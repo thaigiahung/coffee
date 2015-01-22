@@ -69,4 +69,7 @@ module.exports.routes = {
     controller: 'IngredientController',
     action: 'view'
   },
+
+  '/bill/list/:store?': 'BillController.indexByStore',
+  '/bill/get/:id?': 'BillItemController.indexBillItem'
 };
