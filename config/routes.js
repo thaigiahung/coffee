@@ -34,7 +34,7 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
 
   /***************************************************************************
   *                                                                          *
@@ -45,5 +45,28 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
+  'POST /ingredient/warning/set': {
+    controller: 'IngredientController',
+    action: 'updateLimit'
+  },
 
+  '/store/view': {
+    controller: 'StoreController',
+    action: 'view'
+  },
+
+  '/ingredient/show/:store': {
+    controller: 'IngredientController',
+    action: 'getIngredientOf1Store'
+  },
+
+  '/ingredient/get-limit/:store/:ingredient': {
+    controller: 'IngredientController',
+    action: 'getLimitOf1Ingredient'
+  },
+
+  '/ingredient/view': {
+    controller: 'IngredientController',
+    action: 'view'
+  },
 };
