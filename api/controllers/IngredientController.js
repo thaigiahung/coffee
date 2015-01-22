@@ -107,37 +107,80 @@ module.exports = {
 	 * message: text
 	 */
 	updateLimit: function(req, res) {
-		var t = req.param('option');
-		console.log(t);
-		console.log(req.param("data"));
-		res.send(req.param("data"));
-		/**
-		 * find one ingredient by id and storeid
-		 * then update the limit equal to amount
-		 */
-		/*Ingredient.update({ id: req.param('id'), store: req.param('storeid') },
-			{ limit: req.param('amount') } )
-			.exec(function (err, ingredient) {
-
-			//check if there is any error. write to the log and return fail
-			if (err) {
-				console.log(err);
-				return res.json({"status": 0});
-			}
-
-			//check if there is no ingredient found. write to the log and return fail
-			if (!ingredient || !ingredient.length) {
-				console.log("Can not find any ingredient");
-				return res.json({"status": 0});
-			}
-
-			//if everything is ok, return success
-			return res.json({"status": 1});
-		});*/
+		var option = req.param('option');
+		var data = JSON.parse(req.param("data"));
+		
+		if(option == 0) //Set limit of all stores
+		{
+			data = data[0];			
+			IngredientStore.update(
+									{ ingredient: data.ingredientid },
+									{ limit: data.limit }
+								)
+				.exec(function (err, updated) {
+					//check if there is any error.
+					if (err) {
+						res.json(
+							{
+								"status": 0, 
+								"message": "Không thể cập nhật mức cảnh báo của nguyên liệu!"
+							}
+						);
+					}
+					else
+						res.json(
+								{
+									"status": 1, 
+									"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+								}
+							);
+				});
+		}
+		else //Set limit of some stores
+		{
+			/*data.forEach(function(obj){
+				IngredientStore.update(
+										{ ingredient: obj.ingredientid, store: obj.storeid },
+										{ limit: obj.limit})
+					.exec(function (err, updated) {
+						if (err) {
+							res.json(
+								{
+									"status": 0, 
+									"message": "Không thể cập nhật mức cảnh báo của nguyên liệu!"
+								}
+							);
+						}
+					});
+			});
+			res.json(
+					{
+						"status": 1, 
+						"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+					}
+				);*/	
+			for(var i = 0; i < data.length; i++)
+			{
+				IngredientStore.update(
+										{ ingredient: data[i].ingredientid, store: data[i].storeid },
+										{ limit: data[i].limit})
+					.exec(function (err, updated) {
+						if (err) {
+							res.json(
+								{
+									"status": 0, 
+									"message": "Không thể cập nhật mức cảnh báo của nguyên liệu!"
+								}
+							);
+						}
+					});
+			}	
+			res.json(
+					{
+						"status": 1, 
+						"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+					}
+				);	
+		}
 	},
-
-	test: function(req, res) {
-		console.log(req);
-		res.send("OK");
-	}
 };
