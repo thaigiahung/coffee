@@ -60,10 +60,10 @@ getJson = function(json, model) {
  * this function will get a list of criteria to find objects in a model.
  * then, it will display a list of objects including message and status.
  * 
- * @param  {[type]} json    input json
- * @param  {[type]} model   the model to select
- * @param  {[type]} res     the res object from controller (workaround)
- * @param  {[type]} options there are 2 options :
+ * @param  {type: json} json    input json
+ * @param  {type: model} model   the model to select
+ * @param  {type: res} res     the res object from controller (workaround)
+ * @param  {type: array} options there are 2 options :
  * res: 
  *      true: return res.json the result including message and status
  *      **false: suppose to return the result to the controller 
