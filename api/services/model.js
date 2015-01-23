@@ -14,7 +14,7 @@ getName = function (model) {
     return model._context.adapter.collection;
 }
 
-// *get the criteria in the model after applying where clause
+// get the criteria in the model after applying where clause
 getCriteria = function (model) {
     var crit = model._criteria.where;
     return crit;
@@ -98,8 +98,22 @@ capitaliseFirstLetter = function(string)
  * Type: boolean.
  * Default : false
  * If this is set to true, then this function will write the logs to the console
+ *
+ * action - Optional.
+ * Type: string
+ * Default: find
+ * if this is set to find or not provide, then the function will only find the records
+ * if this is set to destroy, then the function will destroy any found record from db
+ * if this is set to update, then the function will quire the input "set" 
+ *      in order to know which column to be set with what value
+ *
+ * set - required if action is 'update'
+ * Type: json
+ * Default: null.
+ * if action is update and this json is provided
+ * Then this function will update the found records with the column and value contains in this json
  */
-exports.find = function(params, callback) {
+exports.exec = function(params, callback) {
 
     // if the type of params is req
     // then assign the input like params.query.from . . .
@@ -107,41 +121,67 @@ exports.find = function(params, callback) {
     // then assign input directly as array to array
     if(params._readableState) {
         var input = {
-            'from': params.query.from,
-            'where': JSON.parse(params.query.where),
-            'message': params.query.message,
-            'log': params.query.log
+            'from': params.param('from'),
+            'message': params.param('message'),
+            'log': params.param('log'),
+            'action': params.param('action')
         };
+
+        // if user provide the input where then parse it to json
+        if(params.param('where')) {
+            input.where = JSON.parse(params.param('where'));
+        }
+
+        // if user provide the input set then parse it to json
+        if(params.param('set')) {
+            input.where = JSON.parse(params.param('set'));
+        }
+
     }
     else {
         var input = params;
     }
 
     // get the model name from the user input.from
-    var modelName = capitaliseFirstLetter(input.from);
+    var modelName = capitaliseFirstLetter(input.from.toLowerCase());
 
-
-    //default value for message and log
+    //default value for message, log, action
     var message = true;
     var log = false;
+    var action = 'find';
+
+    if(input.set) {
+        var set = input.set;
+    }
 
     //if user input message and it's true
     //then assign message = true
     if(input.message)
-        if(input.message == 'false')
+        if(input.message.toLowerCase() == 'false')
             message = false;
 
     //if user input log and it's true
     //then assign log = true
     if(input.log)
-        if(input.log == 'true')
+        if(input.log.toLowerCase() == 'true')
             log = true;
+
+    //change the action to match the user input
+    if(input.action) {
+        if(input.action.toLowerCase() == 'destroy')
+            action = 'destroy';
+        else if (input.action.toLowerCase() == 'update')
+            action = 'update';
+    }
 
     // try to get the model name in "from" that the user provide
     try {
         // get the model. 
         // This is equal to Ingredient.find() or Store.find() ... depdends on the modelName
-        var model = global[modelName].find();
+        if(action.toLowerCase() == 'destroy')
+            var model = global[modelName].destroy();
+        else
+            var model = global[modelName].find();
     }
     catch(err) {
         return checkThenLog(log,'There is no such model name: ' + modelName);
@@ -171,8 +211,9 @@ exports.find = function(params, callback) {
         // is there is some errors
         // then assgign 'error' to result['message']
         if(err) {
-            result['message'] = 'error';
+            result['message'] = 'error when finding';
             checkThenLog(log,err);
+            return;
         }
 
         // if no match found
@@ -182,6 +223,40 @@ exports.find = function(params, callback) {
 
             checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
             checkThenLog(log,getCriteria(model));
+            return;
+        }
+
+        // if set is provided and action is update
+        // then do the update for the found record
+        if(set && action == 'update') {
+            // if set is an array
+            // then perform a loop through all object in that array
+            if(set.length) {
+                for(var i = 0; i < set.length; i++) {
+                    for(var j = 0; j < found.length; j++) {
+                        // for each object in set
+                        // which is containing the column and the value to be set
+                        // apply that to every found record
+                        found[j][set[i]['column']] = set[i]['value'];
+                    }
+                }
+            }
+            // if set is only one object
+            // then apply that to every record found
+            else {
+                for(var j = 0; j < found.length; j++) {
+                    found[j][set['column']] = set['value'];
+                }
+            }
+            // save all the changes that we just applied to the records
+            for(var i = 0; i < found.length; i++) {
+                found[i].save(function(err) {
+                    if(err) {
+                        result['message'] = 'error when updating';
+                        checkThenLog(log,err);
+                    }
+                });
+            }
         }
 
         // if finding success
@@ -196,6 +271,7 @@ exports.find = function(params, callback) {
         }
 
         checkThenLog(result['message']);
+
 
         // if there is a call back function
         // then do the callback function
