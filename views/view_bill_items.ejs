@@ -18,13 +18,13 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <% _.each(datas, function (data) { %>
+                              <% _.each(result.data, function (obj) { %>
                                 <tr>
-                                  <td><%= data.id %></td>
-                                  <td><%= data.product %></td>
-                                  <td><%= data.amount %></td>
-                                  <td><%= data.price %></td>
-                                  <td><%= data.total %></td>
+                                  <td><%= obj.id %></td>
+                                  <td><%= obj.product %></td>
+                                  <td><%= obj.amount %></td>
+                                  <td><%= obj.price %></td>
+                                  <td><%= obj.total %></td>
                                 </tr>
                               <% }) %>
                             </tbody>
