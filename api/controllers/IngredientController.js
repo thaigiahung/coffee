@@ -51,7 +51,7 @@ module.exports = {
 			{
 				var arrIngredient = [];
 				founds.forEach(function(found){
-					var ingre = {"ingredientid": found.ingredient.id,"ingredientname": found.ingredient.name};
+					var ingre = {"ingredientid": found.id,"ingredientname": found.ingredient.name};
 					arrIngredient.push(ingre);
 				});
 				res.json({
