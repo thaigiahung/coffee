@@ -167,7 +167,7 @@ module.exports = {
 			for(var i = 0; i < data.length; i++)
 			{
 				IngredientStore.update(
-										{ ingredient: data[i].ingredientid, store: data[i].storeid },
+										{ id: data[i].ingredientid },
 										{ limit: data[i].limit})
 					.exec(function (err, updated) {
 						if (err) {
