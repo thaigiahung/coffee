@@ -64,7 +64,7 @@ module.exports = {
 	},
 
 	getLimitOf1Ingredient: function(req, res) {		
-		IngredientStore.findOne({ store: req.param('store'), ingredient: req.param('ingredient')  }).populate('ingredient').exec(function (err, found) {
+		IngredientStore.findOne({ store: req.param('store'), id: req.param('ingredient')  }).populate('ingredient').exec(function (err, found) {
 			if(err) {
 				res.json({
 					'status': 0,
