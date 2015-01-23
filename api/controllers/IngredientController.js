@@ -83,7 +83,12 @@ module.exports = {
 				res.json({
 					'status': 1,
 					'message': 'Thành công',
-					'ingredient': found.ingredient
+					'ingredient': {
+									id: found.id,
+									name: found.ingredient.name,
+									unit: found.ingredient.unit,
+									limit: found.limit
+								}
 				});
 			}			
 		});
