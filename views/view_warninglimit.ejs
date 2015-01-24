@@ -1,0 +1,188 @@
+<!-- Cookie -->
+<script type="text/javascript">
+</script>
+	<div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Thay đổi mức cảnh báo của nguyên liệu
+                </div>
+                <div class= "panel-body">
+                	<div class="table-responsive">
+                        <input type ="radio" id= "rbutton1" name="choice" >Cập nhật tất cả các store</input>
+                        <br></br>
+                            <form>
+                                <div  id="allstores" hidden>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                <tr>
+                                    <th>
+                                        Cửa hàng
+                                    </th>
+                                    <th>
+                                        Nguyên liệu
+                                    </th>
+                                    <th>
+                                        Mức cảnh báo mới
+                                    </th>
+                                    <th>
+                                        Thực hiện
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <label id="lbstore">Tất cả cửa hàng</label>
+                                    </td>
+                                    <td>
+                                        <select id="ingredientlist">
+                                                <option value= "0">
+                                                    Nguyên liệu
+                                                </option>
+                                                <script type="text/javascript">
+                                                    $.getJSON("http://localhost:1337/ingredient/view",function(datas3){
+                                                       for (var i = 0; i < datas3.ingredient.length; i++) {
+                                                           $("#ingredientlist").append("<option value ='"+datas3.ingredient[i].id+"'  id='ingredient? "+datas3.ingredient[i].id+"'>"+datas3.ingredient[i].name+"</option>");
+                                                       };
+                                                    });
+                                                </script>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type ="text" name="newlimit" id="limit">
+
+                                        </input>
+                                    </td>
+                                    <td>
+                                        <input type="submit" value="Thay đổi"></input>
+                                        <input type="reset" value="Hủy"></input>
+                                    </td>
+                                </tr>
+                            </tbody>
+                                </table>
+                            </div>
+                            </form>
+                        <br></br>
+                        <input type ="radio" id= "rbutton2" name="choice">Cập nhật từng store</input>
+                        <div id="specificstores" hidden>
+                		<form>
+                        <table class="table table-striped table-bordered table-hover">
+                			<thead>
+                				<tr>
+                					<th>
+                						Cửa hàng
+                					</th>
+                					<th>
+                						Nguyên liệu
+                					</th>
+                					<th>
+                						Mức cảnh báo hiện tại
+                					</th>
+                					<th>
+                						Mức cảnh báo mới
+                					</th>
+                				</tr>
+                			</thead>
+                                <tbody id="tbody">
+                                    <tr id="tr">
+                                        <td><!--Dropdown list of stores including their ID-->
+                                            <select id="storelist1">
+                                                <option value="0">
+                                                    Cửa hàng
+                                                </option>
+                                                <script type="text/javascript">
+                                                    $.getJSON("http://localhost:1337/store/view",function(datas){
+                                                       for (var i = 0; i < datas.store.length; i++) {
+                                                           $("#storelist1").append("<option value ='"+datas.store[i].id+"'  id='store1? "+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
+                                                       };
+                                                    });
+                                                </script>
+                                            </select>
+                                        </td>
+                                        <td><!--Dropdown list of ingredients of chosen store above-->
+                                            <select id="ingredientlist1">
+                                                <option value= "0">
+                                                    Nguyên liệu
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <label id="lb1">
+                                                
+                                            </label>
+                                        </td>
+                                        <td>
+                                            <input type ="text" name="newlimit1" id="limit1">
+
+                                            </input>
+                                        </td>
+                                    </tr>
+                    			</tbody>
+                		</table>
+                        <input type="button"value="Thêm" id="btnAdd"></input>
+                        <input type="submit" value="Thay đổi"></input>
+                        <input type="reset" value="Hủy hết"></input>
+                        </form>  
+                    </div>
+                	</div>	
+                    
+                </div>
+            <div>
+        </div>
+    </div>
+<script type="text/javascript" charset="utf-8">
+
+    function del(row)//xóa 1 row trong table 
+    {
+        $("#addtr"+row+"").remove();
+    }
+    var x= 1;
+    $( document ).ready(function() {
+        $("#storelist1").change(function()
+        {
+            var store = $("#storelist1").val();
+            $("#ingredientlist1").empty();
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1){
+                                                for (var i = 0; i < datas1.ingredient.length; i++) {
+                                                           $("#ingredientlist1").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                                                       };
+                                                    });
+        });
+        $('#rbutton1').click(function()
+        {
+            $("#allstores").show();
+            $("#specificstores").hide();
+            for (var i = 2; i <= x; i++) {
+                $("#addtr"+i+"").remove();
+            };
+        });
+        $('#rbutton2').click(function()
+        {
+            $("#specificstores").show();
+            $("#allstores").hide();
+        });
+
+        $('#btnAdd').click(function()
+        {
+            x = x+1;
+            $("#tbody").append("<tr id='addtr"+x+"'><td><select id='storelist"+x+"'><option value='0'>Cửa hàng</option></select></td><td><select id='ingredientlist"+x+"'><option value='0'>Nguyên liệu</option></select></td><td><label id='lb"+x+"'></label></td><td><input type ='text' name='newlimit"+x+"' id='limit"+x+"'></input><input type='button' class='btndelete' onclick='del("+x+");' id='"+x+"' value='Xóa'></input></td></tr>");
+            $.getJSON("http://localhost:1337/store/view",function(datas){
+                for (var i = 0; i < datas.store.length; i++) {
+                    $("#storelist"+x+"").append("<option value ='"+datas.store[i].id+"'  id='store"+x+"? "+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
+                };
+            });
+            $("#storelist"+x+"").change(function(){
+            var store = $("#storelist"+x+"").val();
+            $("#ingredientlist"+x+"").empty();
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1){
+            for (var i = 0; i < datas1.ingredient.length; i++) {
+                $("#ingredientlist"+x+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                };
+            });
+        });
+        });
+    
+    });
+
+</script>
