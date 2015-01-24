@@ -130,18 +130,18 @@ exports.exec = function(params, callback) {
 
         // if these input is provided, then parse it to json
         if(params.param('where')) {
-            input.where = JSON.parse(params.param('where'));
+            input.where = JSON.parse(params.param('where').toLowerCase());
         }
 
         if(params.param('updatedata')) {
-            input.updatedata = JSON.parse(params.param('updatedata'));
+            input.updatedata = JSON.parse(params.param('updatedata').toLowerCase());
         } 
         else if(params.param('createdata')) {
-            input.createdata = JSON.parse(params.param('createdata'));
+            input.createdata = JSON.parse(params.param('createdata').toLowerCase());
         }
 
         if(params.param('populate')) {
-            input.populate = JSON.parse(params.param('populate'));
+            input.populate = JSON.parse(params.param('populate').toLowerCase());
         }
 
     }
@@ -234,12 +234,15 @@ exports.exec = function(params, callback) {
 
                 // if nothing was created
                 // then assign a message to result['message']
-                if(!created || !created.length) {
+                if(!created) {
+                    result['status'] = 0;
                     result['message'] = 'can not create ' + modelName;
 
                     checkThenLog(log,'Can not create ' + modelName + 'with these data');
                     checkThenLog(data);
                 }
+
+                result[modelName.toLowerCase()] = created;
 
                 // if there is a call back function
                 // then do the callback function
@@ -255,8 +258,8 @@ exports.exec = function(params, callback) {
                         callback(created);
                     }
                 }
-                return;
             });
+            return;
         }
         else {
             var model = global[modelName].find()
@@ -266,27 +269,36 @@ exports.exec = function(params, callback) {
         return checkThenLog(log,'There is no such model name: ' + modelName);
     }
 
-    // if the user have the input json.
-    // if not then find all
-    if(input.where) {
-        // get the where clause from the user input.where which is in json format
-        var where = input.where;
+    // if action is find or update
+    // then apply where and populate to model
+    if(action == 'find' || action =='update') {
+        // if the user provide the input where.
+        // if not then find all
+        if(input.where) {
+            // get the where clause from the user input.where which is in json format
+            var where = input.where;
 
-        // apply where clause to model
-        getJson(where, model);
-    }
-
-    // if input.populate is true and action is find or update
-    // then for each input.populate, assign them to the model
-    if(input.populate && (action == 'find' || action == 'update')) {
-        var populate = input.populate;
-        if(populate.length) {
-            for (var i = 0; i< populate.length; i++) {
-                model.populate(populate[i].model);
+            // apply where clause to model
+            if(!where.and && !where.or) {
+                model.where(where);
+            }
+            else {
+            getJson(where, model);
             }
         }
-        else {
-            model.populate(populate.model);
+
+        // if user provide the input populate
+        // then for each input.populate, assign them to the model
+        if(input.populate) {
+            var populate = input.populate;
+            if(populate.length) {
+                for (var i = 0; i< populate.length; i++) {
+                    model.populate(populate[i].model);
+                }
+            }
+            else {
+                model.populate(populate.model);
+            }
         }
     }
 
@@ -346,7 +358,7 @@ exports.exec = function(params, callback) {
         // else
         // then data status to 0
         if(result['message'] == 'success') {
-            result[getName(model)] = found;
+            result[modelName.toLowerCase()] = found;
         }
         else {
             result['status'] = 0;
