@@ -161,7 +161,8 @@ exports.exec = function(params, callback) {
     }
 
     // get the model name from the user input.from
-    var modelName = capitaliseFirstLetter(input.from.toLowerCase());
+    var modelName = capitaliseFirstLetter(input.from);
+    // var modelName = input.from;
 
     //default value 
     var message = true;
@@ -266,7 +267,11 @@ exports.exec = function(params, callback) {
         }
     }
     catch(err) {
-        return checkThenLog(log,'There is no such model name: ' + modelName);
+        result['status'] = 0;
+        result['message'] = 'There is no such model name: ' + modelName;
+        checkThenLog(log,'There is no such model name: ' + modelName);
+        console.log(result);
+        return result;
     }
 
     // if action is find or update
