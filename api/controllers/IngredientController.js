@@ -183,4 +183,10 @@ module.exports = {
 				);	
 		}
 	},
+
+	test: function(req, res) {
+		model.exec(req, function(found){
+			res.json(found);
+		});
+	}
 };
