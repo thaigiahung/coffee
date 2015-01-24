@@ -51,7 +51,7 @@ module.exports = {
 			{
 				var arrIngredient = [];
 				founds.forEach(function(found){
-					var ingre = {"ingredientid": found.ingredient.id,"ingredientname": found.ingredient.name};
+					var ingre = {"ingredientid": found.id,"ingredientname": found.ingredient.name};
 					arrIngredient.push(ingre);
 				});
 				res.json({
@@ -64,7 +64,7 @@ module.exports = {
 	},
 
 	getLimitOf1Ingredient: function(req, res) {		
-		IngredientStore.findOne({ store: req.param('store'), ingredient: req.param('ingredient')  }).populate('ingredient').exec(function (err, found) {
+		IngredientStore.findOne({ store: req.param('store'), id: req.param('ingredient')  }).populate('ingredient').exec(function (err, found) {
 			if(err) {
 				res.json({
 					'status': 0,
@@ -83,7 +83,12 @@ module.exports = {
 				res.json({
 					'status': 1,
 					'message': 'Thành công',
-					'ingredient': found.ingredient
+					'ingredient': {
+									id: found.id,
+									name: found.ingredient.name,
+									unit: found.ingredient.unit,
+									limit: found.limit
+								}
 				});
 			}			
 		});
@@ -162,7 +167,7 @@ module.exports = {
 			for(var i = 0; i < data.length; i++)
 			{
 				IngredientStore.update(
-										{ ingredient: data[i].ingredientid, store: data[i].storeid },
+										{ id: data[i].ingredientid },
 										{ limit: data[i].limit})
 					.exec(function (err, updated) {
 						if (err) {

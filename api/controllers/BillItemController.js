@@ -8,31 +8,27 @@
 module.exports = {
 	indexBillItem: function(req, res){
         BillItem.find({ bill: req.param('id')}).exec(function (err, billItems){
+            var result;
             if (err) {
-                res.json(
-                	{
-                		"status": 0,
-                		"message": "Lỗi!"
-            		}
-        		);
+                result = {
+                    		"status": 0,
+                    		"message": "Lỗi!"
+                		}
             }
             else if(typeof billItems == "undefined") {
-	            res.json(
-	            	{
-	            		"status": 0,
-	            		"message": "Không tìm thấy chi tiết hóa đơn!"
-	        		}
-	    		);
+	            result = {
+    	            		"status": 0,
+    	            		"message": "Không tìm thấy chi tiết hóa đơn!"
+    	        		}
             }
             else{
-    	        res.json(
-    	        	{
-    	        		"status": 1,
-    	        		"message": "Thành công!",
-    	        		"data": billItems
-    	    		}
-    			);
+    	        result = {
+        	        		"status": 1,
+        	        		"message": "Thành công!",
+        	        		"data": billItems
+        	    		}
             }
+            res.view('view_bill_items', {result: result});
         })
     }
 };

@@ -55,7 +55,7 @@
                                         </input>
                                     </td>
                                     <td>
-                                        <input type="submit" value="Thay đổi"></input>
+                                        <input type="button" value="Thay đổi" onclick="Update()"></input>
                                         <input type="reset" value="Hủy"></input>
                                     </td>
                                 </tr>
@@ -85,10 +85,10 @@
                 				</tr>
                 			</thead>
                                 <tbody id="tbody">
-                                    <tr id="tr">
+                                    <tr id="addtr1">
                                         <td><!--Dropdown list of stores including their ID-->
-                                            <select id="storelist1">
-                                                <option value="0">
+                                            <select id="storelist1" onchange="ChangeStore(1);">
+                                                <option value="0" id="default" selected="selected">
                                                     Cửa hàng
                                                 </option>
                                                 <script type="text/javascript">
@@ -101,8 +101,8 @@
                                             </select>
                                         </td>
                                         <td><!--Dropdown list of ingredients of chosen store above-->
-                                            <select id="ingredientlist1">
-                                                <option value= "0">
+                                            <select id="ingredientlist1" onchange="ChangeLimit(1);">
+                                                <option value= "0" selected = "selected">
                                                     Nguyên liệu
                                                 </option>
                                             </select>
@@ -121,8 +121,8 @@
                     			</tbody>
                 		</table>
                         <input type="button"value="Thêm" id="btnAdd"></input>
-                        <input type="submit" value="Thay đổi"></input>
-                        <input type="reset" value="Hủy hết"></input>
+                        <input type="button" value="Thay đổi" onclick="UpdateLimit()"></input>
+                        <input type="reset" id="btnCancel" value="Hủy hết"></input>
                         </form>  
                     </div>
                 	</div>	
@@ -132,24 +132,51 @@
         </div>
     </div>
 <script type="text/javascript" charset="utf-8">
-
-    function del(row)//xóa 1 row trong table 
+    function ChangeStore(x)
+    {
+            var store = $("#storelist"+x+"").val();
+            $("#ingredientlist"+x+"").empty();
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1){
+            if(datas1.status==0)
+                {
+                    $("#lb"+x+"").text("");
+                    $("#ingredientlist"+x+"").append("<option value = '0'>Nguyên liệu</option>");
+                    alert("Cửa hàng này không có nguyên liệu nào!");
+                    return false;
+                }
+            for (var i = 0; i < datas1.ingredient.length; i++) {
+                $("#ingredientlist"+x+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                };
+                //Set default selected choice for ingredient list      
+                $("#ingredientlist"+x+"").val(""+datas1.ingredient[0].ingredientid+"");
+                var ingredient = $("#ingredientlist"+x+"").val();
+                $.getJSON("http://localhost:1337/ingredient/get-limit/"+store+"/"+ingredient+"",function(datas2){
+                $("#lb"+x+"").text(""+datas2.ingredient.limit+"");
+            });
+            });
+        };
+    function ChangeLimit(x)
+    {
+        var ingredient= $("#ingredientlist"+x+"").val();
+                var store = $("#storelist"+x+"").val();
+                $.getJSON("http://localhost:1337/ingredient/get-limit/"+store+"/"+ingredient+"",function(datas2){
+                $("#lb"+x+"").text(""+datas2.ingredient.limit+"");
+            });
+    }
+    function del(row)//Detele row in table 
     {
         $("#addtr"+row+"").remove();
     }
     var x= 1;
     $( document ).ready(function() {
-        $("#storelist1").change(function()
-        {
-            var store = $("#storelist1").val();
-            $("#ingredientlist1").empty();
-            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1){
-                                                for (var i = 0; i < datas1.ingredient.length; i++) {
-                                                           $("#ingredientlist1").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
-                                                       };
-                                                    });
+        $("#btnCancel").click(function(){
+            for (var i = 1; i <=x; i++) {
+                $("#ingredientlist"+i+"").empty();
+                $("#ingredientlist"+i+"").append("<option value = '0'>Nguyên liệu</option>");
+                $("#lb"+i+"").text("");
+            };
         });
-        $('#rbutton1').click(function()
+    $('#rbutton1').click(function()//radiobutton for all stores choice
         {
             $("#allstores").show();
             $("#specificstores").hide();
@@ -157,32 +184,113 @@
                 $("#addtr"+i+"").remove();
             };
         });
-        $('#rbutton2').click(function()
+    $('#rbutton2').click(function()//radio button for specific stores choice
         {
             $("#specificstores").show();
             $("#allstores").hide();
         });
 
-        $('#btnAdd').click(function()
+    $('#btnAdd').click(function()//to add 1 row into table
         {
             x = x+1;
-            $("#tbody").append("<tr id='addtr"+x+"'><td><select id='storelist"+x+"'><option value='0'>Cửa hàng</option></select></td><td><select id='ingredientlist"+x+"'><option value='0'>Nguyên liệu</option></select></td><td><label id='lb"+x+"'></label></td><td><input type ='text' name='newlimit"+x+"' id='limit"+x+"'></input><input type='button' class='btndelete' onclick='del("+x+");' id='"+x+"' value='Xóa'></input></td></tr>");
-            $.getJSON("http://localhost:1337/store/view",function(datas){
-                for (var i = 0; i < datas.store.length; i++) {
+            $("#tbody").append("<tr id='addtr"+x+"'><td><select id='storelist"+x+"' onchange='ChangeStore("+x+")'><option id='default' value='0'>Cửa hàng</option></select></td><td><select onchange='ChangeLimit("+x+")' id='ingredientlist"+x+"'><option value='0'>Nguyên liệu</option></select></td><td><label id='lb"+x+"'></label></td><td><input type ='text' name='newlimit"+x+"' id='limit"+x+"'></input><input type='button' class='btndelete' onclick='del("+x+");' id='"+x+"' value='Xóa'></input></td></tr>");
+            $.getJSON("http://localhost:1337/store/view",function(datas)
+            {
+                for (var i = 0; i < datas.store.length; i++) 
+                {
                     $("#storelist"+x+"").append("<option value ='"+datas.store[i].id+"'  id='store"+x+"? "+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
                 };
             });
-            $("#storelist"+x+"").change(function(){
-            var store = $("#storelist"+x+"").val();
-            $("#ingredientlist"+x+"").empty();
-            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1){
-            for (var i = 0; i < datas1.ingredient.length; i++) {
-                $("#ingredientlist"+x+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
-                };
-            });
-        });
+            
         });
     
     });
+    
+    function Update()//update limit for all stores
+    {
+        if($("#ingredientlist").val()==0)//check if the user choose ingredient or not 
+        {
+            alert("Bạn chưa chọn nguyên liệu để cập nhật!");
+            return false;
+        }
+        else
+        {
+            var ingredientid = $("#ingredientlist").val();
+            if($("#limit").val()=="")//check if the user input new limit or not
+            {
+                alert("Bạn chưa nhập mức cảnh báo mới!");
+                return false;
+            }
+            else
+            {
+                var limit = $("#limit").val();
+                //create json object to store input data
+                var data = [
+                                {
+                                    "ingredientid": ingredientid,
+                                    "limit": limit
+                                }
+                            ]
+                
+                //send data
+                $.post("/ingredient/warning/set",{option: 0, data: JSON.stringify(data)},function(result)
+                {
+                    alert(result.message);
+                    window.location.reload();
+                });
 
+            }
+        }
+    };
+
+    function UpdateLimit()//update limit for specific stores
+    {   
+        for (var i = 1; i <= x; i++) 
+        {
+            if($("#addtr"+i+"").length)//check if the row exists
+            {
+                if($("#storelist"+i+"").val()==0)//check if there is 1 row which has no store chosen
+                {
+                    alert("Bạn chưa chọn đầy đủ thông tin cập nhật");
+                    return false;
+                }
+            }
+        };
+        for (var i = 1; i <= x; i++)
+        {
+            if($("#addtr"+i+"").length)//check if the row exists
+            {
+            var ingredientid = $("#ingredientlist"+i+"").val();
+            if($("#limit"+i+"").val()=="")//check if the user input new limit or not
+            {
+                alert("Bạn chưa nhập mức cảnh báo mới!");
+                return false;
+            }
+            else
+            {
+                var limit = $("#limit"+i+"").val();
+                //create json object to store input data
+                var data = [
+                                {
+                                    "ingredientid": ingredientid,
+                                    "limit": limit
+                                }
+                            ]
+                
+                //send data
+                $.post("/ingredient/warning/set",{option: 1, data: JSON.stringify(data)},function(result)
+                {
+                    
+                });
+
+            }
+            }
+        }
+        alert("Bạn đã cập nhật thành công!");
+        window.location.reload();
+
+    };
+    //var ingredientid = $("#ingredientlist"+i+"").val();
+                    //var limit = parseInt($("#lb"+i+"").text());
+                    //alert(limit);
 </script>
