@@ -69,7 +69,33 @@ module.exports.routes = {
     controller: 'IngredientController',
     action: 'view'
   },
+  'get /warninglimit':{
+    view: 'view_warninglimit',
+    locals:{
+      datas: [
+        {storeid:1, storename: 'Passio Sai Gòn'},
+        {storeid:2, storename: 'Passio Hà Nội'},
+        {storeid:3, storename: 'Passio Đà Nẵng'},
+      ],
+      datas1:
+      [
+        {ingredientid:1, ingredientname: 'Đường'},
+        {ingredientid:2, ingredientname: 'Muối'},
+        {ingredientid:3, ingredientname: 'Bột ngọt'},
+        {ingredientid:4, ingredientname: 'Sữa'}
+      ],
+      datas2:
+      [{id:1, ingredientname: 'Đường', unit:'kg', limitation: 1000}],
+      datas3:
+      [
+        {ingredientid:1, ingredientname: 'Gạo'},
+        {ingredientid:2, ingredientname: 'Củi'},
+        {ingredientid:3, ingredientname: 'Lửa'},
+        {ingredientid:4, ingredientname: 'Sữa'}
+      ],
+    },
 
+  },
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem'
 };
