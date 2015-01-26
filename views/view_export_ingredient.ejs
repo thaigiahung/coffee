@@ -1,0 +1,129 @@
+<div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Xuất kho
+                </div>
+                <div class= "panel-body">
+                	<div class="table-responsive">
+                        <input type ="radio" id= "rbutton1" name="choice" >Chuyển nguyên liệu đến tất cả cửa hàng</input>
+                        <br></br>
+                            <form>
+                                <div  id="allstores" hidden>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                <tr>
+                                    <th>
+                                        Cửa hàng
+                                    </th>
+                                    <th>
+                                        Nguyên liệu
+                                    </th>
+                                    <th>
+                                        Kho tổng
+                                    </th>
+                                    <th>
+                                        Số lượng chuyển
+                                    </th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <tr id="allstorestr1">
+                                    <td>
+                                        <label id="lbstore">Tất cả cửa hàng</label>
+                                    </td>
+                                    <td>
+                                        <select id="allstoresingredientlist1" onchange="changeIngredient(1)">
+                                                <option value= "0">
+                                                    Nguyên liệu
+                                                </option>
+                                                <script type="text/javascript">
+                                                    $.getJSON("http://localhost:1337/ingredient/view",function(datas){
+                                                       for (var i = 0; i < datas.ingredient.length; i++) {
+                                                           $("#allstoresingredientlist1").append("<option value ='"+datas.ingredient[i].id+"'  id='allstoresingredient1? "+datas.ingredient[i].id+"'>"+datas.ingredient[i].name+"</option>");
+                                                       };
+                                                    });
+                                                </script>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label id="allstoreslb1">
+                                            
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="addstock1" id="allstoresaddstock1"></input>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                                </table>
+                                <input type="button" id="btnadd" value="Thêm"></input>
+                                <input type="button" id="btnchange" value="Thay đổi"></input>
+                                <input type="reset" id="btncancel" value="Hủy"></input>
+                            </form>
+                            </div>
+                        <br></br>
+            <div>
+        </div>
+    </div>
+<script type="text/javascript" charset="utf-8">
+    function deleterow(row)//delete one row in the table allstores
+    {
+        $("#allstorestr"+row+"").remove();
+    };
+    $("#btncancel").click(function()
+    {
+        for (var i = 1; i <= x; i++) 
+        {
+            $("#allstoreslb"+i+"").text('');
+        };
+    });
+    function changeIngredient(y)//when the user choose an ingredient from dropdown list
+    {
+        for (var i = 1; i <= x; i++) 
+        {
+            //check if the user already chose this ingredient or not
+            if($("#allstoresingredientlist"+i+"").val()==$("#allstoresingredientlist"+y+"").val()&&y!=i)
+            {
+                alert("Bạn đã chọn nguyên liệu này rồi!");
+                $("#allstoresingredientlist"+y+"").val(0);
+                $("#allstoreslb"+y+"").text('');
+                return false;
+            }
+            else //get the stock in Main Storage
+            {
+
+            }
+        };
+    };
+    $( document ).ready(function()
+    {
+        $("#rbutton1").click(function()
+        {
+            $("#allstores").show();
+            $("#specificstores").hide();
+        });
+    });
+    var x=1;
+    $("#btnadd").click(function()
+    {
+        x=x+1;
+        $("#tbody").append("<tr id='allstorestr"+x+"'><td></td><td><select id='allstoresingredientlist"+x+"' onchange='changeIngredient("+x+")'><option value='0'>Nguyên liệu</option></select></td><td><label id='allstoreslb"+x+"'></label></td><td><input type ='text' name='addstock"+x+"' id='allstoresaddstock"+x+"'></input></td><td><input type='button' onclick='deleterow("+x+");' value='Xóa' id='"+x+"'></input></td></tr>");
+
+        //Input ingredient into dropdown list
+        $.getJSON("http://localhost:1337/ingredient/view",function(datas)
+        {
+            for (var i = 0; i < datas.ingredient.length; i++) 
+            {
+                $("#allstoresingredientlist"+x+"").append("<option value ='"+datas.ingredient[i].id+"'  id='allstoresingredient"+x+"?"+datas.ingredient[i].id+"'>"+datas.ingredient[i].name+"</option>");
+            };
+        });
+
+    })
+</script>
