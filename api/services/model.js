@@ -114,7 +114,7 @@ capitaliseFirstLetter = function(string)
  * if action is update and this json is provided
  * Then this function will update the found records with the column and value contains in this json
  */
-exports.exec = function(params, callback) {
+exports.crud = function(params, callback) {
 
 
     // if the type of params is req
