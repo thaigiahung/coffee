@@ -30,6 +30,7 @@ getJson = function(json, model) {
     else if(json.or)
         var crit = json.or;
 
+    console.log(crit);
     // if the json input only have on criteria, then crit.length will fail
     // so that we only need to use model.where(crit);
     try {
@@ -276,7 +277,7 @@ exports.exec = function(params, callback) {
 
     // if action is find or update
     // then apply where and populate to model
-    if(action == 'find' || action =='update') {
+    if(action != 'create') {
         // if the user provide the input where.
         // if not then find all
         if(input.where) {
