@@ -98,4 +98,5 @@ module.exports.routes = {
   },
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
+  'POST /stock/show': 'IngredientController.getIngredientAmount',
 };

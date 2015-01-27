@@ -188,4 +188,106 @@ module.exports = {
 				);	
 		}
 	},
+
+	getIngredientAmount: function(req, res) {
+		var option = parseInt(req.param('option'));
+		var ingredientId = req.param('ingredientid');		
+		switch(option) {
+			case 0: //By id in model ingredient + store id
+				var storeId = req.param('storeid');
+				IngredientStore.findOne({ store: storeId, ingredient: ingredientId }).exec(function (err, objIngredientStoreLocal) {
+					if(err) {
+						res.json({
+							'status': 0,
+							'message': 'Lỗi'
+						});
+					}
+					else if(typeof objIngredientStoreLocal == "undefined") {
+						res.json(
+						{
+							"status": 0,
+							"message": "Không tìm thấy nguyên liệu ở kho phụ!"
+						});
+					}
+					else {
+						IngredientStore.findOne({ store: 1, ingredient: ingredientId }).exec(function (err, objIngredientStoreMain) {
+							if(err) {
+								res.json({
+									'status': 0,
+									'message': 'Lỗi'
+								});
+							}
+							else if(typeof objIngredientStoreMain == "undefined") {
+								res.json(
+								{
+									"status": 0,
+									"message": "Không tìm thấy nguyên liệu ở kho chính!"
+								});
+							}
+							else {
+								res.json(
+								{
+									"status": 1,
+									"message": "Bạn đã xuất nguyên liệu thành công!",
+									"mainstock": objIngredientStoreMain.instock,
+									"localstock": objIngredientStoreLocal.instock
+								});
+							}
+						});
+					}
+				});
+				break;
+			case 1: //By id in model IngredientStore
+				IngredientStore.findOne({ id: ingredientId }).exec(function (err, objIngredientStoreLocal) {
+					if(err) {
+						res.json({
+							'status': 0,
+							'message': 'Lỗi'
+						});
+					}
+					else if(typeof objIngredientStoreLocal == "undefined") {
+						res.json(
+						{
+							"status": 0,
+							"message": "Không tìm thấy nguyên liệu ở kho phụ!"
+						});
+					}
+					else {
+						IngredientStore.findOne({ store: 1, ingredient: objIngredientStoreLocal.ingredient }).exec(function (err, objIngredientStoreMain) {
+							if(err) {
+								res.json({
+									'status': 0,
+									'message': 'Lỗi'
+								});
+							}
+							else if(typeof objIngredientStoreMain == "undefined") {
+								res.json(
+								{
+									"status": 0,
+									"message": "Không tìm thấy nguyên liệu ở kho chính!"
+								});
+							}
+							else {
+								res.json(
+								{
+									"status": 1,
+									"message": "Bạn đã xuất nguyên liệu thành công!",
+									"mainstock": objIngredientStoreMain.instock,
+									"localstock": objIngredientStoreLocal.instock
+								});
+							}
+						});
+					}
+				});
+				break;
+			default:
+				res.json(
+					{
+						"status": 0, 
+						"message": "Không thể lấy thông tin nguyên liệu!"
+					}
+				);
+				break;
+		}
+	},
 };
