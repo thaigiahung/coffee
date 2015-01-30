@@ -290,4 +290,114 @@ module.exports = {
 				break;
 		}
 	},
+
+	exportIngredient: function(req, res) {
+		var input = {
+					    'where': '{"or":[{"id":1},{"id":2}]}',
+					    'from': 'ingredientstore',
+					    'message': false,
+					    'log': true,
+					    'action': 'find'
+					};
+					crud(input, function(found){
+					    res.json(found);
+					});
+		/*var option = parseInt(req.param('option'));
+		switch(option){
+			case 0: //Export multiple ingre for all store				
+				var datas = JSON.parse(req.param('data'));
+
+				for(var i = 0; i < datas.length; i++)
+				{
+					var ingredientId = parseInt(datas[i].ingredientid);
+					var stock = parseInt(datas[i].stock);
+
+					IngredientStore.find({ ingredient: ingredientId, sort: 'store ASC' }).populate('ingredient').exec(function (err, arrIngredientStore) {
+
+						//Length of arrIngredientStore should be at least 1 because the main store must has this ingredient. There should alway be at least one record which has store = 1 and ingredient = ingredientId (Store = 1 is main store)
+						//If this record is not exist => the main store does not has this ingredient
+						if(err || arrIngredientStore.length < 1) 
+						{
+							return res.json(
+								{
+									"status": 0, 
+									"message": "Không thể xuất nguyên liệu!"
+								}
+							);
+						}
+						else 
+						{
+							//Main store will not be counted
+							var numOfStore = arrIngredientStore.length - 1; 
+
+							//Total amount of ingredient need to export for all local store
+							var amountOfIngredient = numOfStore * stock;
+
+							//Because the array is sort by store id => the first one should be store 1 (Main store)
+							//If total amount > amount of ingredient of main store => not enough
+							if(amountOfIngredient > arrIngredientStore[0].instock)
+							{
+								return res.json(
+									{
+										"status": 0, 
+										"message": arrIngredientStore[0].ingredient.name + " không đủ nguyên liệu!"
+									}
+								);
+							}
+							else //Enough amount instock to export
+							{
+								for(var j = 0; j < arrIngredientStore.length; j++)
+								{
+									var objIngredientStore = arrIngredientStore[j];
+									var instock = 0;
+									if(j == 0) //Main store: - total amount
+									{
+										instock = objIngredientStore.instock - amountOfIngredient;
+									}
+									else //Local store: + input stock amount
+									{
+										instock = objIngredientStore.instock + stock;
+									}
+
+									//Update DB
+									IngredientStore.update({id:objIngredientStore.id},{instock:instock}).exec(function(err,updated){
+										if(err)
+										{
+											return res.json(
+												{
+													"status": 0, 
+													"message": "Không thể xuất nguyên liệu!"
+												}
+											);
+										}
+									});
+								}
+							}
+						}
+					});
+				}
+				//Bị lỗi do return bên trong con
+				return res.json(
+					{
+						"status": 1, 
+						"message": "Bạn đã xuất nguyên liệu thành công!"
+					}
+				);	
+				break;
+			case 1: //Export multiple ingre for 1 store
+
+				break;
+			case 2: //Export 1 ingre for multiple store
+				break;
+			default:
+				res.status(500);
+				return res.json(
+					{
+						"status": 0, 
+						"message": "Không thể xuất nguyên liệu!"
+					}
+				);
+				break;
+		}*/
+	},
 };
