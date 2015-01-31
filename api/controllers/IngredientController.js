@@ -4,6 +4,130 @@
  * @description :: Server-side logic for managing materials
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
+
+
+ /**
+  * Get all ingredient of main store by array of id
+  *
+  * @param  {Integer}   type
+  * @param  {Array}   arrId
+  * @return {Object}
+  */
+function getIngredientOfMainStoreById (type, arrId, callback) {
+ 	if(type == 1) //this is IngredientId belongs to model Ingredient
+ 	{
+ 		IngredientStore.find({store: 1, ingredient : arrId}).exec(function (err, found) {
+ 			var status = 1;
+ 			if(err || found.length == 0)
+ 				status = 0;
+ 			var result = {
+			 				status: status,
+			 				data: found
+			 			}
+ 			callback(result);
+ 		}); 		
+ 	}
+ 	else //this is Id primary key in model IngredientStore
+ 	{
+ 		IngredientStore.find({store: 1, id : arrId}).exec(function (err, found) {
+ 			var status = 1;
+ 			if(err || found.length == 0)
+ 				status = 0;
+ 			var result = {
+			 				status: status,
+			 				data: found
+			 			}
+ 			callback(result);
+ 		});
+ 	}
+}
+
+ /**
+  * Add mainstock
+  *
+  * @param  {Integer}   ingredient
+  * @return {Object}
+  */
+function addMainStock (ingredient, oldIngredientStoreObj, callback) {
+	IngredientStore.findOne({store: 1, ingredient : ingredient}).exec(function (err, foundMainStore) {
+		var mainstock;
+		if(err || typeof foundMainStore == "undefined")
+			mainstock = 0;
+		else
+			mainstock = foundMainStore.instock;
+		//Add mainstock to oldIngredientStoreObj (Others properties still remain)
+		oldIngredientStoreObj.mainstock = mainstock;
+	    callback(oldIngredientStoreObj);
+	});	
+}
+
+ /**
+  * Get all IngredientStore by array of id (Primary key)
+  * including stock of main store
+  *
+  * @param  {Array}   arrId
+  * @return {Array}
+  */
+function getIngredientStoreByArrayOfId (arrId, callback) {
+	IngredientStore.find({id : arrId}).exec(function (err, founds) {	
+		var arr = [];
+		if(!err && founds.length > 0)
+		{
+			//Found will be an array of IngredientStore which have Id belong to arrId
+			//Now, we will loop through founds to add mainstock
+			var count = founds.length;
+			founds.forEach(function(found){
+				//Find one record which has store = 1 AND ingredient = found[i].ingredient
+				addMainStock(found.ingredient, found, function (obj) {
+					arr.push(obj);
+					if(count <= 1){
+						callback(arr);
+					}
+					count--;
+				});								
+			});			
+		}
+		else
+		callback(arr);
+	}); 
+}
+
+/**
+ * Count how many store that has this ingredient except main store
+ * Id will be column ingredient in IngredientStore.
+ *
+ * @param  {Integer}   id
+ * @return {Object}
+ */
+function getNumOfStoreByIngredientId (id, callback) {
+	//Find all records that has ingredient = id AND store != 1
+	IngredientStore.find({ingredient : id, store: { '!': 1 }}).exec(function (err, found) {
+		callback(found.length);
+	});
+}
+
+function checkAmountOfIngredient (arr, datas, callback) {
+	var count = arr.length;
+	var flag = 0;
+	arr.forEach(function (obj) {
+		var stock = 0;
+		for(var i = 0; i<datas.length; i++)
+		{
+			if(datas[i].ingredientid == obj.id)
+				stock = datas[i].stock;
+		}
+
+		if(obj.mainstock < stock) //Not enough ingredient
+		{
+			flag = 1;		
+		}
+
+		if(count <= 1){
+			callback(flag);
+		}
+		count--;
+	});
+}
  
 module.exports = {
 	view: function(req, res) {
@@ -292,20 +416,11 @@ module.exports = {
 	},
 
 	exportIngredient: function(req, res) {
-		var input = {
-					    'where': '{"or":[{"id":1},{"id":2}]}',
-					    'from': 'ingredientstore',
-					    'message': false,
-					    'log': true,
-					    'action': 'find'
-					};
-					crud(input, function(found){
-					    res.json(found);
-					});
-		/*var option = parseInt(req.param('option'));
+		var option = parseInt(req.param('option'));
+		var datas = JSON.parse(req.param('data'));
 		switch(option){
 			case 0: //Export multiple ingre for all store				
-				var datas = JSON.parse(req.param('data'));
+				/*
 
 				for(var i = 0; i < datas.length; i++)
 				{
@@ -382,10 +497,60 @@ module.exports = {
 						"status": 1, 
 						"message": "Bạn đã xuất nguyên liệu thành công!"
 					}
-				);	
+				);	*/
 				break;
 			case 1: //Export multiple ingre for 1 store
+				var arrId = [];
+				for(var i = 0; i < datas.length; i++)
+				{
+					arrId.push(datas[i].ingredientid);
+				}
+				getIngredientStoreByArrayOfId(arrId,function (arr) {
+					if(arr.length == 0)
+					{
+						return res.json(
+							{
+								"status": 0, 
+								"message": "Không tìm thấy nguyên liệu!"
+							}
+						);
+					}
+					else
+					{
+						checkAmountOfIngredient(arr,datas,function (flag) {
+							if(flag == 1)
+							{
+								return res.json(
+									{
+										"status": 0, 
+										"message": "Không đủ nguyên liệu!"
+									}
+								);
+							}
+							else
+							{
+								arr.forEach(function (obj) {
+									datas.forEach(function (data) {
+										if(data.ingredientid == obj.id)
+										{
+											//Update Main Store
+											IngredientStore.update({store: 1, ingredient:obj.ingredient},{instock:obj.mainstock - data.stock}).exec(function(err,updated){});
 
+											//Update Local Store
+											IngredientStore.update({id: obj.id},{instock:obj.instock + data.stock}).exec(function(err,updated){});
+										}
+									});
+								});
+								return res.json(
+									{
+										"status": 1, 
+										"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+									}
+								);
+							}
+						});	
+					}
+				});
 				break;
 			case 2: //Export 1 ingre for multiple store
 				break;
@@ -398,6 +563,6 @@ module.exports = {
 					}
 				);
 				break;
-		}*/
+		}
 	},
 };
