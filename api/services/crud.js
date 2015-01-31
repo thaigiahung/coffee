@@ -22,15 +22,15 @@ getCriteria = function (model) {
 
 // Apply where clause to the model.
 getJson = function(json, model) {
+    console.log("Here");
     // because we don't know we will encounter json.and or json.or
     // so that we will set crit will be equal to one of them
     // that will be easier to use later
     if(json.and)
-        var crit = json.and;    
+        var crit = json.and;
     else if(json.or)
         var crit = json.or;
 
-    console.log(crit);
     // if the json input only have on criteria, then crit.length will fail
     // so that we only need to use model.where(crit);
     try {
@@ -131,14 +131,14 @@ module.exports = function(params, callback) {
 
         // if these input is provided, then parse it to json
         if(params.param('where')) {
-            input.where = JSON.parse(params.param('where').toLowerCase());
+            input.where = JSON.parse(params.param('where'));
         }
 
         if(params.param('updatedata')) {
-            input.updatedata = JSON.parse(params.param('updatedata').toLowerCase());
+            input.updatedata = JSON.parse(params.param('updatedata'));
         } 
         else if(params.param('createdata')) {
-            input.createdata = JSON.parse(params.param('createdata').toLowerCase());
+            input.createdata = JSON.parse(params.param('createdata'));
         }
 
         if(params.param('populate')) {
@@ -148,6 +148,22 @@ module.exports = function(params, callback) {
     }
     else {
         var input = params;
+
+        // if these input is provided, then parse it to json
+        if(params.where) {
+            input.where = JSON.parse(params.where);
+        }
+
+        if(params.updatedata) {
+            input.updatedata = JSON.parse(params.updatedata);
+        } 
+        else if(params.createdata) {
+            input.createdata = JSON.parse(params.createdata);
+        }
+
+        if(params.populate) {
+            input.populate = JSON.parse(params.populate.toLowerCase());
+        }
     }
     
     // check if input.from is provided
@@ -207,7 +223,6 @@ module.exports = function(params, callback) {
             else if (action == 'update') {
                 var data = input.updatedata;
             }
-            console.log(data);
 
             if(!data) {
                 checkThenLog(log,'Variable "' + action + 'data" is missing for ' + action);
@@ -218,7 +233,6 @@ module.exports = function(params, callback) {
             }
         }
     }
-
     // try to get the model name in "from" that the user provide
     try {
         // get the model. 
@@ -241,7 +255,7 @@ module.exports = function(params, callback) {
                     result['message'] = 'can not create ' + modelName;
 
                     checkThenLog(log,'Can not create ' + modelName + 'with these data');
-                    checkThenLog(data);
+                    checkThenLog(log,data);
                 }
 
                 result[modelName.toLowerCase()] = created;
@@ -271,7 +285,6 @@ module.exports = function(params, callback) {
         result['status'] = 0;
         result['message'] = 'There is no such model name: ' + modelName;
         checkThenLog(log,'There is no such model name: ' + modelName);
-        console.log(result);
         return result;
     }
 
@@ -283,13 +296,12 @@ module.exports = function(params, callback) {
         if(input.where) {
             // get the where clause from the user input.where which is in json format
             var where = input.where;
-
             // apply where clause to model
             if(!where.and && !where.or) {
                 model.where(where);
             }
             else {
-            getJson(where, model);
+                getJson(where, model);
             }
         }
 
@@ -370,7 +382,7 @@ module.exports = function(params, callback) {
             result['status'] = 0;
         }
 
-        checkThenLog(result['message']);
+        checkThenLog(log,result['message']);
 
         // if there is a call back function
         // then do the callback function
