@@ -553,9 +553,73 @@ module.exports = {
 				});
 				break;
 			case 2: //Export 1 ingre for multiple store
+				var total = 0;
+				var stores = datas.store;
+				for(var i = 0; i < stores.length; i++)
+				{
+					total += stores[i].stock;
+				}
+				//Find amount of this ingredient in main store
+				IngredientStore.findOne({store: 1, ingredient : datas.ingredientid}).exec(function (err, foundMainStore) {
+					if(err || typeof foundMainStore == "undefined")
+					{
+						return res.json(
+							{
+								"status": 0, 
+								"message": "Không thể xuất nguyên liệu!"
+							}
+						);
+					}
+					else
+					{
+						if(foundMainStore.instock < total)
+						{
+							return res.json(
+								{
+									"status": 0, 
+									"message": "Không đủ nguyên liệu!"
+								}
+							);
+						}
+						else
+						{
+							//Update Main Store
+							IngredientStore.update({id: foundMainStore.id},{instock: foundMainStore.instock - total}).exec(function(err,updated){});
+
+							//Update Local Store							
+							stores.forEach(function (store) {
+								//First, we need to find amount of this ingredient of the local store
+								//Because main store and local store now have the same ingredient
+								//so we can use foundMainStore.ingredient
+								IngredientStore.findOne({store: store.storeid, ingredient : foundMainStore.ingredient}).exec(function (err, foundLocalStore) {
+									var mainstock;
+									if(typeof foundLocalStore == "undefined") //Not exist => insert
+									{
+										IngredientStore.create({
+										  store : store.storeid,
+										  ingredient : foundMainStore.ingredient,
+										  limit : 0,
+										  instock: store.stock
+										}).exec(function(err,created){});
+									}
+									else //Exist => update
+									{
+										//Update amount of this ingredient in local store	
+										IngredientStore.update({id: foundLocalStore.id},{instock: foundLocalStore.instock + store.stock}).exec(function(err,updated){});
+									}
+								});								
+							});			
+							return res.json(
+								{
+									"status": 1, 
+									"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+								}
+							);			
+						}
+					}
+				});	
 				break;
 			default:
-				res.status(500);
 				return res.json(
 					{
 						"status": 0, 
