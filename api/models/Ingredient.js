@@ -23,7 +23,7 @@ module.exports = {
 
         limit: {type: 'integer'},
 
-        store: {type: 'store'}
+        store: { model: 'store'}
 
 /**
  * Cái này lại bị lỗi :(
