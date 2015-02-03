@@ -7,13 +7,7 @@
 
 module.exports = {
 	getModel: function(req, res) {
-		var input = {
-		    'from': req.param('from'),
-		    'message': req.param('message'),
-		    'log': req.param('log'),
-		    'action': req.param('action')
-		};
-		model.crud(input, function(found){
+		model.crud(req, function(found){
 		    return res.json(found);
 		});
 	},

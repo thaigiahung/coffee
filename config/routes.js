@@ -99,4 +99,6 @@ module.exports.routes = {
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
   '/services/model': 'ServicesController.getModel',
+
+  '/product/manage/view': 'ProductController.viewManage',
 };
