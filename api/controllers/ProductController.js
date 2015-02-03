@@ -6,6 +6,10 @@
  */
 
 module.exports = {
-	
+	viewManage: function(req, res) {
+		Product.find().populate('category').exec(function (err, ingredients) {
+			return res.view('product_manage_view', {data: ingredients}); 
+		});
+	},
 };
 
