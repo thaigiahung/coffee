@@ -58,7 +58,7 @@
                 </div>
                 <!-- /.table-responsive -->
                 <div class="text-center">
-                    <button type="submit" id="btnAddProduct" class="btn btn-lg btn-primary add">Thêm sản phẩm</button>
+                    <button type="submit" id="btnAddProduct" onClick="addProduct()" class="btn btn-lg btn-primary add">Thêm sản phẩm</button>
                 </div>
             </div>
             <!-- /.panel-body -->
@@ -70,13 +70,15 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Modal title</h4>
+                <h4 class="modal-title">Thêm sản phẩm</h4>
               </div>
               <div class="modal-body">
-                <div id="message" class="alert alert-danger" role="alert"></div>
+                <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
                 <form role="form">
                   <div class="form-group">
                     <label for="product-name">Tên sản phẩm</label>
+                    <input type="hidden" class="form-control" id="hd-action-type">
+                    <input type="hidden" class="form-control" id="hd-product-id">
                     <input type="text" class="form-control" id="product-name" placeholder="Tên sản phẩm">
                   </div>
                   <div class="form-group">
@@ -91,11 +93,24 @@
                     <label for="product-image">Hình ảnh</label>
                     <input type="file" id="product-image">
                   </div>
+                  <div class="form-group">
+                    <label for="product-description">Mô tả</label>
+                    <input type="text" class="form-control" id="product-description" placeholder="Mô tả">
+                  </div>
+                  <div class="form-group">
+                      <label for="product-status">Trạng thái </label>
+                      <label class="radio-inline">
+                          <input type="radio" name="product-status" id="rdoStatus1" value="true">Xóa
+                      </label>
+                      <label class="radio-inline">
+                          <input type="radio" name="product-status" id="rdoStatus2" value="false">Kích hoạt
+                      </label>
+                  </div>
                 </form>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Thoát</button>
-                <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                <button type="submit" onClick="save()" class="btn btn-primary">Lưu thông tin</button>
               </div>
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
@@ -106,6 +121,99 @@
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
-        $('#list-item').dataTable();
+        $('#list-item').dataTable({
+          "bLengthChange": false
+        });
+
+        //Load Product Category
+        $.get( '/services/model?from=category&where={"deleted": false}', function( data ) {
+          var categories = data.category;
+          $.each( categories, function( key, value ) {
+            //Key: is index
+            // console.log("key: "+key);
+            //Value: is obj category
+            //Ex: 
+              // {
+              //     "id": 1,
+              //     "name": "Sinh tố",
+              //     "description": "Sinh tố trái cây",
+              //     "deleted": null,
+              //     "createdAt": "2015-01-09T08:14:55.000Z",
+              //     "updatedAt": "2015-01-09T08:14:55.000Z"
+              // }
+            // console.log("value: "+value);
+            $('#product-category').append('<option value='+value.id+'>'+value.name+'</option>');
+          });
+        });
     });
+
+    function addProduct()
+    {
+      $('#form').modal();
+      $('#hd-action-type').val("1");
+    }
+
+    function updateProduct () {
+      $('#form').modal();
+      $('#hd-action-type').val("0");
+    }
+
+    function save () {
+      var type = $('#hd-action-type').val();
+      var name = $('#product-name').val();
+      var category = $('#product-category').val();
+      var description = $('#product-description').val();
+      var price = $('#product-price').val();
+      var status = $('input[name=product-status]:checked').val();
+      var obj = {
+                  "name": name, 
+                  "category": category, 
+                  "description": description,
+                  "price": price,
+                  "deleted": status
+                };
+      var data = {
+                    "from": "product",
+                    "action": "create",
+                    "createdata": JSON.stringify(obj)
+                };
+      console.log(data);
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            console.log(data);
+            var rowCount = $('#list-item tr').length;
+            //If table has < 10 row => not the last page => append new row to it
+            //Else: don't append
+            if(rowCount < 10)
+            {
+              data = data.product;
+              //Because response doesn't include category name => get text of the selected dropdown list
+              $('#list-item').append("<tr><td>"+data.id+"</td><td>"+data.name+"</td><td>"+$("#product-category option:selected").text()+"</td><td>"+data.price+"</td><td></td><td>"+data.description+"</td><td>Kích hoạt</td><td><button type='button' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button></td></tr>");
+            }            
+            $('#form').modal('hide');
+            resetForm();
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Không thể cập nhật sản phẩm');
+          $('#message').show();
+        });
+    }
+
+    function resetForm()
+    {
+      $('#product-name').val("");
+      $('#product-description').val("");
+      $('#product-price').val("");
+      $('input[name=product-status]').attr("checked", false);
+    }
 </script>
