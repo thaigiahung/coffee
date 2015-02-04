@@ -163,7 +163,7 @@ module.exports = {
 						"status": 1, 
 						"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
 					}
-				);*/	
+				);*/
 			for(var i = 0; i < data.length; i++)
 			{
 				IngredientStore.update(
@@ -189,9 +189,9 @@ module.exports = {
 		}
 	},
 
-	test: function(req, res) {
-		model.exec(req, function(found){
-			res.json(found);
+	viewManage: function(req, res) {
+		Ingredient.find().populate('category').populate('store').exec(function (err, ingredients) {
+			return res.view('ingredient_manage_view', {data: ingredients}); 
 		});
-	}
+	},
 };

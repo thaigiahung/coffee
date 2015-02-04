@@ -101,4 +101,5 @@ module.exports.routes = {
   '/services/model': 'ServicesController.getModel',
 
   '/product/manage/view': 'ProductController.viewManage',
+  '/ingredient/manage/view': 'IngredientController.viewManage',
 };
