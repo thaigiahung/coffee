@@ -6,6 +6,10 @@
  */
 
 module.exports = {
-	
+    viewManage: function(req, res) {
+        IngredientCategory.find().exec(function (err, ingredients) {
+            return res.view('ingredient_category_manage_view', {data: ingredients}); 
+        });
+    },
 };
 
