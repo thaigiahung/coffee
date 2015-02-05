@@ -179,7 +179,7 @@ module.exports = function(params, callback) {
 
     // get the model name from the user input.from
     var modelName = capitaliseFirstLetter(input.from);
-    // var modelName = input.from;
+    var modelNameLowerCase = capitaliseFirstLetter(input.from);
 
     //default value 
     var message = true;
@@ -258,7 +258,7 @@ module.exports = function(params, callback) {
                     checkThenLog(log,data);
                 }
 
-                result[modelName.toLowerCase()] = created;
+                result[modelNameLowerCase] = created;
 
                 // if there is a call back function
                 // then do the callback function
@@ -285,7 +285,13 @@ module.exports = function(params, callback) {
         result['status'] = 0;
         result['message'] = 'There is no such model name: ' + modelName;
         checkThenLog(log,'There is no such model name: ' + modelName);
-        return result;
+        if(callback) {
+            if(message == true)
+                callback(result);
+            else
+                callback(null);
+        }
+        return;
     }
 
     // if action is find or update
@@ -333,41 +339,54 @@ module.exports = function(params, callback) {
         // then assign a message to result['message']
         if(!found || !found.length) {
             result['message'] = 'can not find any ' + modelName;
+            result[modelNameLowerCase] = new Array();
 
             checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
             checkThenLog(log,getCriteria(model));
+            
+            callback(result);
+            return;
         }
 
         // if data is provided and action is update
         // then do the update for the found record
-        if(data && action == 'update') {
-            // if data is an array
-            // then perform a loop through all object in that array
-            if(data.length) {
-                for(var i = 0; i < data.length; i++) {
+        if(action == 'update') {
+            console.log(data);
+            if(data) {
+                // if data is an array
+                // then perform a loop through all object in that array
+                if(data.length) {
+                    for(var i = 0; i < data.length; i++) {
+                        for(var j = 0; j < found.length; j++) {
+                            // for each object in data
+                            // which is containing the column and the value to be data
+                            // apply that to every found record
+                            found[j][data[i]['column']] = data[i]['value'];
+                        }
+                    }
+                }
+                // if data is only one object
+                // then apply that to every record found
+                else {
                     for(var j = 0; j < found.length; j++) {
-                        // for each object in data
-                        // which is containing the column and the value to be data
-                        // apply that to every found record
-                        found[j][data[i]['column']] = data[i]['value'];
+                        found[j][data['column']] = data['value'];
                     }
                 }
+                // save all the changes that we just applied to the records
+                for(var i = 0; i < found.length; i++) {
+                    console.log(i);
+                    found[i].save(function(err) {
+                        if(err) {
+                            result['message'] = 'error when updating';
+                            checkThenLog(log,err);
+                        }
+                    });
+                }
             }
-            // if data is only one object
-            // then apply that to every record found
             else {
-                for(var j = 0; j < found.length; j++) {
-                    found[j][data['column']] = data['value'];
-                }
-            }
-            // save all the changes that we just applied to the records
-            for(var i = 0; i < found.length; i++) {
-                found[i].save(function(err) {
-                    if(err) {
-                        result['message'] = 'error when updating';
-                        checkThenLog(log,err);
-                    }
-                });
+                result['message'] = 'Missing input for update';
+                result['status'] = 0;
+                checkThenLog(log, result['message']);
             }
         }
 
@@ -376,7 +395,7 @@ module.exports = function(params, callback) {
         // else
         // then data status to 0
         if(result['message'] == 'success') {
-            result[modelName.toLowerCase()] = found;
+            result[modelNameLowerCase] = found;
         }
         else {
             result['status'] = 0;

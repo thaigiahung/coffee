@@ -21,9 +21,9 @@ module.exports = {
         unit: { type: 'string', size: 5, required: true },
         // unit: { type: 'string', size: 5, required: true, enum: ['p', 'mg', 'ml'], defaultsTo: 'cái'},
 
-        limit: {type: 'integer'},
+        // limit: {type: 'integer'},
 
-        store: { model: 'store'}
+        // store: { model: 'store'}
 
 /**
  * Cái này lại bị lỗi :(
