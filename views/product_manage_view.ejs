@@ -147,6 +147,7 @@
 
     function addProduct()
     {
+      resetForm();
       $('#message').hide();
       $('#form').modal();
       $('#hd-action-type').val("1");
@@ -180,19 +181,35 @@
       var status = $('input[name=product-status]:checked').val();
 
       
-      var obj = {
-                  "name": name, 
-                  "category": category, 
-                  "description": description,
-                  "price": price,
-                  "deleted": status
-                };
+      var obj = null;
       //If type == 0 -> action is update
       //Else action is create
       var data = null;
       if(type == 0)
       {
         var productId = $('#hd-product-id').val();
+        obj = [
+                {
+                  "column": "name",
+                  "value": name
+                },
+                {
+                  "column": "category",
+                  "value": category
+                },
+                {
+                  "column": "description",
+                  "value": description
+                },
+                {
+                  "column": "price",
+                  "value": price
+                },
+                {
+                  "column": "deleted",
+                  "value": status
+                }
+              ];        
         data = {
                       "from": "product",
                       "action": "update",                      
@@ -202,6 +219,13 @@
       }
       else
       {
+        obj = {
+                "name": name, 
+                "category": category, 
+                "description": description,
+                "price": price,
+                "deleted": status
+              };
         data = {
                       "from": "product",
                       "action": "create",
@@ -215,25 +239,21 @@
           if(data.status == 1)
           {
             product = data.product;
-            console.log(product);
             //Get datatable
             var listItem = $('#list-item').DataTable();
+
             if(type == 0) //If action is update => remove old row
             {
               //Because we can update multiple rows => product will be an array not an object like insert
               product = product[0];
 
               //Get selected row
-              console.log("prod id: "+product.id);
               var row = $("#btnUpdate"+product.id).closest('tr');
-              console.log(row);
               row = row[0];
-              console.log(row);
               //Get selected row id
               // var rowId = table.row( row ).index();
-              listItem.row(row).remove;
-            }
-            else
+              listItem.row(row).remove();
+            }         
             listItem.row.add( [
                                 product.id,
                                 product.name,
@@ -242,11 +262,10 @@
                                 'null',
                                 (product.description == undefined) ? "" : product.description,
                                 (product.deleted == false) ? "Kích hoạt" : "Đã xóa",
-                                "<button type='button' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
-                              ] ).draw(false);
+                                "<button type='button' id='btnUpdate"+ product.id +"' onClick='updateProduct("+JSON.stringify(product)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
+                              ] ).draw();
             //.draw(false) to prevent datatable reload to page 1
-            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)
-            
+            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
             
             $('#form').modal('hide');
             resetForm();
