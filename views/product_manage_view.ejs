@@ -48,8 +48,8 @@
                               <% } %> 
 
                               <td>
-                                <button type="button" class="btn btn-primary update">Cập nhật</button> 
-                                <button type="button" class="btn btn-danger remove">Xóa</button>
+                                <button type="button" id="btnUpdate<%= obj.id %>" onClick="updateProduct(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
+                                <button type="button" id="btnRemove<%= obj.id %>" class="btn btn-danger remove">Xóa</button>
                               </td>                            
                             </tr>
                           <% }) %>
@@ -152,10 +152,23 @@
       $('#hd-action-type').val("1");
     }
 
-    function updateProduct () {
+    function updateProduct (product) {
+      $('#hd-action-type').val("0");      
+      $('#hd-product-id').val(product.id);
+      $('#product-name').val(product.name);      
+      $('#product-category').val(product.category.id);
+      $('#product-price').val(product.price);      
+      $('#product-description').val((product.description == undefined) ? "" : product.description);
+
+      var status = null;
+      if(product.deleted)
+        status = "true";
+      else
+        status = "false";
+      $('input:radio[name="product-status"]').filter('[value='+status+']').prop('checked', true);
+
       $('#message').hide();
       $('#form').modal();
-      $('#hd-action-type').val("0");
     }
 
     function save () {
@@ -166,9 +179,7 @@
       var price = $('#product-price').val();
       var status = $('input[name=product-status]:checked').val();
 
-      //If type == 0 -> action is update
-      //Else action is create
-      var action = (type == 0) ? "update" : "create"
+      
       var obj = {
                   "name": name, 
                   "category": category, 
@@ -176,20 +187,53 @@
                   "price": price,
                   "deleted": status
                 };
-      var data = {
-                    "from": "product",
-                    "action": "create",
-                    "createdata": JSON.stringify(obj)
-                };
+      //If type == 0 -> action is update
+      //Else action is create
+      var data = null;
+      if(type == 0)
+      {
+        var productId = $('#hd-product-id').val();
+        data = {
+                      "from": "product",
+                      "action": "update",                      
+                      "where": JSON.stringify({ "id": productId}),
+                      "updatedata": JSON.stringify(obj)
+                  };
+      }
+      else
+      {
+        data = {
+                      "from": "product",
+                      "action": "create",
+                      "createdata": JSON.stringify(obj)
+                  };
+      }
+      
       $.post("/services/model", data)
         .done(function(data) 
         {
           if(data.status == 1)
           {
             product = data.product;
+            console.log(product);
             //Get datatable
             var listItem = $('#list-item').DataTable();
-            //Add new row to datatable
+            if(type == 0) //If action is update => remove old row
+            {
+              //Because we can update multiple rows => product will be an array not an object like insert
+              product = product[0];
+
+              //Get selected row
+              console.log("prod id: "+product.id);
+              var row = $("#btnUpdate"+product.id).closest('tr');
+              console.log(row);
+              row = row[0];
+              console.log(row);
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove;
+            }
+            else
             listItem.row.add( [
                                 product.id,
                                 product.name,
@@ -202,6 +246,8 @@
                               ] ).draw(false);
             //.draw(false) to prevent datatable reload to page 1
             //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)
+            
+            
             $('#form').modal('hide');
             resetForm();
           }
