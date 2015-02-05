@@ -179,7 +179,7 @@ module.exports = function(params, callback) {
 
     // get the model name from the user input.from
     var modelName = capitaliseFirstLetter(input.from);
-    // var modelName = input.from;
+    var modelNameLowerCase = capitaliseFirstLetter(input.from);
 
     //default value 
     var message = true;
@@ -258,7 +258,7 @@ module.exports = function(params, callback) {
                     checkThenLog(log,data);
                 }
 
-                result[modelName.toLowerCase()] = created;
+                result[modelNameLowerCase] = created;
 
                 // if there is a call back function
                 // then do the callback function
@@ -339,9 +339,13 @@ module.exports = function(params, callback) {
         // then assign a message to result['message']
         if(!found || !found.length) {
             result['message'] = 'can not find any ' + modelName;
+            result[modelNameLowerCase] = new Array();
 
             checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
             checkThenLog(log,getCriteria(model));
+            
+            callback(result);
+            return;
         }
 
         // if data is provided and action is update
@@ -391,7 +395,7 @@ module.exports = function(params, callback) {
         // else
         // then data status to 0
         if(result['message'] == 'success') {
-            result[modelName.toLowerCase()] = found;
+            result[modelNameLowerCase] = found;
         }
         else {
             result['status'] = 0;

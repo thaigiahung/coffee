@@ -7,7 +7,7 @@
 
 module.exports = {
 	getModel: function(req, res) {
-		model.crud(req, function(found){
+		crud(req, function(found){
 		    return res.json(found);
 		});
 	},
