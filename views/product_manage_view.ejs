@@ -146,7 +146,7 @@
 
         //Load Product Category
         $.get( '/services/model?from=category&where={"deleted": false}', function( data ) {
-          var categories = data.category;
+          var categories = data.Category;
           $.each( categories, function( key, value ) {
             //Key: is index
             // console.log("key: "+key);
@@ -211,7 +211,7 @@
         {
           if(data.status == 1)
           {
-            product = data.product;
+            product = data.Product;
             //Get datatable
             var listItem = $('#list-item').DataTable();
             product = product[0];
@@ -302,7 +302,7 @@
         {
           if(data.status == 1)
           {
-            product = data.product;
+            product = data.Product;
             //Get datatable
             var listItem = $('#list-item').DataTable();
 
@@ -325,7 +325,7 @@
                                 product.price,
                                 'null',
                                 (product.description == undefined) ? "" : product.description,
-                                (product.deleted == false) ? "Kích hoạt" : "Đã xóa",
+                                (product.deleted == "false") ? "Kích hoạt" : "Đã xóa",
                                 "<button type='button' id='btnUpdate"+ product.id +"' onClick='updateProduct("+JSON.stringify(product)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
                               ] ).draw();
             //.draw(false) to prevent datatable reload to page 1
