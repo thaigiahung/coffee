@@ -22,8 +22,6 @@
                               <th>Mô Tả</th>
                               <th>Trạng Thái</th>
                               <th>Đơn Vị</th>
-                              <th>Mức Báo Động</th>
-                              <th>Cửa Hàng</th>
                               <th>&nbsp;</th>
                           </tr>
                         </thead>
@@ -47,8 +45,6 @@
                               <% } %> 
 
                               <td><%= obj.unit %></td>
-                              <td><%= obj.limit %></td>
-                              <td><%= obj.store.name %></td>
 
 
                               <td>
@@ -107,16 +103,6 @@
                     <input type="hidden" class="form-control" id="hd-action-type">
                     <input type="hidden" class="form-control" id="hd-ingredient-id">
                     <input type="text" class="form-control" id="ingredient-unit" placeholder="Đơn vị">
-                  </div>
-                  <div class="form-group">
-                    <label for="ingredient-limit">Mức báo động</label>
-                    <input type="hidden" class="form-control" id="hd-action-type">
-                    <input type="hidden" class="form-control" id="hd-ingredient-id">
-                    <input type="text" class="form-control" id="ingredient-limit" placeholder="Mức báo động">
-                  </div>
-                  <div class="form-group">
-                    <label for="ingredient-store">Cửa hàng</label>
-                    <select class="form-control" id="ingredient-store"></select>
                   </div>
                 </form>
               </div>
@@ -196,10 +182,10 @@
       var type = $('#hd-action-type').val();
       var name = $('#ingredient-name').val();
       var category = $('#ingredient-category').val();
-      var store = $('#ingredient-store').val();
+      // var store = $('#ingredient-store').val();
       var description = $('#ingredient-description').val();
       var unit = $('#ingredient-unit').val();
-      var limit = $('#ingredient-limit').val();
+      // var limit = $('#ingredient-limit').val();
       var status = $('input[name=ingredient-status]:checked').val();
 
       //If type == 0 -> action is update
@@ -208,10 +194,10 @@
       var obj = {
                     "name": name,
                     "category": category,
-                    "store": store,
+                    // "store": store,
                     "description": description,
                     "unit": unit,
-                    "limit": limit,
+                    // "limit": limit,
                     "deleted": status
 
                 };
@@ -233,10 +219,10 @@
                                 ingredient.id,
                                 ingredient.name,
                                 $("#ingredient-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
-                                $("#ingredient-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                                // $("#ingredient-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
                                 (ingredient.description == undefined) ? "" : ingredient.description,
                                 ingredient.unit,
-                                ingredient.limit,
+                                // ingredient.limit,
                                 (ingredient.deleted == false) ? "Kích hoạt" : "Đã xóa",
                                 "<button type='button' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
                               ] ).draw(false);
@@ -263,7 +249,7 @@
       $('#ingredient-name').val("");
       $('#ingredient-description').val("");
       $('#ingredient-unit').val("");
-      $('#ingredient-limit').val("");
+      // $('#ingredient-limit').val("");
       $('input[name=ingredient-status]').attr("checked", false);
     }
 </script>
