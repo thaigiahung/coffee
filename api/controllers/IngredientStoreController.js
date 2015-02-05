@@ -6,6 +6,10 @@
  */
 
 module.exports = {
-	
+    viewManage: function(req, res) {
+        IngredientStore.find().populate('ingredient').populate('store').exec(function (err, ingredients) {
+            return res.view('ingredient_store_manage_view', {data: ingredients}); 
+        });
+    },
 };
 
