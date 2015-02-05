@@ -49,7 +49,7 @@
 
                               <td>
                                 <button type="button" id="btnUpdate<%= obj.id %>" onClick="updateProduct(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
-                                <button type="button" id="btnRemove<%= obj.id %>" class="btn btn-danger remove">Xóa</button>
+                                <button type="button" id="btnRemove<%= obj.id %>" onClick="removeProduct(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
                               </td>                            
                             </tr>
                           <% }) %>
@@ -116,6 +116,27 @@
           </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
 
+
+        <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">Lỗi</h4>
+                    </div>
+                    <div class="modal-body" id="errorModelMessage">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -170,6 +191,49 @@
 
       $('#message').hide();
       $('#form').modal();
+    }
+
+    function removeProduct (product) {
+      var obj = [
+              {
+                "column": "deleted",
+                "value": true
+              }
+            ]
+      var data = {
+                    "from": "product",
+                    "action": "update",                      
+                    "where": JSON.stringify({ "id": product.id}),
+                    "updatedata": JSON.stringify(obj)
+                };
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            product = data.product;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+            product = product[0];
+
+            //Get selected row
+            var row = $("#btnUpdate"+product.id).closest('tr');
+            row = row[0];
+            //Get selected row id
+            // var rowId = table.row( row ).index();
+            listItem.row(row).remove().draw();
+            
+            $('#errorModelMessage').text(data.message);
+            $('#errorModelMessage').show();
+            $('#errorModal').modal('hide');
+          }
+        })
+        .fail(function(error)
+        {
+          $('#errorModelMessage').text("Không thể xóa dữ liệu!");
+          $('#errorModelMessage').show();
+          $('#errorModal').modal('hide');
+        });
     }
 
     function save () {
