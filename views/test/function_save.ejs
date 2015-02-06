@@ -1,0 +1,65 @@
+function save () {
+  var type = $('#hd-action-type').val();
+  var name = $('#ingredient-name').val();
+  var category = $('#ingredient-category').val();
+  // var store = $('#ingredient-store').val();
+  var description = $('#ingredient-description').val();
+  var unit = $('#ingredient-unit').val();
+  // var limit = $('#ingredient-limit').val();
+  var status = $('input[name=ingredient-status]:checked').val();
+
+  //If type == 0 -> action is update
+  //Else action is create
+  var action = (type == 0) ? "update" : "create"
+  var obj = {
+                "name": name,
+                "category": category,
+                // "store": store,
+                "description": description,
+                "unit": unit,
+                // "limit": limit,
+                "deleted": status
+
+            };
+  var data = {
+                "from": "ingredient",
+                "action": "create",
+                "createdata": JSON.stringify(obj)
+            };
+  $.post("/services/model", data)
+    .done(function(data) 
+    {
+      if(data.status == 1)
+      {
+        ingredient = data.ingredient;
+        //Get datatable
+        var listItem = $('#list-item').DataTable();
+        //Add new row to datatable
+        listItem.row.add( [
+                            ingredient.id,
+                            ingredient.name,
+                            $("#ingredient-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                            // $("#ingredient-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                            (ingredient.description == undefined) ? "" : ingredient.description,
+                            ingredient.unit,
+                            // ingredient.limit,
+                            (ingredient.deleted == false) ? "Kích hoạt" : "Đã xóa",
+                            "<button type='button' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
+                          ] ).draw(false);
+        //.draw(false) to prevent datatable reload to page 1
+        //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)
+        $('#form').modal('hide');
+        resetForm();
+      }
+      else
+      {
+        $('#message').text(data.message);
+        $('#message').show();
+      }
+    })
+    .fail(function(error)
+    {
+      $('#message').text('Không thể cập nhật nguyên liệu');
+      $('#message').show();
+    });
+}

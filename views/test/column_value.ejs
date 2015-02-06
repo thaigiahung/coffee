@@ -1,0 +1,27 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+    <td><%= obj.name %></td>
+    <td><%= obj.category.name %></td>
+
+    <% if (obj.description == undefined) { %>
+      <td></td>
+    <% } else { %>
+      <td><%= obj.description %></td>
+    <% } %>
+    
+    <% if (obj.deleted == true) { %>
+      <td>Đã xóa</td>
+    <% } else { %>
+      <td>Kích hoạt</td>
+    <% } %> 
+
+    <td><%= obj.unit %></td>
+
+
+    <td>
+      <button type="button" class="btn btn-primary update">Cập nhật</button> 
+      <button type="button" class="btn btn-danger remove">Xóa</button>
+    </td>                            
+  </tr>
+<% }) %>

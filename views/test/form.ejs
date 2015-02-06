@@ -1,0 +1,34 @@
+<div class="modal-body">
+  <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
+  <form role="form">
+    <div class="form-group">
+      <label for="ingredient-name">Tên nguyên liệu</label>
+      <input type="hidden" class="form-control" id="hd-action-type">
+      <input type="hidden" class="form-control" id="hd-ingredient-id">
+      <input type="text" class="form-control" id="ingredient-name" placeholder="Tên nguyên liệu">
+    </div>
+    <div class="form-group">
+      <label for="ingredient-category">Loại nguyên liệu</label>
+      <select class="form-control" id="ingredient-category"></select>
+    </div>
+    <div class="form-group">
+      <label for="ingredient-description">Mô tả</label>
+      <input type="text" class="form-control" id="ingredient-description" placeholder="Mô tả">
+    </div>
+    <div class="form-group">
+        <label for="ingredient-status">Trạng thái </label>
+        <label class="radio-inline">
+            <input type="radio" name="ingredient-status" id="rdoStatus1" value="true">Xóa
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="ingredient-status" id="rdoStatus2" value="false">Kích hoạt
+        </label>
+    </div>
+    <div class="form-group">
+      <label for="ingredient-unit">Đơn vị</label>
+      <input type="hidden" class="form-control" id="hd-action-type">
+      <input type="hidden" class="form-control" id="hd-ingredient-id">
+      <input type="text" class="form-control" id="ingredient-unit" placeholder="Đơn vị">
+    </div>
+  </form>
+</div>

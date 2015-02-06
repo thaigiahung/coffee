@@ -191,7 +191,13 @@ module.exports = {
 
 	viewManage: function(req, res) {
 		Ingredient.find().populate('category').populate('store').exec(function (err, ingredients) {
-			return res.view('ingredient_manage_view', {data: ingredients}); 
+			return res.view('test_view', 
+			{
+				data: ingredients,
+				model: 'test',
+				header: 'Quản Lý Sản Phẩm',
+				table_header: 'Danh Sách Sản Phẩm'
+			}); 
 		});
 	},
 };

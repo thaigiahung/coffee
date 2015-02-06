@@ -1,0 +1,46 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+
+    //Load  Category
+    $.get( '/services/model?from=ingredientCategory&where={"deleted": 0}', function( data ) {
+      var categories = data.ingredientcategory;
+      $.each( categories, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj category
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#ingredient-category').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+
+
+    //Load  Category
+    $.get( '/services/model?from=store&where={"deleted": 0}', function( data ) {
+      var stores = data.store;
+      $.each( stores, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj category
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#ingredient-store').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

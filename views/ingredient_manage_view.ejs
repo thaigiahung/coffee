@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Quản lý nguyên liệu</h1>
+        <h1 class="page-header">Quản lý sản phẩm</h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -8,7 +8,7 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Danh sách nguyên liệu
+                Danh sách sản phẩm
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -172,10 +172,23 @@
       $('#hd-action-type').val("1");
     }
 
-    function updateIngredient () {
+    function updateIngredient (ingredient) {
+      $('#hd-action-type').val("0");      
+      $('#hd-ingredient-id').val(ingredient.id);
+      $('#ingredient-name').val(ingredient.name);      
+      $('#ingredient-category').val(ingredient.category.id);
+      $('#ingredient-description').val((ingredient.description == undefined) ? "" : ingredient.description);
+      $('#ingredient-unit').val(ingredient.unit);
+
+      var status = null;
+      if(ingredient.deleted)
+        status = "true";
+      else
+        status = "false";
+      $('input:radio[name="ingredient-status"]').filter('[value='+status+']').prop('checked', true);
+
       $('#message').hide();
       $('#form').modal();
-      $('#hd-action-type').val("0");
     }
 
     function save () {
