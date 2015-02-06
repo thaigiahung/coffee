@@ -17,7 +17,10 @@
                         <thead>
                           <tr>
                               <th>Mã</th>
-                              <th>Loại Sản Phẩm</th>
+                              <th>Sản phẩm</th>
+                              <th>Loại</th>
+                              <th>Giá</th>
+                              <th>Hình</th>
                               <th>Mô tả</th>
                               <th>Trạng thái</th>
                               <th>&nbsp;</th>
@@ -28,6 +31,9 @@
                             <tr>
                               <td><%= obj.id %></td>
                               <td><%= obj.name %></td>
+                              <td><%= obj.category.name %></td>
+                              <td><%= obj.price %></td>
+                              <td><%= obj.image %></td>
 
                               <% if (obj.description == undefined) { %>
                                 <td></td>
@@ -52,7 +58,7 @@
                 </div>
                 <!-- /.table-responsive -->
                 <div class="text-center">
-                    <button type="submit" id="btnAddProductCategory" onClick="addProductCategory()" class="btn btn-lg btn-primary add">Thêm sản phẩm</button>
+                    <button type="submit" id="btnAddProduct" onClick="addProduct()" class="btn btn-lg btn-primary add">Thêm sản phẩm</button>
                 </div>
             </div>
             <!-- /.panel-body -->
@@ -70,22 +76,34 @@
                 <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
                 <form role="form">
                   <div class="form-group">
-                    <label for="productcategory-name">Loại sản phẩm</label>
+                    <label for="product-name">Tên sản phẩm</label>
                     <input type="hidden" class="form-control" id="hd-action-type">
-                    <input type="hidden" class="form-control" id="hd-productcategory-id">
-                    <input type="text" class="form-control" id="productcategory-name" placeholder="Tên sản phẩm">
+                    <input type="hidden" class="form-control" id="hd-product-id">
+                    <input type="text" class="form-control" id="product-name" placeholder="Tên sản phẩm">
                   </div>
                   <div class="form-group">
-                    <label for="productcategory-description">Mô tả</label>
-                    <input type="text" class="form-control" id="productcategory-description" placeholder="Mô tả">
+                    <label for="product-category">Loại sản phẩm</label>
+                    <select class="form-control" id="product-category"></select>
                   </div>
                   <div class="form-group">
-                      <label for="productcategory-status">Trạng thái </label>
+                    <label for="product-price">Giá</label>
+                    <input type="text" class="form-control" id="product-price" placeholder="Giá">
+                  </div>
+                  <div class="form-group">
+                    <label for="product-image">Hình ảnh</label>
+                    <input type="file" id="product-image">
+                  </div>
+                  <div class="form-group">
+                    <label for="product-description">Mô tả</label>
+                    <input type="text" class="form-control" id="product-description" placeholder="Mô tả">
+                  </div>
+                  <div class="form-group">
+                      <label for="product-status">Trạng thái </label>
                       <label class="radio-inline">
-                          <input type="radio" name="productcategory-status" id="rdoStatus1" value="true">Xóa
+                          <input type="radio" name="product-status" id="rdoStatus1" value="true">Xóa
                       </label>
                       <label class="radio-inline">
-                          <input type="radio" name="productcategory-status" id="rdoStatus2" value="false">Kích hoạt
+                          <input type="radio" name="product-status" id="rdoStatus2" value="false">Kích hoạt
                       </label>
                   </div>
                 </form>
@@ -127,14 +145,14 @@
         });
     });
 
-    function addProductCategory()
+    function addProduct()
     {
       $('#message').hide();
       $('#form').modal();
       $('#hd-action-type').val("1");
     }
 
-    function updateProductCategory () {
+    function updateProduct () {
       $('#message').hide();
       $('#form').modal();
       $('#hd-action-type').val("0");
@@ -142,20 +160,24 @@
 
     function save () {
       var type = $('#hd-action-type').val();
-      var name = $('#productcategory-name').val();
-      var description = $('#productcategory-description').val();
-      var status = $('input[name=productcategory-status]:checked').val();
+      var name = $('#product-name').val();
+      var category = $('#product-category').val();
+      var description = $('#product-description').val();
+      var price = $('#product-price').val();
+      var status = $('input[name=product-status]:checked').val();
 
       //If type == 0 -> action is update
       //Else action is create
       var action = (type == 0) ? "update" : "create"
       var obj = {
                   "name": name, 
+                  "category": category, 
                   "description": description,
+                  "price": price,
                   "deleted": status
                 };
       var data = {
-                    "from": "category",
+                    "from": "product",
                     "action": "create",
                     "createdata": JSON.stringify(obj)
                 };
@@ -164,15 +186,18 @@
         {
           if(data.status == 1)
           {
-            productcategory = data.category;
+            product = data.product;
             //Get datatable
             var listItem = $('#list-item').DataTable();
             //Add new row to datatable
             listItem.row.add( [
-                                productcategory.id,
-                                productcategory.name,
-                                (productcategory.description == undefined) ? "" : productcategory.description,
-                                (productcategory.deleted == false) ? "Kích hoạt" : "Đã xóa",
+                                product.id,
+                                product.name,
+                                $("#product-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                                product.price,
+                                'null',
+                                (product.description == undefined) ? "" : product.description,
+                                (product.deleted == false) ? "Kích hoạt" : "Đã xóa",
                                 "<button type='button' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
                               ] ).draw(false);
             //.draw(false) to prevent datatable reload to page 1
@@ -188,15 +213,16 @@
         })
         .fail(function(error)
         {
-          $('#message').text('Không thể cập nhật loại sản phẩm');
+          $('#message').text('Không thể cập nhật sản phẩm');
           $('#message').show();
         });
     }
 
     function resetForm()
     {
-      $('#productcategory-name').val("");
-      $('#productcategory-description').val("");
-      $('input[name=productcategory-status]').attr("checked", false);
+      $('#product-name').val("");
+      $('#product-description').val("");
+      $('#product-price').val("");
+      $('input[name=product-status]').attr("checked", false);
     }
 </script>
