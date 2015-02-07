@@ -6,6 +6,14 @@
  */
 
 module.exports = {
-	
+    viewManage: function(req, res) {
+        IngredientStore.find().populate('store').populate('ingredient').exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "nguyên liệu",
+                _directory: "ingredient_store_manage/"
+            }); 
+        });
+    },
 };
 

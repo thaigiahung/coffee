@@ -9,39 +9,32 @@ function add()
 function update (object) {
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
-  $('#object-name').val(object.name);      
-  $('#object-description').val((object.description == undefined) ? "" : object.description);
-
-  var status = null;
-  if(object.deleted)
-    status = "true";
-  else
-    status = "false";
-  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
+  $('#object-ingredient').val(object.ingredient.id);      
+  $('#object-store').val(object.store.id);      
 
   $('#message').hide();
   $('#form').modal();
 }
 
 function removeObject (object) {
-      var obj = [
-              {
-                "column": "deleted",
-                "value": true
-              }
-            ]
+      // var obj = [
+      //         {
+      //           "column": "deleted",
+      //           "value": true
+      //         }
+      //       ]
       var data = {
-                    "from": "category",
-                    "action": "update",                      
+                    "from": "ingredientStore",
+                    "action": "destroy",                      
                     "where": JSON.stringify({ "id": object.id}),
-                    "updatedata": JSON.stringify(obj)
+                    // "updatedata": JSON.stringify(obj)
                 };
       $.post("/services/model", data)
         .done(function(data) 
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.IngredientStore;
             //Get datatable
             var listItem = $('#list-item').DataTable();
             object = object[0];
@@ -67,9 +60,10 @@ function removeObject (object) {
 }
 function save () {
       var type = $('#hd-action-type').val();
-      var name = $('#object-name').val();
-      var description = $('#object-description').val();
-      var status = $('input[name=object-status]:checked').val();
+      var instock = $('#object-instock').val();
+      var limit = $('#object-limit').val();
+      var ingredient = $('#object-ingredient').val();
+      var store = $('#object-store').val();
 
       
       var obj = null;
@@ -81,20 +75,24 @@ function save () {
         var objectId = $('#hd-object-id').val();
         obj = [
                 {
-                  "column": "name",
-                  "value": name
+                  "column": "ingredient",
+                  "value": ingredient
                 },
                 {
-                  "column": "description",
-                  "value": description
+                  "column": "store",
+                  "value": store
                 },
                 {
-                  "column": "deleted",
-                  "value": status
+                  "column": "instock",
+                  "value": instock
+                },
+                {
+                  "column": "limit",
+                  "value": limit
                 }
               ];        
         data = {
-                      "from": "category",
+                      "from": "ingredientStore",
                       "action": "update",                      
                       "where": JSON.stringify({ "id": objectId}),
                       "updatedata": JSON.stringify(obj)
@@ -103,12 +101,13 @@ function save () {
       else
       {
         obj = {
-                "name": name, 
-                "description": description,
-                "deleted": status
+                "ingredient": ingredient, 
+                "store": store, 
+                "instock": instock, 
+                "limit": limit
               };
         data = {
-                      "from": "category",
+                      "from": "ingredientStore",
                       "action": "create",
                       "createdata": JSON.stringify(obj)
                   };
@@ -119,7 +118,7 @@ function save () {
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.IngredientStore;
             //Get datatable
             var listItem = $('#list-item').DataTable();
 
@@ -137,9 +136,10 @@ function save () {
             }         
             listItem.row.add( [
                                 object.id,
-                                object.name,
-                                (object.description == undefined) ? "" : object.description,
-                                (object.deleted == "false") ? "Kích hoạt" : "Đã xóa",
+                                $("#object-ingredient option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                                $("#object-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                                object.instock,
+                                object.limit,
                                 "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
                               ] ).draw();
             //.draw(false) to prevent datatable reload to page 1
@@ -162,7 +162,6 @@ function save () {
 }
 function resetForm()
 {
-  $('#object-name').val("");
-  $('#object-description').val("");
-  $('input[name=object-status]').attr("checked", false);
+  $('#object-instockl').val("");
+  $('#object-limit').val("");
 }

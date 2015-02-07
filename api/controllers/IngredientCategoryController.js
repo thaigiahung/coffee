@@ -6,6 +6,14 @@
  */
 
 module.exports = {
-	
+    viewManage: function(req, res) {
+        IngredientCategory.find({deleted: false}).exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "loại nguyên liệu",
+                _directory: "ingredient_category_manage/"
+            }); 
+        });
+    },
 };
 

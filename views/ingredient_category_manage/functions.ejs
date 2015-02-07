@@ -1,29 +1,12 @@
-function add()
-{
+function add(){
   resetForm();
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
 }
 
-function update (object) {
-  $('#hd-action-type').val("0");      
-  $('#hd-object-id').val(object.id);
-  $('#object-name').val(object.name);      
-  $('#object-description').val((object.description == undefined) ? "" : object.description);
 
-  var status = null;
-  if(object.deleted)
-    status = "true";
-  else
-    status = "false";
-  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
-
-  $('#message').hide();
-  $('#form').modal();
-}
-
-function removeObject (object) {
+function removeObject(object) {
       var obj = [
               {
                 "column": "deleted",
@@ -31,7 +14,7 @@ function removeObject (object) {
               }
             ]
       var data = {
-                    "from": "category",
+                    "from": "product",
                     "action": "update",                      
                     "where": JSON.stringify({ "id": object.id}),
                     "updatedata": JSON.stringify(obj)
@@ -41,7 +24,7 @@ function removeObject (object) {
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.Product;
             //Get datatable
             var listItem = $('#list-item').DataTable();
             object = object[0];
@@ -65,10 +48,30 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function update (object) {
+  $('#hd-action-type').val("0");      
+  $('#hd-object-id').val(object.id);
+  $('#object-name').val(object.name);      
+  $('#object-description').val((object.description == undefined) ? "" : object.description);
+
+  var status = null;
+  if(object.deleted)
+    status = "true";
+  else
+    status = "false";
+  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
+
+  $('#message').hide();
+  $('#form').modal();
+}
+
 function save () {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
+      var category = $('#object-category').val();
       var description = $('#object-description').val();
+      var price = $('#object-price').val();
       var status = $('input[name=object-status]:checked').val();
 
       
@@ -94,10 +97,11 @@ function save () {
                 }
               ];        
         data = {
-                      "from": "category",
+                      "from": "product",
                       "action": "update",                      
                       "where": JSON.stringify({ "id": objectId}),
-                      "updatedata": JSON.stringify(obj)
+                      "updatedata": JSON.stringify(obj),
+                      "log": true
                   };
       }
       else
@@ -108,7 +112,7 @@ function save () {
                 "deleted": status
               };
         data = {
-                      "from": "category",
+                      "from": "product",
                       "action": "create",
                       "createdata": JSON.stringify(obj)
                   };
@@ -119,7 +123,7 @@ function save () {
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.Product;
             //Get datatable
             var listItem = $('#list-item').DataTable();
 

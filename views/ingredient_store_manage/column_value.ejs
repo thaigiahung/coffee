@@ -1,27 +1,21 @@
 <% _.each(data, function (obj) { %>
   <tr>
     <td><%= obj.id %></td>
-    <td><%= obj.name %></td>
 
-      <% if (obj.category == undefined) {%>
+      <% if (obj.ingredient == undefined) {%>
         <td></td>
       <%} else {%>
-        <td><%= obj.category.name %></td>
+        <td><%= obj.ingredient.name %></td>
+      <%} %>
+
+      <% if (obj.store.name == undefined) {%>
+        <td></td>
+      <%} else {%>
+        <td><%= obj.store.name %></td>
       <%} %>
         
-    <td><%= obj.price %></td>
-    <td><%= obj.image %></td>
-
-    <td>
-      <% if (obj.description != undefined) %>
-        <%= obj.description %>
-    </td>
-    
-    <% if (obj.deleted == true) { %>
-      <td>Đã xóa</td>
-    <% } else { %>
-      <td>Kích hoạt</td>
-    <% } %> 
+    <td><%= obj.instock %></td>
+    <td><%= obj.limit %></td>
 
     <td>
       <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 

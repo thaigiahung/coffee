@@ -3,11 +3,11 @@
     <td><%= obj.id %></td>
     <td><%= obj.name %></td>
 
-    <td>
-      <% if (obj.category.name != undefined) %>
-        <%= obj.category.name %>
-    </td>
-
+      <% if (obj.category == undefined) {%>
+        <td></td>
+      <%} else {%>
+        <td><%= obj.category.name %></td>
+      <%} %>
     <td>
       <% if (obj.description != undefined) %>
         <%= obj.description %>
@@ -23,7 +23,7 @@
 
     <td>
       <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
-      <button type="button" id="btnRemove<%= obj.id %>" onClick="remove(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
+      <button type="button" id="btnRemove<%= obj.id %>" onClick="removeObject(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
     </td>                            
   </tr>
 <% }) %>

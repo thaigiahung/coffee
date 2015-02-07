@@ -1,31 +1,12 @@
-function add()
-{
+function add(){
   resetForm();
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
 }
 
-function update (object) {
-  $('#hd-action-type').val("0");      
-  $('#hd-object-id').val(object.id);
-  $('#object-name').val(object.name);      
-  $('#object-category').val(object.category.id);
-  $('#object-price').val(object.price);      
-  $('#object-description').val((object.description == undefined) ? "" : object.description);
 
-  var status = null;
-  if(object.deleted)
-    status = "true";
-  else
-    status = "false";
-  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
-
-  $('#message').hide();
-  $('#form').modal();
-}
-
-function remove (object) {
+function removeObject(object) {
       var obj = [
               {
                 "column": "deleted",
@@ -68,45 +49,23 @@ function remove (object) {
         });
 }
 
- function removeProduct (product) {
-var obj = [
-{
-"column": "deleted",
-"value": true
-}
-]
-var data = {
-"from": "product",
-"action": "update",
-"where": JSON.stringify({ "id": product.id}),
-"updatedata": JSON.stringify(obj)
-};
-$.post("/services/model", data)
-.done(function(data)
-{
-if(data.status == 1)
-{
-product = data.Product;
-//Get datatable
-var listItem = $('#list-item').DataTable();
-product = product[0];
-//Get selected row
-var row = $("#btnUpdate"+product.id).closest('tr');
-row = row[0];
-//Get selected row id
-// var rowId = table.row( row ).index();
-listItem.row(row).remove().draw();
-$('#errorModelMessage').text(data.message);
-$('#errorModelMessage').show();
-$('#errorModal').modal('hide');
-}
-})
-.fail(function(error)
-{
-$('#errorModelMessage').text("Không thể xóa dữ liệu!");
-$('#errorModelMessage').show();
-$('#errorModal').modal('hide');
-});
+function update (object) {
+  $('#hd-action-type').val("0");      
+  $('#hd-object-id').val(object.id);
+  $('#object-name').val(object.name);      
+  $('#object-category').val(object.category.id);
+  $('#object-price').val(object.price);      
+  $('#object-description').val((object.description == undefined) ? "" : object.description);
+
+  var status = null;
+  if(object.deleted)
+    status = "true";
+  else
+    status = "false";
+  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
+
+  $('#message').hide();
+  $('#form').modal();
 }
 
 function save () {
