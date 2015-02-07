@@ -7,8 +7,12 @@
 
 module.exports = {
     viewManage: function(req, res) {
-        Category.find().exec(function (err, ingredients) {
-            return res.view('product_category_manage_view', {data: ingredients}); 
+        Category.find({deleted: false}).exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "loại sản phẩm",
+                _directory: "product_category_manage/"
+            }); 
         });
     },
 };

@@ -1,0 +1,29 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+    <td><%= obj.name %></td>
+
+    <td>
+      <% if (obj.category.name != undefined) %>
+        <%= obj.category.name %>
+    </td>
+
+    <td>
+      <% if (obj.description != undefined) %>
+        <%= obj.description %>
+    </td>
+
+    <td><%= obj.unit %></td>
+
+    <% if (obj.deleted == true) { %>
+      <td>Đã xóa</td>
+    <% } else { %>
+      <td>Kích hoạt</td>
+    <% } %> 
+
+    <td>
+      <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
+      <button type="button" id="btnRemove<%= obj.id %>" onClick="remove(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
+    </td>                            
+  </tr>
+<% }) %>

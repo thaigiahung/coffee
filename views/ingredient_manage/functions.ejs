@@ -1,0 +1,185 @@
+function add()
+{
+  resetForm();
+  $('#message').hide();
+  $('#form').modal();
+  $('#hd-action-type').val("1");
+}
+
+function update (object) {
+  $('#hd-action-type').val("0");      
+  $('#hd-object-id').val(object.id);
+  $('#object-name').val(object.name);      
+  $('#object-category').val(object.category.id);
+  $('#object-unit').val(object.unit);      
+  $('#object-description').val((object.description == undefined) ? "" : object.description);
+
+  var status = null;
+  if(object.deleted)
+    status = "true";
+  else
+    status = "false";
+  $('input:radio[name="object-status"]').filter('[value='+status+']').prop('checked', true);
+
+  $('#message').hide();
+  $('#form').modal();
+}
+
+function remove (object) {
+      var obj = [
+              {
+                "column": "deleted",
+                "value": true
+              }
+            ]
+      var data = {
+                    "from": "ingredient",
+                    "action": "update",                      
+                    "where": JSON.stringify({ "id": object.id}),
+                    "updatedata": JSON.stringify(obj)
+                };
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            object = data.Ingredient;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+            object = object[0];
+
+            //Get selected row
+            var row = $("#btnUpdate"+object.id).closest('tr');
+            row = row[0];
+            //Get selected row id
+            // var rowId = table.row( row ).index();
+            listItem.row(row).remove().draw();
+            
+            $('#errorModelMessage').text(data.message);
+            $('#errorModelMessage').show();
+            $('#errorModal').modal('hide');
+          }
+        })
+        .fail(function(error)
+        {
+          $('#errorModelMessage').text("Không thể xóa dữ liệu!");
+          $('#errorModelMessage').show();
+          $('#errorModal').modal('hide');
+        });
+}
+function save () {
+      var type = $('#hd-action-type').val();
+      var name = $('#object-name').val();
+      var category = $('#object-category').val();
+      var description = $('#object-description').val();
+      var unit = $('#object-unit').val();
+      var status = $('input[name=object-status]:checked').val();
+
+      
+      var obj = null;
+      //If type == 0 -> action is update
+      //Else action is create
+      var data = null;
+      if(type == 0)
+      {
+        var objectId = $('#hd-object-id').val();
+        obj = [
+                {
+                  "column": "name",
+                  "value": name
+                },
+                {
+                  "column": "category",
+                  "value": category
+                },
+                {
+                  "column": "description",
+                  "value": description
+                },
+                {
+                  "column": "unit",
+                  "value": unit
+                },
+                {
+                  "column": "deleted",
+                  "value": status
+                }
+              ];        
+        data = {
+                      "from": "ingredient",
+                      "action": "update",                      
+                      "where": JSON.stringify({ "id": objectId}),
+                      "updatedata": JSON.stringify(obj)
+                  };
+      }
+      else
+      {
+        obj = {
+                "name": name, 
+                "category": category, 
+                "description": description,
+                "unit": unit,
+                "deleted": status
+              };
+        data = {
+                      "from": "ingredient",
+                      "action": "create",
+                      "createdata": JSON.stringify(obj)
+                  };
+      }
+      
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            object = data.Ingredient;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+
+            if(type == 0) //If action is update => remove old row
+            {
+              //Because we can update multiple rows => object will be an array not an object like insert
+              object = object[0];
+
+              //Get selected row
+              var row = $("#btnUpdate"+object.id).closest('tr');
+              row = row[0];
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove();
+            }         
+            listItem.row.add( [
+                                object.id,
+                                object.name,
+                                $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+                                object.unit,
+                                (object.description == undefined) ? "" : object.description,
+                                (object.deleted == "false") ? "Kích hoạt" : "Đã xóa",
+                                "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' class='btn btn-danger remove'>Xóa</button>"
+                              ] ).draw();
+            //.draw(false) to prevent datatable reload to page 1
+            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
+            
+            $('#form').modal('hide');
+            resetForm();
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Không thể cập nhật '+_name);
+          $('#message').show();
+        });
+}
+function resetForm()
+{
+  $('#object-name').val("");
+  $('#object-description').val("");
+  $('#object-unit').val("");
+  $('input[name=object-status]').attr("checked", false);
+}

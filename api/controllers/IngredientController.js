@@ -190,8 +190,5 @@ module.exports = {
 	},
 
 	viewManage: function(req, res) {
-		Ingredient.find().populate('category').populate('store').exec(function (err, ingredients) {
-			return res.view('ingredient_manage_view', {data: ingredients}); 
-		});
 	},
 };
