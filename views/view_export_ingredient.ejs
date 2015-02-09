@@ -1,0 +1,736 @@
+<div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Xuất kho
+                </div>
+                <div class= "panel-body">
+                	<div class="table-responsive">
+                        <input type ="radio" id= "rbutton1" name="choice" >Chuyển nguyên liệu đến tất cả cửa hàng</input>
+                        <br></br>
+                                <div  id="allstores" hidden>
+                                <form>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                <tr>
+                                    <th>
+                                        Cửa hàng
+                                    </th>
+                                    <th>
+                                        Nguyên liệu
+                                    </th>
+                                    <th>
+                                        Kho tổng
+                                    </th>
+                                    <th>
+                                        Số lượng chuyển
+                                    </th>
+                                    <th>
+
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                <tr id="allstorestr1">
+                                    <td>
+                                        <label id="lbstore">#1 Tất cả cửa hàng</label>
+                                    </td>
+                                    <td>
+                                        <select id="allstoresingredientlist1" onchange="changeIngredient(1)">
+                                                <option value= "0">
+                                                    Nguyên liệu
+                                                </option>
+                                                <script type="text/javascript">
+                                                    $.getJSON("http://localhost:1337/ingredient/view",function(datas){
+                                                       for (var i = 0; i < datas.ingredient.length; i++) {
+                                                           $("#allstoresingredientlist1").append("<option value ='"+datas.ingredient[i].id+"'  id='allstoresingredient1? "+datas.ingredient[i].id+"'>"+datas.ingredient[i].name+"</option>");
+                                                       };
+                                                    });
+                                                </script>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <label id="allstoreslb1">
+                                            
+                                        </label>
+                                    </td>
+                                    <td>
+                                        <input type="text" name="addstock1" id="allstoresaddstock1"></input>
+                                    </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                            </tbody>
+                                </table>
+                                <input type="button" id="btnadd" value="Thêm"></input>
+                                <input type="reset" id="btncancel" value="Hủy"></input>
+                                <input type="button" id="btndelete" value="Xóa hết"></input>
+                                <input type="button" id="btnchange" value="Thay đổi"></input>
+                            </form>
+                            </div>
+                        <br></br>
+                        <input type ="radio" id= "rbutton2" name="choice" >Chuyển nguyên liệu cho 1 cửa hàng</input>
+                        <br></br>
+                        <div  id="onestore" hidden>
+                            <form>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <th>
+                                            Cửa hàng
+                                        </th>
+                                        <th>
+                                            Nguyên liệu
+                                        </th>
+                                        <th>
+                                            Kho tổng
+                                        </th>
+                                        <th>
+                                            Tồn kho
+                                        </th>
+                                        <th>
+                                            Số lượng chuyển
+                                        </th>
+                                        <th>
+                                            
+                                        </th>
+                                    </thead>
+                                    <tbody id="tbody1">
+                                        <tr id="onestoretr1">
+                                            <td>
+                                                <b>#1</b> <select id="allstoreslist" onchange="ChangeStore();">
+                                                    <option value="0">Cửa hàng</option>
+                                                    <script type="text/javascript">
+                                                        $.getJSON("http://localhost:1337/store/view",function(datas){
+                                                       for (var i = 0; i < datas.store.length; i++) {
+                                                           $("#allstoreslist").append("<option value ='"+datas.store[i].id+"'  id='store"+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
+                                                       };
+                                                    });
+                                                    </script>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select id="onestoreingredientlist1" onchange="ChangeIngredient(1);">
+                                                    <option value="0">
+                                                        Nguyên liệu
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <label id="onestoreMain1"></label>
+                                            </td>
+                                            <td>
+                                                <label id="onestoreLocal1"></label>
+                                            </td>
+                                            <td>
+                                                <input type="text" id="onestoreaddstock1"></input>
+                                            </td>
+                                            <td>
+                                                
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <input type="button" id="btnadd1" value="Thêm"></input>
+                                <input type="button" id="btncancel1" value="Xóa hết"></input>   
+                                <input type="button" id="btnchange1" value="Thay đổi"></input> 
+                            </form>
+                        </div>
+                         <br></br>
+                        <input type ="radio" id= "rbutton3" name="choice" >Chuyển 1 loại nguyên liệu cho nhiều cửa hàng</input>
+                        <br></br>
+                        <div  id="oneingredient" hidden>
+                            <form>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Nguyên liệu
+                                            </th>
+                                            <th>
+                                                Cửa hàng
+                                            </th>
+                                            <th>
+                                                Kho tổng
+                                            </th>
+                                            <th>
+                                                Tồn kho
+                                            </th>
+                                            <th>
+                                                Số lượng chuyển
+                                            </th>
+                                            <th>
+                                                
+                                            </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tbody2">
+                                        <tr id="oneingredienttr1">
+                                            <td>
+                                                <b>#1</b><select id="oneingredientlist1" onchange="OneIngredientChangeIngredient();">
+                                                    <option value="0">Nguyên liệu</option>
+                                                    <script type="text/javascript">
+                                                         $.getJSON("http://localhost:1337/ingredient/view",function(datas3){
+                                                       for (var i = 0; i < datas3.ingredient.length; i++) {
+                                                           $("#oneingredientlist1").append("<option value ='"+datas3.ingredient[i].id+"'  id='oneingredient1? "+datas3.ingredient[i].id+"'>"+datas3.ingredient[i].name+"</option>");
+                                                       };
+                                                    });
+                                                    </script>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select id="oneingredientstoreslist1" onchange="OneIngredientChangeStore(1);">
+                                                    <option value="0">Cửa hàng</option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <label id="oneingredientMain1"></label>
+                                            </td>
+                                            <td>
+                                                <label id="oneingredientLocal1"></label>
+                                            </td>
+                                            <td>
+                                                <input type="textbox" id="oneingredientaddstock1"></input>
+                                            </td>
+                                            <td>
+                                                
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <input type="button" id="btnadd2" value="Thêm"></input>
+                                <input type="button" id="btnchange2" value="Chuyển"></input>
+                                <input type="reset" id="btncancel2" value="Hủy"></input>
+                                <input type="button" id="btndelete2" value="Xóa hết"></input>    
+                            </form>
+                        </div>
+
+            <div>
+        </div>
+    </div>
+<script type="text/javascript" charset="utf-8">
+var y = 5;
+var x=5;
+var z=5;
+//All functions related to table All stores
+    $("#btnchange").click(function()
+    {
+        var flag = 0;
+        for (var i = 1; i<=x; i++) //validate user input***
+        {
+            if($("#allstorestr"+i+"").length)//check if the row is deleted or not
+            {
+                if($("#allstoresingredientlist"+i+"").val()!=0&& $("#allstoresaddstock"+i+"").val()!="")
+                {
+                    flag =1;
+                    if(/^[0-9]+$/.test($("#allstoresaddstock"+i+"").val())==false)// check if user input the right format of amount
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu không hợp lệ!");
+                        return false;
+                    };
+                    if($("#allstoresaddstock"+i+"").val()>=1000000000)//check if user input a very large amount
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu không được lớn hơn 1000000000!");
+                        return false;
+                    };
+                };
+                if($("#allstoresingredientlist"+i+"").val()!=0&& $("#allstoresaddstock"+i+"").val()=="")
+                {
+                    alert("#"+i+" Bạn chưa nhập số lượng nguyên liệu cần chuyển!");
+                    return false;
+                };        
+                if($("#allstoresingredientlist"+i+"").val()==0&& $("#allstoresaddstock"+i+"").val()!="")
+                {
+                    alert("#"+i+" Bạn chưa chọn nguyên liệu!");
+                    return false;
+                };  
+            }
+        };
+        if(flag==0)
+        {
+            alert("Bạn phải chuyển ít nhất 1 thứ nguyên liệu!");
+            return false;
+        }
+        //Export ingrdients******************************
+    });
+    $("#btndelete").click(function()//delete all rows starting from row 6
+    {
+        for (var i = 6; i <=x; i++) 
+        {
+            $("#allstorestr"+i+"").remove();
+        };
+        x=5;
+    });
+    function deleterow(row)//delete one row in the table allstores
+    {
+        if(row==x)//case: user delete the lastest row
+        {
+            x=x-1;
+            $("#allstorestr"+row+"").remove();
+        };
+        if(row<x)//case: user delete middle row
+        {
+            for (var i = row; i<x; i++) 
+            {
+                var n = i+1;
+                $("#allstoresingredientlist"+i+"").val($("#allstoresingredientlist"+n+"").val());
+                $("#allstoreslb"+i+"").val($("#allstoreslb"+n+"").val());
+                $("#allstoresaddstock"+i+"").val($("#allstoresaddstock"+n+"").val());
+            };
+            $("#allstorestr"+x+"").remove();
+            x=x-1;
+        };
+    };
+    $("#btncancel").click(function()
+    {
+        for (var i = 1; i <= x; i++) 
+        {
+            $("#allstoreslb"+i+"").text('');
+        };
+    });
+    function changeIngredient(y)//when the user choose an ingredient from dropdown list
+    {
+        for (var i = 1; i <= x; i++) 
+        {
+            //check if the user already chose this ingredient or not
+                if($("#allstoresingredientlist"+i+"").val()==$("#allstoresingredientlist"+y+"").val()&&y!=i&&$("#allstoresingredientlist"+i+"").val()!=0)
+                {
+                    alert("Bạn đã chọn nguyên liệu này rồi!");
+                    $("#allstoresingredientlist"+y+"").val(0);
+                    $("#allstoreslb"+y+"").text('');
+                    return false;
+                }
+        };
+        var ingredientid = $("#allstoresingredientlist"+y+"").val();
+        if(ingredientid==0)
+        {
+            $("#allstoreslb"+y+"").text("");
+        }
+        if(ingredientid!=0)
+        {
+            var where = {"and":[{"ingredient":ingredientid},{"store": 1}]};// stock of chose ingredient(MainStore)
+            $.post("/services/model",{from:"ingredientStore", where: JSON.stringify(where)},function(result)
+            {
+                if(result.status==0)
+                {
+                    alert("Cửa hàng không có nguyên liệu này!");
+                    $("#allstoresingredientlist"+y+"").val(0);
+                    return false;
+                }
+                $("#allstoreslb"+y+"").text(result.IngredientStore[0].instock);
+            });
+        }
+    };
+    $( document ).ready(function()
+    {
+        
+        for (var y = 2; y <= 5; y++) 
+        {
+            $("#tbody1").append("<tr id='onestoretr"+y+"'><td><b>#"+y+"</b></td><td><select id='onestoreingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label id='onestoreMain"+y+"'></label></td><td><label id='onestoreLocal"+y+"'></label></td><td><input type='text' id='onestoreaddstock"+y+"'></input></td><td><input type='button' onclick='deleterow1("+y+");' id="+y+" value='Xóa'></input></td></tr>");
+        $("#onestoreingredientlist"+y+"").empty();
+        $("#onestoreingredientlist"+y+"").append("<option value='0'>Nguyên liệu</option>");
+        };
+        for (var x = 2; x <=5; x++) 
+        {
+            $("#tbody").append("<tr id='allstorestr"+x+"'><td><b>#"+x+"</b></td><td><select id='allstoresingredientlist"+x+"' onchange='changeIngredient("+x+")'><option value='0'>Nguyên liệu</option></select></td><td><label id='allstoreslb"+x+"'></label></td><td><input type ='text' name='addstock"+x+"' id='allstoresaddstock"+x+"'></input></td><td><input type='button' onclick='deleterow("+x+");' value='Xóa' id='"+x+"'></input></td></tr>");
+        };
+        //Input ingredient into dropdown list
+        $.getJSON("http://localhost:1337/ingredient/view",function(datas)
+        {
+            for (var x = 2; x <=5; x++) 
+            {
+                for (var i = 0; i < datas.ingredient.length; i++) 
+                {
+                    $("#allstoresingredientlist"+x+"").append("<option value ='"+datas.ingredient[i].id+"'  id='allstoresingredient"+x+"?"+datas.ingredient[i].id+"'>"+datas.ingredient[i].name+"</option>");
+                };
+            };
+        });
+         for (var x = 2; x <=5; x++) 
+        {
+            $("#tbody2").append("<tr id='oneingredienttr"+x+"'><td><b>#"+x+"</b></td><td><select id='oneingredientstoreslist"+x+"' onchange='OneIngredientChangeStore("+x+");''><option value='0'>Cửa hàng</option></select></td><td><label id='oneingredientMain"+x+"'></label></td><td><label id='oneingredientLocal"+x+"'></label></td><td><input type='textbox' id='oneingredientaddstock"+x+"'></input></td><td><input type='button' id='oneingredientdelete"+x+"' value='Xóa' onclick='deleterow2("+x+");'></input></td></tr>");
+        };
+       
+        $("#rbutton1").click(function()//show table all stores
+        {
+            $("#allstores").show();
+            $("#onestore").hide();
+            $("#oneingredient").hide();
+        });
+        $("#rbutton2").click(function()//show table one store
+        {
+            $("#allstores").hide();
+            $("#onestore").show();
+            $("#oneingredient").hide();
+        });
+        $("#rbutton3").click(function()//show table one store
+        {
+            $("#allstores").hide();
+            $("#onestore").hide();
+            $("#oneingredient").show();
+        });
+    });
+    $("#btnadd").click(function()//add one row into table all stores
+    {
+        x=x+1;
+        $("#tbody").append("<tr id='allstorestr"+x+"'><td><b>#"+x+"</b></td><td><select id='allstoresingredientlist"+x+"' onchange='changeIngredient("+x+")'><option value='0'>Nguyên liệu</option></select></td><td><label id='allstoreslb"+x+"'></label></td><td><input type ='text' name='addstock"+x+"' id='allstoresaddstock"+x+"'></input></td><td><input type='button' onclick='deleterow("+x+");' value='Xóa' id='"+x+"'></input></td></tr>");
+
+        //Input ingredient into dropdown list
+        $.getJSON("http://localhost:1337/ingredient/view",function(datas)
+        {
+            for (var i = 0; i < datas.ingredient.length; i++) 
+            {
+                $("#allstoresingredientlist"+x+"").append("<option value ='"+datas.ingredient[i].id+"'  id='allstoresingredient"+x+"?"+datas.ingredient[i].id+"'>"+datas.ingredient[i].name+"</option>");
+            };
+        });
+
+    })
+
+//All functions related to table one store
+    function deleterow1(row)//delete one row in one store table
+    {
+        
+        if(row==y)//case: user delete the lastest row
+        {
+            y=y-1;
+            $("#onestoretr"+row+"").remove();
+        };
+        if(row<y)//case: user delete middle row
+        {
+            for (var i = row; i<y; i++) 
+            {
+                var n = i+1;
+                var test = $("#onestoreingredientlist"+n+"").val();
+                $("#onestoreingredientlist"+i+"").val(test);
+                $("#onestoreMain"+i+"").val($("#onestoreMain"+n+"").val());
+                $("#onestoreLocal"+i+"").val($("#onestoreLocal"+n+"").val());
+                $("#onestoreaddstock"+i+"").val($("#onestoreaddstock"+n+"").val());
+
+            };
+            $("#onestoretr"+y+"").remove();
+            y=y-1;
+        };
+    };
+    $("#btncancel1").click(function()//cancel all choices from onestore table
+    {
+        for (var i = 6; i <= y; i++) 
+        {
+            $("#onestoretr"+i+"").remove();
+        };
+        y=5;
+    });
+    function ChangeStore()
+    {
+        var store = $("#allstoreslist").val();
+        /*for (var i = 6; i <= y; i++) 
+        {
+            $("#onestoretr"+i+"").remove();
+        };
+        y=5;*/
+        for (var i = 1; i <=y; i++) 
+        {
+            $("#onestoreingredientlist"+i+"").empty();
+            $("#onestoreMain"+i+"").text("");
+            $("#onestoreLocal"+i+"").text("");
+            $("#onestoreaddstock"+i+"").val("");
+            $("#onestoreingredientlist"+i+"").append("<option value='0'>Nguyên liệu</option>");
+        };
+        
+        if(store!=0)
+        {
+            //get ingredient list depend on chosen store
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+            {
+                if(datas1.status==0)//check if the store has any kinds of ingredient
+                {
+                    for (var i = 1; i <=y; i++) 
+                    {
+                        $("#onestoreMain"+i+"").text("");
+                        //$("#onestoreingredientlist"+i+"").append("<option value = '0'>Nguyên liệu</option>");
+                    };
+                    alert("Cửa hàng này không có nguyên liệu nào!");
+                    return false;
+                    
+                }
+                for (var l = 1; l <=y; l++) 
+                {
+                    for (var i = 0; i < datas1.ingredient.length; i++) 
+                {
+                    $("#onestoreingredientlist"+l+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                };
+                };
+                
+            });
+        };
+    };
+    function ChangeIngredient(row)
+    {
+        for (var i = 1; i <=y; i++) 
+        {
+            if($("#onestoreingredientlist"+row+"").val()==$("#onestoreingredientlist"+i+"").val()&&row!=i&&$("#onestoreingredientlist"+row+"").val()!=0)//check if user chose this ingredient or not
+            {
+                alert("Bạn đã chọn nguyên liệu này rồi!");
+                $("#onestoreingredientlist"+row+"").val(0);
+                $("#onestoreMain"+row+"").text("");
+                $("#onestoreLocal"+row+"").text("");
+                return false;
+            };
+        };
+        var ingredientid = $("#onestoreingredientlist"+row+"").val();
+        //get stock depend on chosen ingredient***********************
+        if(ingredientid==0)
+        {
+            $("#onestoreMain"+row+"").text("");
+            $("#onestoreLocal"+row+"").text("");
+        };
+        var where = {"id":ingredientid};
+        $.post("/services/model",{from:"ingredientStore",where: JSON.stringify(where)},function(result)
+        {
+            //get the stock in main storage of chosen ingredient
+            var where1= {"and":[{"ingredient":result.IngredientStore[0].ingredient},{"store":1}]};
+            $.post("/services/model",{from:"ingredientStore", where: JSON.stringify(where1)},function(result1)
+            {
+                if(result1.status==0)
+                {
+                    alert("Kho tổng không có nguyên liệu này!");
+                    return false;
+                }
+                $("#onestoreMain"+row+"").text(result1.IngredientStore[0].instock);
+            });
+            //get the stock of chosen ingredient from chose store
+            $("#onestoreLocal"+row+"").text(result.IngredientStore[0].instock);
+        });
+
+    };
+    $("#btnadd1").click(function()
+    {
+        var store = $("#allstoreslist").val();
+        y=y+1;
+        $("#tbody1").append("<tr id='onestoretr"+y+"'><td><b>#"+y+"</b></td><td><select id='onestoreingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label id='onestoreMain"+y+"'></label></td><td><label id='onestoreLocal"+y+"'></label></td><td><input type='text' id='onestoreaddstock"+y+"'></input></td><td><input type='button' onclick='deleterow1("+y+");' id="+y+" value='Xóa'></input></td></tr>");
+        $("#onestoreingredientlist"+y+"").empty();
+        $("#onestoreingredientlist"+y+"").append("<option value='0'>Nguyên liệu</option>");
+        $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+        {
+            for (var i = 0; i < datas1.ingredient.length; i++) 
+            {
+                $("#onestoreingredientlist"+y+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+            };
+        });
+    });
+    $("#btnchange1").click(function()
+    {
+        var flag = 0;
+        if($("#allstoreslist").val()==0)//check if user chose store or not
+        {
+            alert("Bạn chưa chọn cửa hàng để chuyển nguyên liệu!");
+            return false;
+        }
+        for (var i = 1; i <=y; i++) 
+        {
+            if($("#onestoretr"+i+"").length)//check if the row is deleted or not
+            {
+                if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()!="")
+                {
+                    flag =1;
+                    if(/^[0-9]+$/.test($("#onestoreaddstock"+i+"").val())==false)
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu cần chuyển không hợp lệ!");
+                        return false;
+                    };
+                    if($("#onestoreaddstock"+i+"").val()>1000000000)
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu cần chuyển không được lớn hơn 1000000000");
+                        return false;
+                    };
+                };
+                if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()=="")
+                {
+                    alert("#"+i+" Bạn chưa nhập số lượng nguyên liệu cần chuyển!");
+                    return false;
+                };
+                if($("#onestoreingredientlist"+i+"").val()==0&&$("#onestoreaddstock"+i+"").val()!="")
+                {
+                    alert("#"+i+" Bạn chưa chọn nguyên liệu cần chuyển!");
+                    return false;
+                };
+            }
+        };
+        if(flag==0)
+        {
+            alert("Bạn phải chuyển ít nhất một nguyên liệu!");
+            return false;
+        }
+        //Export inggrdients***************************************
+    });
+
+//Functions related to OneIngredient choice
+    function OneIngredientChangeIngredient()
+    {
+        var chosenIngredient = $("#oneingredientlist1").val();
+        /*for (var i = 6; i <= z; i++) 
+        {
+            $("#oneingredienttr"+i+"").remove();
+        };
+        z=5;*/
+            for (var i = 1; i <= z; i++) 
+            {
+                $("#oneingredientstoreslist"+i+"").empty();
+                $("#oneingredientMain"+i+"").text("");
+                $("#oneingredientLocal"+i+"").text("");
+                $("#oneingredientaddstock"+i+"").val("");
+                $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
+            };
+        var populate = {"model":"store"};
+        var where = {"ingredient":chosenIngredient};
+        $.post("/services/model",{ from: "ingredientStore", populate: JSON.stringify(populate) , where: JSON.stringify(where)},function(result)
+                {
+                    if(result.status==0)// check if chosen ingredient belong to any stores
+                    {
+                        alert("Không có cửa hàng nào có nguyên liệu này");
+                        return false;
+                    }
+                    for (var i = 1; i <=z; i++) 
+                    {
+                        if($("#oneingredienttr"+i+"").length)//check if the row exists
+                        {
+                            for (var m = 0; m < result.IngredientStore.length ; m++) 
+                            {
+                                $("#oneingredientstoreslist"+i+"").append("<option value='"+result.IngredientStore[m].store.id+"'>"+result.IngredientStore[m].store.name+"</option>");
+                                if(result.IngredientStore[m].store.id==1)
+                                {
+                                    $("#oneingredientMain"+i+"").text(result.IngredientStore[m].instock);
+                                }
+                            };
+                        };
+                    };
+                });
+    };
+    function OneIngredientChangeStore(row)
+    {
+        for (var i = 1; i <=z; i++) 
+        {
+            if($("#oneingredientstoreslist"+i+"").val()==$("#oneingredientstoreslist"+row+"").val()&&row!=i&&$("#oneingredientstoreslist"+row+"").val()!=0)
+            {
+                alert("#"+row+" Bạn đã chọn cửa hàng này rồi!");
+                $("#oneingredientstoreslist"+row+"").val(0);
+                $("#oneingredientLocal"+row+"").text("");
+                return false;
+            }
+
+        };
+        var store= $("#oneingredientstoreslist"+row+"").val();
+        var ingredient=$("#oneingredientlist1").val(); 
+        //get stock of chosen ingredient depend on chosen store
+        var where2= {"and":[{"ingredient":ingredient},{"store":store}]};
+        $.post("/services/model",{from:"ingredientStore",where: JSON.stringify(where2)},function(result2)
+        {
+            $("#oneingredientLocal"+row+"").text(result2.IngredientStore[0].instock);
+        });
+    }
+    function deleterow2(row)
+    {
+        if(row==z)//user deletes the last row
+        {
+            $("#oneingredienttr"+row+"").remove();
+            z=z-1;
+        };
+        if(row<z)//user deletes middle row
+        {
+            for (var i = row; i < z; i++) 
+            {
+                var n= i+1;
+                $("#oneingredientstoreslist"+i+"").val($("#oneingredientstoreslist"+n+"").val());
+                $("#oneingredientMain"+i+"").val($("#oneingredientMain"+n+"").val());
+                $("#oneingredientLocal"+i+"").val($("#oneingredientLocal"+n+"").val());
+                $("#oneingredientaddstock"+i+"").val($("#oneingredientaddstock"+n+"").val());
+            };
+            $("#oneingredienttr"+z+"").remove();
+            z=z-1;
+        };
+    };
+    $("#btnadd2").click(function()
+    {
+        z=z+1;
+        $("#tbody2").append("<tr id='oneingredienttr"+z+"'><td><b>#"+z+"</b></td><td><select id='oneingredientstoreslist"+z+"' onchange='OneIngredientChangeStore("+z+");''><option value='0'>Cửa hàng</option></select></td><td><label id='oneingredientMain"+z+"'></label></td><td><label id='oneingredientLocal"+z+"'></label></td><td><input type='textbox' id='oneingredientaddstock"+z+"'></input></td><td><input type='button' id='oneingredientdelete"+z+"' value='Xóa' onclick='deleterow2("+z+");'></input></td></tr>");
+        //get store list based on chosen ingredient
+        var chosenIngredient = $("#oneingredientlist1").val();
+        var populate = {"model":"store"};
+        var where = {"ingredient":chosenIngredient};
+        var data = { "from": "ingredientStore", "populate": {"model":"store"}, "where":{"ingredient":chosenIngredient}};
+        $.post("/services/model",{ from: "ingredientStore", populate: JSON.stringify(populate) , where: JSON.stringify(where)},function(result)
+                {
+                            for (var m = 0; m < result.IngredientStore.length ; m++) 
+                            {
+                                $("#oneingredientstoreslist"+z+"").append("<option value='"+result.IngredientStore[m].store.id+"'>"+result.IngredientStore[m].store.name+"</option>");
+                                if(result.IngredientStore[m].store.id==1)
+                                {
+                                    $("#oneingredientMain"+z+"").text(result.IngredientStore[m].instock);
+                                }
+                            };
+                });
+    });
+$("#btncancel2").click(function()
+{
+    for (var i = 1; i <=z; i++) 
+    {
+        $("#oneingredientstoreslist"+i+"").empty();
+        $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
+        $("#oneingredientMain"+i+"").text("");
+        $("#oneingredientLocal"+i+"").text("");
+        $("#oneingredientaddstock"+i+"").val("");
+    };
+});
+
+$("#btndelete2").click(function()
+{
+    for (var i = 6; i <= z; i++) 
+    {
+        $("#oneingredienttr"+i+"").remove();
+    };
+    z=5;
+});
+
+$("#btnchange2").click(function()
+{
+    if($("#oneingredientlist1").val()==0)
+    {
+        alert("Bạn chưa chọn nguyên liệu cần chuyển!");
+        return false;
+    }
+    var flag = 0;
+    for (var i = 1; i <= z; i++) 
+    {
+        if($("#oneingredienttr"+i+"").length)
+        { 
+            if($("#oneingredientstoreslist"+i+"").val()!=0&&$("#oneingredientaddstock"+i+"").val()!="")
+            {
+                flag =1;
+                if(/^[0-9]+$/.test($("#oneingredientaddstock"+i+"").val())==false)
+                {
+                    alert("#"+i+" Số lượng nguyên liệu cần chuyển không hợp lệ!");
+                    return false;
+                };
+                if($("#oneingredientaddstock"+i+"").val()>1000000000)
+                {
+                    alert("#"+i+" Số lượng nguyên liệu cần chuyển không được lớn hơn 1000000000");
+                    return false;
+                };
+            }
+            if($("#oneingredientstoreslist"+i+"").val()!=0&&$("#oneingredientaddstock"+i+"").val()=="")
+                {
+                    alert("#"+i+" Bạn chưa nhập số lượng nguyên liệu cần chuyển!");
+                    return false;
+                };
+                if($("#oneingredientstoreslist"+i+"").val()==0&&$("#oneingredientaddstock"+i+"").val()!="")
+                {
+                    alert("#"+i+" Bạn chưa chọn cửa hàng cần chuyển!");
+                    return false;
+                };
+        }
+    };
+    if(flag==0)
+    {
+        alert("Bạn phải chuyển nguyên liệu đến ít nhất 1 cửa hàng !");
+        return false;
+    }
+});
+</script>
