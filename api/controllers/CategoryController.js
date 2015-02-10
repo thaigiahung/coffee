@@ -7,7 +7,7 @@
 
 module.exports = {
     viewManage: function(req, res) {
-        Category.find({deleted: false}).exec(function (err, found) {
+        Category.find().exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
                 _name: "loại sản phẩm",
