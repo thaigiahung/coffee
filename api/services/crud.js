@@ -1,14 +1,3 @@
-// to check if a child is an object or not.
-isObject = function (param) {
-    if(param.and){
-        return true;
-    } 
-    else if (param.or) {
-        return true;
-    }
-    return false
-}
-
 // get the name of the model
 getName = function (model) {
     return model._context.adapter.collection;
@@ -20,44 +9,6 @@ getCriteria = function (model) {
     return crit;
 }
 
-// Apply where clause to the model.
-getJson = function(json, model) {
-    console.log("Here");
-    // because we don't know we will encounter json.and or json.or
-    // so that we will set crit will be equal to one of them
-    // that will be easier to use later
-    if(json.and)
-        var crit = json.and;
-    else if(json.or)
-        var crit = json.or;
-
-    // if the json input only have on criteria, then crit.length will fail
-    // so that we only need to use model.where(crit);
-    try {
-        // loop through each child in the object
-        for(var i = 0; i < crit.length; i++) {
-            if(isObject(crit[i])){
-                // if this child is an object (which is "or" or "and" object)
-                // then getJson of this child
-                getJson(crit[i], model);
-            }
-            else {
-                // if this child is not object
-                // and this child is in an "and" object
-                // then manually apply each criteria in json to where clause
-                if(json.and)
-                    model.where(crit[i]);
-            }
-        }
-        if(json.or)
-            // if this is in an "or" object
-            // then we only need to apply criteria in json using the built in way of sails
-            model.where(crit);
-    }
-    catch(err) {
-        model.where(crit);
-    }
-}
 
 // If the criteria is true
 // then write to console a message
@@ -87,7 +38,6 @@ capitaliseFirstLetter = function(string)
  * where - Optional. 
  * Type: json. 
  * Default : if not provided then the function will find all
- * this is the json of the where clause, it can mix "and" and "or" phrase
  *
  * message - Optional.
  * Type: boolean.
@@ -108,11 +58,24 @@ capitaliseFirstLetter = function(string)
  * if this is set to update, then the function will quire the input "set" 
  *      in order to know which column to be set with what value
  *
- * updatedata - required if action is 'update'
+ * updatedata - Optional
  * Type: json
  * Default: null.
  * if action is update and this json is provided
  * Then this function will update the found records with the column and value contains in this json
+ *
+ * add - Optional (Required if action is update and updatedata is not provided)
+ * Type: json
+ * Default: null
+ * if action is update/create and this json is provided
+ * then the function will find/create the records match to the where clause.
+ * Then for each found/created record, the function will add an association for this record.
+ *
+ * createdata - required if action is true.
+ * Type: json
+ * Default: null.
+ * if action is create and this json is provided
+ * Then this function will create a new record with the column and value contains in this json
  */
 module.exports = function(params, callback) {
 
@@ -145,6 +108,10 @@ module.exports = function(params, callback) {
             input.populate = JSON.parse(params.param('populate').toLowerCase());
         }
 
+        if(params.param('add')) {
+            input.add = JSON.parse(params.param('add').toLowerCase());
+        }
+
     }
     else {
         var input = params;
@@ -163,6 +130,10 @@ module.exports = function(params, callback) {
 
         if(params.populate) {
             input.populate = JSON.parse(params.populate.toLowerCase());
+        }
+
+        if(params.add) {
+            input.add = JSON.parse(params.add.toLowerCase());
         }
     }
     
@@ -186,6 +157,7 @@ module.exports = function(params, callback) {
     var log = false;
     var action = 'find';
     var result = {status: 1, message: 'success'};
+    var add = input.add;
 
     //if user input message and it's true
     //then assign message = true
@@ -198,6 +170,11 @@ module.exports = function(params, callback) {
     if(input.log)
         if(input.log.toLowerCase() == 'true')
             log = true;
+
+    // if user provide the input populate
+    if(input.populate) {
+        var populate = input.populate;
+    }
 
     //change the action to match the user input
     if(input.action) {
@@ -224,7 +201,9 @@ module.exports = function(params, callback) {
                 var data = input.updatedata;
             }
 
-            if(!data) {
+            // if data and add is not provide
+            // then return with fail message and status
+            if(!data && !add) {
                 checkThenLog(log,'Variable "' + action + 'data" is missing for ' + action);
                 result['message'] = 'Variable "' + action + 'data" is missing for ' + action;
                 result['status'] = 0;
@@ -240,7 +219,22 @@ module.exports = function(params, callback) {
         if(action == 'destroy')
             var model = global[modelName].destroy();
         else if(action == 'create') {
-            var model = global[modelName].create(data).exec(function(err, created){
+            var model = global[modelName].create(data);
+
+            // populate, assign them to the model
+            if(populate) {
+                if(populate.length) {
+                    for (var i = 0; i< populate.length; i++) {
+                        model.populate(populate[i].model);
+                    }
+                }
+                else {
+                    model.populate(populate.model);
+                }
+            }
+
+
+            model.exec(function(err, created){
                 // is there is some errors
                 // then assgign 'error' to result['message']
                 if(err) {
@@ -256,6 +250,47 @@ module.exports = function(params, callback) {
 
                     checkThenLog(log,'Can not create ' + modelName + 'with these data');
                     checkThenLog(log,data);
+                }
+
+                // if add and populate is provide
+                // then perform the adding for the association
+                if(add) {
+                    if(populate) {
+
+                        // loop throught each key in add
+                        for( var n = 0 ; n < (Object.keys(add)).length; n++) {
+                            var key = (Object.keys(add))[n];
+
+                            // for each key of add
+                            // loop through each value of that key
+                            for( var m = 0 ; m < add[key].length ; m++ ) {
+
+                                // if created is an array then perform the adding for each element
+                                if(created.length) {
+                                    for(var i = 0 ; i < created.length ; i ++ ) { 
+                                        var value = add[key][m];
+                                        created[i][key].add(value);
+                                    }
+                                    created[i].save();
+                                }
+                                // if create is only one then perform the adding to one object
+                                else {
+                                    var value = add[key][m];
+                                    created[key].add(value);
+                                    created.save();
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        // if populate is not provided
+                        // then return with fail message and status
+                        result['message'] = 'Missing input for update';
+                        result['status'] = 0;
+                        checkThenLog(log,err);
+                        callback(result);
+                        return;
+                    }
                 }
 
                 result[modelNameLowerCase] = created;
@@ -303,18 +338,11 @@ module.exports = function(params, callback) {
             // get the where clause from the user input.where which is in json format
             var where = input.where;
             // apply where clause to model
-            if(!where.and && !where.or) {
-                model.where(where);
-            }
-            else {
-                getJson(where, model);
-            }
+            model.where(where);
         }
 
-        // if user provide the input populate
-        // then for each input.populate, assign them to the model
-        if(input.populate) {
-            var populate = input.populate;
+        // for each populate, assign them to the model
+        if(populate) {
             if(populate.length) {
                 for (var i = 0; i< populate.length; i++) {
                     model.populate(populate[i].model);
@@ -348,45 +376,71 @@ module.exports = function(params, callback) {
             return;
         }
 
-        // if data is provided and action is update
+        // if data or add is provided and action is update
         // then do the update for the found record
         if(action == 'update') {
-            console.log(data);
-            if(data) {
-                // if data is an array
-                // then perform a loop through all object in that array
-                if(data.length) {
-                    for(var i = 0; i < data.length; i++) {
-                        for(var j = 0; j < found.length; j++) {
+            if(data || add) {
+                // perform a loop through all object in that array
+                for(var j = 0; j < found.length; j++) {
+
+                    // if data is provide
+                    // then perform the update
+                    if(data){
+                        for(var i = 0; i < Object.keys(data).length; i++) {
                             // for each object in data
                             // which is containing the column and the value to be data
                             // apply that to every found record
-                            found[j][data[i]['column']] = data[i]['value'];
+                            found[j][Object.keys(data)[i]] = data[Object.keys(data)[i]];
+                        }
+                    }
+
+                    // if add is provide
+                    // then perform the adding for the association
+                    if(add) {
+                        if(populate) {
+                            for( var n = 0 ; n < (Object.keys(add)).length; n++) {
+                                var key = (Object.keys(add))[n];
+                                // for each key in "add"
+                                // get the name of the key
+                                for( var m = 0 ; m < add[key].length ; m++ ) {
+                                    // loop through all the values of that key
+                                    // add that value into the joint table
+                                    var value = add[key][m];
+                                    found[j][key].add(value);
+                                }
+                            }
+                        }
+                        else {
+                            result['message'] = 'Missing input for update';
+                            result['status'] = 0;
+                            checkThenLog(log,err);
+                            callback(result);
+                            return;
                         }
                     }
                 }
-                // if data is only one object
-                // then apply that to every record found
-                else {
-                    for(var j = 0; j < found.length; j++) {
-                        found[j][data['column']] = data['value'];
-                    }
-                }
+
                 // save all the changes that we just applied to the records
                 for(var i = 0; i < found.length; i++) {
-                    console.log(i);
                     found[i].save(function(err) {
                         if(err) {
                             result['message'] = 'error when updating';
+                            result['status'] = 0;
                             checkThenLog(log,err);
+                            callback(result);
+                            return;
                         }
                     });
                 }
             }
             else {
+                // if neither data or add is provide
+                // then return with fail message and status
                 result['message'] = 'Missing input for update';
                 result['status'] = 0;
                 checkThenLog(log, result['message']);
+                callback(result);
+                return;
             }
         }
 
