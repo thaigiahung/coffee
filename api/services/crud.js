@@ -22,6 +22,31 @@ capitaliseFirstLetter = function(string)
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+populating = function(populate, model) {
+    if(populate.length) {
+        for(var i = 0 ; i < populate.length ; i++) {
+            model.populate(populate[i]);
+        }
+    }
+    else { 
+        model.populate(populate);
+    }
+
+    console.log(populate);
+
+    // // populate, assign them to the model
+    // if(populate) {
+    //     if(populate.length) {
+    //         for (var i = 0; i< populate.length; i++) {
+    //             model.populate(populate[i].model);
+    //         }
+    //     }
+    //     else {
+    //         model.populate(populate.model);
+    //     }
+    // }
+}
+
 /**
  * this function is to get json of object which match the where clause 
  * the json of objects can be use in callback function
@@ -105,7 +130,12 @@ module.exports = function(params, callback) {
         }
 
         if(params.param('populate')) {
-            input.populate = JSON.parse(params.param('populate').toLowerCase());
+            try {
+                input.populate = JSON.parse(params.param('populate'));
+            }
+            catch(err) {
+                input.populate = params.param('populate');
+            }
         }
 
         if(params.param('add')) {
@@ -129,7 +159,12 @@ module.exports = function(params, callback) {
         }
 
         if(params.populate) {
-            input.populate = JSON.parse(params.populate.toLowerCase());
+            try {
+                input.populate = JSON.parse(params.param('populate'));
+            }
+            catch(err)  {
+                input.populate = params.param('populate');
+            }
         }
 
         if(params.add) {
@@ -221,18 +256,8 @@ module.exports = function(params, callback) {
         else if(action == 'create') {
             var model = global[modelName].create(data);
 
-            // populate, assign them to the model
-            if(populate) {
-                if(populate.length) {
-                    for (var i = 0; i< populate.length; i++) {
-                        model.populate(populate[i].model);
-                    }
-                }
-                else {
-                    model.populate(populate.model);
-                }
-            }
-
+            if(populate)
+                populating(populate, model);
 
             model.exec(function(err, created){
                 // is there is some errors
@@ -341,17 +366,8 @@ module.exports = function(params, callback) {
             model.where(where);
         }
 
-        // for each populate, assign them to the model
-        if(populate) {
-            if(populate.length) {
-                for (var i = 0; i< populate.length; i++) {
-                    model.populate(populate[i].model);
-                }
-            }
-            else {
-                model.populate(populate.model);
-            }
-        }
+        if(populate) 
+            populating(populate, model);
     }
 
     //execute the finding function for model
