@@ -17,6 +17,8 @@ module.exports = {
     limit: { type: 'integer', required: true, defaultsTo: 0},
 
     instock: { type: 'integer', required: true, defaultsTo: 0 },
+
+    deleted: { type: 'boolean', defaultsTo: false },
   }
 };
 

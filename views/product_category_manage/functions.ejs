@@ -1,3 +1,5 @@
+var model = "category";
+
 function add()
 {
   resetForm();
@@ -23,19 +25,35 @@ function update (object) {
   $('#form').modal();
 }
 
+function drawObject(object, button) {
+  var listItem = $('#list-item').DataTable();
+
+  if(object.deleted == "false")
+    var buttons = "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+  else
+    var buttons = "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>";
+
+  var _object = [
+    object.id,
+    object.name,
+    (object.description == undefined) ? "" : object.description,
+    (object.deleted == "false") ? "Kích hoạt" : "Đã xóa"
+  ];
+
+  _object.push(buttons);
+
+  listItem.row.add(_object).draw();
+}
+
 function removeObject (object) {
-      var obj = [
-              {
-                "column": "deleted",
-                "value": true
-              }
-            ]
+      var obj = {"deleted": true};
       var data = {
-                    "from": "category",
-                    "action": "update",                      
+                    "from": model,
+                    "action": "update",
                     "where": JSON.stringify({ "id": object.id}),
                     "updatedata": JSON.stringify(obj)
                 };
+
       $.post("/services/model", data)
         .done(function(data) 
         {
@@ -53,13 +71,7 @@ function removeObject (object) {
             // var rowId = table.row( row ).index();
             listItem.row(row).remove();
 
-            listItem.row.add( [
-                                object.id,
-                                object.name,
-                                (object.description == undefined) ? "" : object.description,
-                                (object.deleted == "false") ? "Kích hoạt" : "Đã xóa",
-                                "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>"
-                              ] ).draw();
+            drawObject(object);
             
             $('#errorModelMessage').text(data.message);
             $('#errorModelMessage').show();
@@ -79,43 +91,29 @@ function save () {
       var description = $('#object-description').val();
       var status = $('input[name=object-status]:checked').val();
       
-      var obj = null;
+      var obj = {
+                "name": name, 
+                "description": description,
+                "deleted": status
+              };
       //If type == 0 -> action is update
       //Else action is create
       var data = null;
       if(type == 0)
       {
         var objectId = $('#hd-object-id').val();
-        obj = [
-                {
-                  "column": "name",
-                  "value": name
-                },
-                {
-                  "column": "description",
-                  "value": description
-                },
-                {
-                  "column": "deleted",
-                  "value": status
-                }
-              ];        
+        
         data = {
-                      "from": "category",
-                      "action": "update",                      
+                      "from": model,
+                      "action": "update",
                       "where": JSON.stringify({ "id": objectId}),
                       "updatedata": JSON.stringify(obj)
                   };
       }
       else
       {
-        obj = {
-                "name": name, 
-                "description": description,
-                "deleted": status
-              };
         data = {
-                      "from": "category",
+                      "from": model,
                       "action": "create",
                       "createdata": JSON.stringify(obj)
                   };
@@ -143,18 +141,9 @@ function save () {
               // var rowId = table.row( row ).index();
               listItem.row(row).remove();
             }
-            var buttons = null;
-            if(object.deleted == "false")
-              buttons = "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button><button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
-            else
-              buttons = "<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>";
-            listItem.row.add( [
-                                object.id,
-                                object.name,
-                                (object.description == undefined) ? "" : object.description,
-                                (object.deleted == "false") ? "Kích hoạt" : "Đã xóa",
-                                buttons
-                              ] ).draw();
+
+            
+            drawObject(object, true);
             //.draw(false) to prevent datatable reload to page 1
             //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
             

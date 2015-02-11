@@ -31,20 +31,6 @@ populating = function(populate, model) {
     else { 
         model.populate(populate);
     }
-
-    console.log(populate);
-
-    // // populate, assign them to the model
-    // if(populate) {
-    //     if(populate.length) {
-    //         for (var i = 0; i< populate.length; i++) {
-    //             model.populate(populate[i].model);
-    //         }
-    //     }
-    //     else {
-    //         model.populate(populate.model);
-    //     }
-    // }
 }
 
 /**
