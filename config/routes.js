@@ -105,7 +105,7 @@ module.exports.routes = {
   '/category/manage/view': 'CategoryController.viewManage',
   '/ingredientcategory/manage/view': 'IngredientCategoryController.viewManage',
   '/ingredientstore/manage/view': 'IngredientStoreController.viewManage',
-  '/user/manage/view': 'UserController.viewManage',
+/*  '/user/manage/view': 'UserController.viewManage',
   '/chain/manage/view': 'ChainController.viewManage',
-  '/store/manage/view': 'StoreController.viewManage',
+  '/store/manage/view': 'StoreController.viewManage',*/
 };
