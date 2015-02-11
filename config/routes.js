@@ -50,7 +50,7 @@ module.exports.routes = {
     action: 'updateLimit'
   },
 
-  '/store/view': {
+  '/store/view/:type?': {
     controller: 'StoreController',
     action: 'view'
   },
