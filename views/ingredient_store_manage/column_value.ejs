@@ -17,6 +17,13 @@
     <td><%= obj.instock %></td>
     <td><%= obj.limit %></td>
 
+    <% if (obj.deleted == true) { %>
+      <td>Đã xóa</td>
+    <% } else { %>
+      <td>Kích hoạt</td>
+    <% } %> 
+
+
     <td>
       <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
       <% if (obj.deleted == false) { %>

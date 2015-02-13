@@ -27,13 +27,13 @@ function update (object) {
 
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
-
   var _object = [
     object.id,
     $("#object-ingredient option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     $("#object-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     object.instock,
     object.limit,
+    (object.deleted == "false") ? "Kích hoạt" : "Đã xóa"
   ];
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
@@ -58,7 +58,7 @@ function removeObject (object) {
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.IngredientStore;
             //Get datatable
             var listItem = $('#list-item').DataTable();
             object = object[0];
@@ -69,6 +69,8 @@ function removeObject (object) {
             //Get selected row id
             // var rowId = table.row( row ).index();
             listItem.row(row).remove();
+
+            console.log(JSON.stringify(object));
 
             drawObject(object);
             
@@ -86,9 +88,10 @@ function removeObject (object) {
 }
 function save () {
       var type = $('#hd-action-type').val();
-      var name = $('#object-name').val();
-      var description = $('#object-description').val();
-      var status = $('input[name=object-status]:checked').val();
+      var ingredient = $('#object-ingredient').val();
+      var store = $('#object-store').val();
+      var instock = $('#object-instock').val();
+      var limit = $('#object-limit').val();
       
       var obj = {
                   "ingredient": ingredient,
@@ -115,16 +118,19 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj)
+                      "createdata": JSON.stringify(obj),
+                      "log": true
                   };
       }
+
+      console.log(data);
       
       $.post("/services/model", data)
         .done(function(data) 
         {
           if(data.status == 1)
           {
-            object = data.Category;
+            object = data.IngredientStore;
             //Get datatable
             var listItem = $('#list-item').DataTable();
 
