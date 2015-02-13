@@ -1,4 +1,4 @@
-var model = "Category";
+var model = "IngredientStore";
 
 function add()
 {
@@ -6,7 +6,6 @@ function add()
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
-
 
   //Hide status because new category should always be activated
   $('#div-status').hide();
@@ -16,8 +15,8 @@ function add()
 function update (object) {
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
-  $('#object-name').val(object.name);      
-  $('#object-description').val((object.description == undefined) ? "" : object.description);
+  $('#object-ingredient').val(object.ingredient.id);      
+  $('#object-store').val(object.store.id);      
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -31,14 +30,16 @@ function drawObject(object, button) {
 
   var _object = [
     object.id,
-    object.name,
-    (object.description == undefined) ? "" : object.description,
-    (object.deleted == "false") ? "Kích hoạt" : "Đã xóa"
+    $("#object-ingredient option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+    $("#object-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+    object.instock,
+    object.limit,
   ];
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(object.deleted == "false")
     _object[_object.length-1] = _object[_object.length-1] + "<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+
 
   listItem.row.add(_object).draw();
 }
@@ -90,9 +91,10 @@ function save () {
       var status = $('input[name=object-status]:checked').val();
       
       var obj = {
-                "name": name, 
-                "description": description,
-                "deleted": status
+                  "ingredient": ingredient,
+                  "store": store,
+                  "instock": instock,
+                  "limit": limit
               };
       //If type == 0 -> action is update
       //Else action is create
@@ -162,7 +164,6 @@ function save () {
 }
 function resetForm()
 {
-  $('#object-name').val("");
-  $('#object-description').val("");
-  $('input[name=object-status]').attr("checked", false);
+  $('#object-instockl').val("");
+  $('#object-limit').val("");
 }
