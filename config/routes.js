@@ -72,6 +72,9 @@ module.exports.routes = {
   'get /export': {
     view: 'view_export_ingredient'
   },
+  'get /export1': {
+    view: 'view_export_ingredient1'
+  },
   'get /warninglimit':{
     view: 'view_warninglimit',
     locals:{
