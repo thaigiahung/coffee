@@ -1,0 +1,263 @@
+<div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <b>Xuất kho</b>
+                </div>
+                <div class= "panel-body">
+                	<div class="table-responsive">
+                        <div  id="onestore">
+                            <form>
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <th>
+                                            Nguyên liệu
+                                        </th>
+                                        <th>
+                                            Tồn kho
+                                        </th>
+                                        <th>
+                                            Số lượng nhập
+                                        </th>
+                                        <th>
+                                            
+                                        </th>
+                                    </thead>
+                                    <tbody id="tbody1">
+                                        <tr id="onestoretr1">
+                                            <td>
+                                                <select id="onestoreingredientlist1" onchange="ChangeIngredient(1);">
+                                                    <option value="0">
+                                                        Nguyên liệu
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <label id="onestoreMain1"></label>
+                                            </td>
+                                            <td>
+                                                <input type="text" id="onestoreaddstock1"></input>
+                                            </td>
+                                            <td>
+                                                
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <img src="images/plus.png" height="20" width="20" id="btnadd1" onmouseover="" style="cursor:pointer;">
+                                              
+                        </div>
+                    </div>           
+                </div>
+        </div>
+</div>
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnchange1" value="Chuyển"></input> <input type="button" id="btncancel1" value="Hủy"></input>  
+</form>
+<script type="text/javascript" charset="utf-8">
+var y = 5;
+    $( document ).ready(function()
+    {
+        
+        for (var y = 2; y <= 5; y++) 
+        {
+            $("#tbody1").append("<tr id='onestoretr"+y+"'><td><b>#"+y+"</b></td><td><select id='onestoreingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label id='onestoreMain"+y+"'></label></td><td><label id='onestoreLocal"+y+"'></label></td><td><input type='text' id='onestoreaddstock"+y+"'></input></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
+        $("#onestoreingredientlist"+y+"").empty();
+        $("#onestoreingredientlist"+y+"").append("<option value='0'>Nguyên liệu</option>");
+        };
+        //Input ingredient into dropdown list
+    });
+//All functions related to table one store
+    function deleterow1(row)//delete one row in one store table
+    {
+        
+        if(row==y)//case: user delete the lastest row
+        {
+            y=y-1;
+            $("#onestoretr"+row+"").remove();
+        };
+        if(row<y)//case: user delete middle row
+        {
+            for (var i = row; i<y; i++) 
+            {
+                var n = i+1;
+                var test = $("#onestoreingredientlist"+n+"").val();
+                $("#onestoreingredientlist"+i+"").val(test);
+                $("#onestoreMain"+i+"").text($("#onestoreMain"+n+"").text());
+                $("#onestoreLocal"+i+"").text($("#onestoreLocal"+n+"").text());
+                $("#onestoreaddstock"+i+"").val($("#onestoreaddstock"+n+"").val());
+
+            };
+            $("#onestoretr"+y+"").remove();
+            y=y-1;
+        };
+    };
+    $("#btncancel1").click(function()//cancel all choices from onestore table
+    {
+        /*for (var i = 6; i <= y; i++) 
+        {
+            $("#onestoretr"+i+"").remove();
+        };
+        y=5;*/
+        window.location.reload();
+    });
+    function ChangeStore()
+    {
+        var store = $("#allstoreslist").val();
+        for (var i = 1; i <=y; i++) 
+        {
+            $("#onestoreingredientlist"+i+"").empty();
+            $("#onestoreMain"+i+"").text("");
+            $("#onestoreLocal"+i+"").text("");
+            $("#onestoreaddstock"+i+"").val("");
+            $("#onestoreingredientlist"+i+"").append("<option value='0'>Nguyên liệu</option>");
+        };
+        
+        if(store!=0)
+        {
+            //get ingredient list depend on chosen store
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+            {
+                if(datas1.status==0)//check if the store has any kinds of ingredient
+                {
+                    for (var i = 1; i <=y; i++) 
+                    {
+                        $("#onestoreMain"+i+"").text("");
+                        //$("#onestoreingredientlist"+i+"").append("<option value = '0'>Nguyên liệu</option>");
+                    };
+                    alert("Cửa hàng này không có nguyên liệu nào!");
+                    return false;
+                    
+                }
+                for (var l = 1; l <=y; l++) 
+                {
+                    for (var i = 0; i < datas1.ingredient.length; i++) 
+                {
+                    $("#onestoreingredientlist"+l+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                };
+                };
+                
+            });
+        };
+    };
+    function ChangeIngredient(row)
+    {
+        for (var i = 1; i <=y; i++) 
+        {
+            if($("#onestoreingredientlist"+row+"").val()==$("#onestoreingredientlist"+i+"").val()&&row!=i&&$("#onestoreingredientlist"+row+"").val()!=0)//check if user chose this ingredient or not
+            {
+                alert("Bạn đã chọn nguyên liệu này rồi!");
+                $("#onestoreingredientlist"+row+"").val(0);
+                $("#onestoreMain"+row+"").text("");
+                $("#onestoreLocal"+row+"").text("");
+                return false;
+            };
+        };
+        var ingredientid = $("#onestoreingredientlist"+row+"").val();
+        //get stock depend on chosen ingredient***********************
+        if(ingredientid==0)
+        {
+            $("#onestoreMain"+row+"").text("");
+            $("#onestoreLocal"+row+"").text("");
+        };
+        var where = {"id":ingredientid};
+        $.post("/services/model",{from:"ingredientStore",where: JSON.stringify(where)},function(result)
+        {
+            //get the stock in main storage of chosen ingredient
+            var where1= {"and":[{"ingredient":result.IngredientStore[0].ingredient},{"store":1}]};
+            $.post("/services/model",{from:"ingredientStore", where: JSON.stringify(where1)},function(result1)
+            {
+                if(result1.status==0)
+                {
+                    alert("Kho tổng không có nguyên liệu này!");
+                    return false;
+                }
+                $("#onestoreMain"+row+"").text(result1.IngredientStore[0].instock);
+            });
+            //get the stock of chosen ingredient from chose store
+            $("#onestoreLocal"+row+"").text(result.IngredientStore[0].instock);
+        });
+
+    };
+    $("#btnadd1").click(function()
+    {
+        var store = $("#allstoreslist").val();
+        y=y+1;
+        $("#tbody1").append("<tr id='onestoretr"+y+"'><td><b>#"+y+"</b></td><td><select id='onestoreingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label id='onestoreMain"+y+"'></label></td><td><label id='onestoreLocal"+y+"'></label></td><td><input type='text' id='onestoreaddstock"+y+"'></input></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
+        $("#onestoreingredientlist"+y+"").empty();
+        $("#onestoreingredientlist"+y+"").append("<option value='0'>Nguyên liệu</option>");
+        if(store!=0)
+        {
+            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+            {
+                for (var i = 0; i < datas1.ingredient.length; i++) 
+                {
+                    $("#onestoreingredientlist"+y+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
+                };
+            });
+        }
+    });
+    $("#btnchange1").click(function()
+    {
+        var flag = 0;
+        var data = [];
+        if($("#allstoreslist").val()==0)//check if user chose store or not
+        {
+            alert("Bạn chưa chọn cửa hàng để chuyển nguyên liệu!");
+            return false;
+        }
+        for (var i = 1; i <=y; i++) 
+        {
+            if($("#onestoretr"+i+"").length)//check if the row is deleted or not
+            {
+                if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()!="")
+                {
+                    flag =1;
+                    if(/^[0-9]+$/.test($("#onestoreaddstock"+i+"").val())==false)
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu cần chuyển không hợp lệ!");
+                        return false;
+                    };
+                    if($("#onestoreaddstock"+i+"").val()>1000000000)
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu cần chuyển không được lớn hơn 1000000000");
+                        return false;
+                    };
+                    //Export inggrdients***************************************
+                    var ingredientid = $("#onestoreingredientlist"+i+"").val();
+                    var stock = parseInt($("#onestoreaddstock"+i+"").val());
+                    var obj = {"ingredientid":ingredientid,"stock":stock};
+                    data.push(obj);        
+                };
+                if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()=="")
+                {
+                    alert("#"+i+" Bạn chưa nhập số lượng nguyên liệu cần chuyển!");
+                    return false;
+                };
+                if($("#onestoreingredientlist"+i+"").val()==0&&$("#onestoreaddstock"+i+"").val()!="")
+                {
+                    alert("#"+i+" Bạn chưa chọn nguyên liệu cần chuyển!");
+                    return false;
+                };
+            }
+        };
+        if(flag==0)
+        {
+            alert("Bạn phải chuyển ít nhất một nguyên liệu!");
+            return false;
+        }
+        $.post("/ingredient/export/set",{option:1,data:JSON.stringify(data)},function(result2)
+        {
+            if(result2.status==1)
+            {
+            alert(result2.message);
+            window.location.reload();
+            }
+            if(result2.status==0)
+            {
+                alert(result2.message+", xin vui lòng kiểm tra lại số lượng đã nhập.");
+                return false;
+            }
+        });
+    });
+</script>
