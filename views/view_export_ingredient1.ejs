@@ -1,6 +1,13 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
+                <div class="table-responsive">
+                        <div id="warningpopup" title="Cảnh báo">
+                    Bạn có chắc muốn hủy bỏ mọi thông tin đã nhập?
+                </div>
                 <div class="panel-heading">
                     Xuất kho
                 </div>
@@ -202,15 +209,30 @@ var z=5;
     });
 $("#btncancel2").click(function()
 {
-    for (var i = 1; i <=z; i++) 
-    {
-        $("#oneingredientlist1").val(0);
-        $("#oneingredientstoreslist"+i+"").empty();
-        $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
-        $("#oneingredientMain"+i+"").text("");
-        $("#oneingredientLocal"+i+"").text("");
-        $("#oneingredientaddstock"+i+"").val("");
-    };
+    $("#warningpopup").dialog({
+      resizable: false,
+      height:200,
+      modal: true,
+      buttons: {
+        "Vâng": function() 
+        { 
+          for (var i = 1; i <=z; i++) 
+        {
+            $("#oneingredientlist1").val(0);
+            $("#oneingredientstoreslist"+i+"").empty();
+            $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
+            $("#oneingredientMain"+i+"").text("");
+            $("#oneingredientLocal"+i+"").text("");
+            $("#oneingredientaddstock"+i+"").val("");
+        }; 
+          $( this ).dialog( "close" );
+           window.location.reload();
+        },
+        Không: function() {
+          $( this ).dialog( "close" );
+        }
+      }
+    });
 });
 
 $("#btndelete2").click(function()
