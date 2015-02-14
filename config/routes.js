@@ -70,8 +70,11 @@ module.exports.routes = {
     action: 'view'
   },
   
+  'get /import': {
+    view: 'view_import_ingredient'
+  },
   'get /warninglimit':{
-    view: 'view_warninglimit',
+    view: 'view_warninglimit'
     },
 
   '/bill/list/:store?': 'BillController.indexByStore',
