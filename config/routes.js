@@ -50,7 +50,7 @@ module.exports.routes = {
     action: 'updateLimit'
   },
 
-  '/store/view': {
+  '/store/view/:type?': {
     controller: 'StoreController',
     action: 'view'
   },
@@ -73,15 +73,24 @@ module.exports.routes = {
   'get /import': {
     view: 'view_import_ingredient'
   },
+  'get /export': {
+    view: 'view_export_ingredient'
+  },
+  'get /export1': {
+    view: 'view_export_ingredient1'
+  },
+  
   'get /warninglimit':{
     view: 'view_warninglimit'
-    },
+  },
 
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
+
   '/services/model': 'ServicesController.getModel',
 
   '/product/manage/view': 'ProductController.viewManage',
+
   '/ingredient/manage/view': 'IngredientController.viewManage',
   '/category/manage/view': 'CategoryController.viewManage',
   '/ingredientcategory/manage/view': 'IngredientCategoryController.viewManage',
@@ -89,4 +98,9 @@ module.exports.routes = {
 /*  '/user/manage/view': 'UserController.viewManage',
   '/chain/manage/view': 'ChainController.viewManage',
   '/store/manage/view': 'StoreController.viewManage',*/
+
+
+  'POST /stock/show': 'IngredientController.getIngredientAmount',
+  'POST /ingredient/export/set': 'IngredientController.exportIngredient',
+  'GET /store/show/:ingredient/:type?': 'StoreController.getStoreByIngredient',
 };
