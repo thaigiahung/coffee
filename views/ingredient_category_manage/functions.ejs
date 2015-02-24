@@ -29,6 +29,7 @@ function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
 
   var deleted = object.deleted;
+  //If action is update => object.deleted will be a string => convert it to boolean
   if(typeof deleted == "string")
     deleted = (deleted == "true") ? true : false; //Convert string to bool
 
