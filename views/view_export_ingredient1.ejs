@@ -1,16 +1,39 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+<div class="table-responsive">
+                        <div id="warningpopup" title="Cảnh báo" hidden>
+                    Bạn có chắc muốn hủy bỏ mọi thông tin đã nhập?
+                </div>
+<div class="row">
+<div id="deleteform" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Cảnh báo</h4>
+              </div>
+              <div class="modal-body">
+                Bạn có chắc muốn hủy bỏ tất cả mọi thông tin đã nhập không?
+
+              </div>
+              <div class="modal-footer">
+                <button type="button"  class="btn btn-primary update" data-dismiss="modal">Không</button>
+                <button type="button" id="btncancel3" class="btn btn-danger remove">Có</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    
+    <div class="col-lg-12">
+        <h1 class="page-header">Xuất kho</h1>
+    </div> 
+</div>
 <div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div class="table-responsive">
-                        <div id="warningpopup" title="Cảnh báo">
-                    Bạn có chắc muốn hủy bỏ mọi thông tin đã nhập?
-                </div>
-                <div class="panel-heading">
-                    Xuất kho
-                </div>
+                
+                
                 <div class= "panel-body">
                 	<div class="table-responsive">
                         <div  id="oneingredient">
@@ -78,8 +101,8 @@
                     <div>
                     </div>
                     </div>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnchange2" value="Chuyển"></input>
-                    <input type="button" id="btncancel2" value="Hủy"></input>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnchange2" class="btn btn-primary update" value="Chuyển"></input>
+                    <input type="button" id="btncancel2" class="btn btn-danger remove" value="Hủy"></input>
                 </form>
                 </div>
             </div>
@@ -112,9 +135,9 @@ var z=5;
                 $("#oneingredientaddstock"+i+"").val("");
                 $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
             };
-        var populate = {"model":"store"};
+        var populate = ["store"];
         var where = {"ingredient":chosenIngredient};
-        $.post("/services/model",{ from: "ingredientStore", populate: JSON.stringify(populate) , where: JSON.stringify(where)},function(result)
+        $.post("/services/model",{ from: "ingredientStore", populate: ["store"] , where: JSON.stringify(where)},function(result)
                 {
                     if(result.status==0)// check if chosen ingredient belong to any stores
                     {
@@ -156,7 +179,7 @@ var z=5;
         var store= $("#oneingredientstoreslist"+row+"").val();
         var ingredient=$("#oneingredientlist1").val(); 
         //get stock of chosen ingredient depend on chosen store
-        var where2= {"and":[{"ingredient":ingredient},{"store":store}]};
+        var where2= {"ingredient":ingredient,"store":store};
         $.post("/services/model",{from:"ingredientStore",where: JSON.stringify(where2)},function(result2)
         {
             $("#oneingredientLocal"+row+"").text(result2.IngredientStore[0].instock);
@@ -189,9 +212,9 @@ var z=5;
         $("#tbody2").append("<tr id='oneingredienttr"+z+"'><td><b>#"+z+"</b></td><td><select id='oneingredientstoreslist"+z+"' onchange='OneIngredientChangeStore("+z+");''><option value='0'>Cửa hàng</option></select></td><td><label id='oneingredientMain"+z+"'></label></td><td><label id='oneingredientLocal"+z+"'></label></td><td><input type='textbox' id='oneingredientaddstock"+z+"'></input></td><td><img src='images/minus.png' onmouseover='' style='cursor:pointer;' id='oneingredientdelete"+z+"'  height='20' width='20' onclick='deleterow2("+z+");'></td></tr>");
         //get store list based on chosen ingredient
         var chosenIngredient = $("#oneingredientlist1").val();
-        var populate = {"model":"store"};
+        var populate = ["store"];
         var where = {"ingredient":chosenIngredient};
-        var data = { "from": "ingredientStore", "populate": {"model":"store"}, "where":{"ingredient":chosenIngredient}};
+        var data = { "from": "ingredientStore", "populate": ["store"], "where":{"ingredient":chosenIngredient}};
         $.post("/services/model",{ from: "ingredientStore", populate: JSON.stringify(populate) , where: JSON.stringify(where)},function(result)
                 {
                             for (var m = 0; m < result.IngredientStore.length ; m++) 
@@ -207,9 +230,10 @@ var z=5;
                             };
                 });
     });
+
 $("#btncancel2").click(function()
 {
-    $("#warningpopup").dialog({
+    /*$("#warningpopup").dialog({
       resizable: false,
       height:200,
       modal: true,
@@ -232,9 +256,22 @@ $("#btncancel2").click(function()
           $( this ).dialog( "close" );
         }
       }
-    });
+    });*/
+    $('#deleteform').modal();
 });
-
+$("#btncancel3").click(function()
+{
+    /*for (var i = 1; i <=z; i++) 
+        {
+            $("#oneingredientlist1").val(0);
+            $("#oneingredientstoreslist"+i+"").empty();
+            $("#oneingredientstoreslist"+i+"").append("<option value='0'>Cửa hàng</option>");
+            $("#oneingredientMain"+i+"").text("");
+            $("#oneingredientLocal"+i+"").text("");
+            $("#oneingredientaddstock"+i+"").val("");
+        };*/
+        window.location.reload(); 
+});
 $("#btndelete2").click(function()
 {
     for (var i = 6; i <= z; i++) 
