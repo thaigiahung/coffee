@@ -30,18 +30,23 @@ function update (object) {
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
 
+  var deleted = object.deleted;
+  //If action is update => object.deleted will be a string => convert it to boolean
+  if(typeof deleted == "string")
+    deleted = (deleted == "true") ? true : false; //Convert string to bool
+
   var _object = [
     object.id,
     object.name,
     $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     (object.description == undefined) ? "" : object.description,
     object.unit,
-    (object.deleted == "false") ? "Kích hoạt" : "Đã xóa",
+    (deleted == false) ? "Kích hoạt" : "Đã xóa",
   ];
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
-  if(object.deleted == "false")
-    _object[_object.length-1] = _object[_object.length-1] + "<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+  if(deleted == false)
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
 
 
   listItem.row.add(_object).draw();
