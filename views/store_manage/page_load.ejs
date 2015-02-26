@@ -1,0 +1,24 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+
+    //Load Product Category
+    $.get( '/services/model?from=user&where={"deleted": false}', function( data ) {
+      var users = data.User;
+      $.each( users, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj category
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#object-manager').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

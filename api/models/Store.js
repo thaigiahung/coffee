@@ -16,7 +16,7 @@ module.exports = {
 
         phone: { type: 'string', required: true },
 
-        chain: { model: 'chain', required: true },
+        chain: { model: 'chain' },
 
         manager: { model: 'user', required: true },
 

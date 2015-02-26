@@ -120,5 +120,14 @@ module.exports = {
 		}
 	},
 	
+    viewManage: function(req, res) {
+        Store.find().populate('manager').exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "cửa hàng",
+                _directory: "store_manage/"
+            }); 
+        });
+    },
 };
 
