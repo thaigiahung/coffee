@@ -17,6 +17,8 @@ function update (object) {
   $('#hd-object-id').val(object.id);
   $('#object-ingredient').val(object.ingredient.id);      
   $('#object-store').val(object.store.id);      
+  $('#object-instock').val(object.instock);      
+  $('#object-limit').val(object.limit);      
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
