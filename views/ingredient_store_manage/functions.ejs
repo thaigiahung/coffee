@@ -92,7 +92,27 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var limit = $('#object-limit').val();
+  var instock = $('#object-instock').val();
+  if(limit == "" || instock =="") //name is null
+  {
+    $('#message').text("Số lượng tồn và mức báo động không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var ingredient = $('#object-ingredient').val();
       var store = $('#object-store').val();
@@ -173,6 +193,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

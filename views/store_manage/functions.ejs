@@ -91,88 +91,108 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  if(name == "") //name is null
+  {
+    $('#message').text("Tên cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
-      var type = $('#hd-action-type').val();
-      var name = $('#object-name').val();
-      var address = $('#object-address').val();
-      var phone = $('#object-phone').val();
-      var manager = $('#object-manager').val();
-      var status = $('input[name=object-status]:checked').val();
+  var status = validate();
+  if(status)
+  {
+    var type = $('#hd-action-type').val();
+    var name = $('#object-name').val();
+    var address = $('#object-address').val();
+    var phone = $('#object-phone').val();
+    var manager = $('#object-manager').val();
+    var status = $('input[name=object-status]:checked').val();
+    
+    var obj = 
+              {
+                "name": name,
+                "address": address,
+                "phone": phone,
+                "manager": manager,
+                "deleted": status
+              };
+    //If type == 0 -> action is update
+    //Else action is create
+    var data = null;
+    if(type == 0)
+    {
+      var objectId = $('#hd-object-id').val();
       
-      var obj = 
-                {
-                  "name": name,
-                  "address": address,
-                  "phone": phone,
-                  "manager": manager,
-                  "deleted": status
+      data = {
+                    "from": model,
+                    "action": "update",
+                    "where": JSON.stringify({ "id": objectId}),
+                    "updatedata": JSON.stringify(obj)
                 };
-      //If type == 0 -> action is update
-      //Else action is create
-      var data = null;
-      if(type == 0)
+    }
+    else
+    {
+      obj.status = true;
+      data = {
+                    "from": model,
+                    "action": "create",
+                    "createdata": JSON.stringify(obj)
+                };
+    }
+    
+    $.post("/services/model", data)
+      .done(function(data) 
       {
-        var objectId = $('#hd-object-id').val();
-        
-        data = {
-                      "from": model,
-                      "action": "update",
-                      "where": JSON.stringify({ "id": objectId}),
-                      "updatedata": JSON.stringify(obj)
-                  };
-      }
-      else
-      {
-        obj.status = true;
-        data = {
-                      "from": model,
-                      "action": "create",
-                      "createdata": JSON.stringify(obj)
-                  };
-      }
-      
-      $.post("/services/model", data)
-        .done(function(data) 
+        if(data.status == 1)
         {
-          if(data.status == 1)
+          object = data.Store;
+          //Get datatable
+          var listItem = $('#list-item').DataTable();
+
+          
+          if(type == 0) //If action is update => remove old row
           {
-            object = data.Store;
-            //Get datatable
-            var listItem = $('#list-item').DataTable();
+            //Because we can update multiple rows => object will be an array not an object like insert
+            object = object[0];
 
-            
-            if(type == 0) //If action is update => remove old row
-            {
-              //Because we can update multiple rows => object will be an array not an object like insert
-              object = object[0];
-
-              //Get selected row
-              var row = $("#btnUpdate"+object.id).closest('tr');
-              row = row[0];
-              //Get selected row id
-              // var rowId = table.row( row ).index();
-              listItem.row(row).remove();
-            }
-
-            
-            drawObject(object, true);
-            //.draw(false) to prevent datatable reload to page 1
-            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
-            
-            $('#form').modal('hide');
-            resetForm();
+            //Get selected row
+            var row = $("#btnUpdate"+object.id).closest('tr');
+            row = row[0];
+            //Get selected row id
+            // var rowId = table.row( row ).index();
+            listItem.row(row).remove();
           }
-          else
-          {
-            $('#message').text(data.message);
-            $('#message').show();
-          }
-        })
-        .fail(function(error)
+
+          
+          drawObject(object, true);
+          //.draw(false) to prevent datatable reload to page 1
+          //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
+          
+          $('#form').modal('hide');
+          resetForm();
+        }
+        else
         {
-          $('#message').text('Không thể cập nhật '+_name);
+          $('#message').text(data.message);
           $('#message').show();
-        });
+        }
+      })
+      .fail(function(error)
+      {
+        $('#message').text('Không thể cập nhật '+_name);
+        $('#message').show();
+      });
+  }
 }
 function resetForm()
 {
