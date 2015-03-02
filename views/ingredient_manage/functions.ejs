@@ -15,8 +15,13 @@ function add()
 function update (object) {
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
-  $('#object-name').val(object.name);      
-  $('#object-category').val((object.category == undefined) ? "" : object.category.id);
+  $('#object-name').val(object.name);  
+
+  //Because when we load modal for the first time, we have an object category
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  $('#object-category').val((object.category.id != undefined) ? String(object.category.id) : object.category);
+  
   $('#object-description').val((object.description == undefined) ? "" : object.description);
   $('#object-unit').val(object.unit);
 
@@ -126,7 +131,8 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj)
+                      "createdata": JSON.stringify(obj),
+                      "populate": ["IngredientCategory"]
                   };
       }
       
