@@ -89,8 +89,6 @@ populating = function(populate, model) {
  * Then this function will create a new record with the column and value contains in this json
  */
 module.exports = function(params, callback) {
-
-
     // if the type of params is req
     // then assign the input like params.query.from . . .
     // else (which is input as array from controller)
@@ -197,31 +195,26 @@ module.exports = function(params, callback) {
         var populate = input.populate;
     }
 
+    // get the where clause from the user input.where which is in json format
+    if(input.where) {
+        var where = input.where;
+    }
+
     //change the action to match the user input
     if(input.action) {
-        // if input.action == destroy
-        // then set action = 'destroy'
-        if(input.action.toLowerCase() == 'destroy') {
-            action = 'destroy';
-        }
-
         // set data = input.data
         // set action = input.action
-        // 
-        // if input.action == update or input.action == insert
-        // if input.data is not provided
-        // then return the error message and status
-        else if (input.action.toLowerCase() == 'update' || input.action.toLowerCase() == 'create') {
-            action = input.action.toLowerCase();
+        action = input.action.toLowerCase();
 
-            // dedends on the action, the data will get difference data from input
-            if (action == 'create') {
-                var data = input.createdata;
-            }
-            else if (action == 'update') {
-                var data = input.updatedata;
-            }
+        // dedends on the action, the data will get difference data from input
+        if (action == 'create') {
+            var data = input.createdata;
+        }
+        else if (action == 'update') {
+            var data = input.updatedata;
+        }
 
+        if(action == 'create' || action == 'update') {
             // if data and add is not provide
             // then return with fail message and status
             if(!data && !add) {
@@ -323,8 +316,98 @@ module.exports = function(params, callback) {
             });
             return;
         }
+        else if(action == 'update') {
+            if(data) {
+                global[modelName].update(where, data).exec(function(err, updated){
+                    if(err) {
+                        result['message'] = 'error when updating';
+                        result['status'] = 0;
+                        checkThenLog(log,err);
+                        callback(result);
+                        return;
+                    }
+                    else {
+                        result['message'] = 'success';
+                        result['status'] = 1;
+                        result[modelNameLowerCase] = updated;
+                        callback(result);
+                        return;
+                    }
+                });
+            }
+
+            if(add) {
+                var model = global[modelName].find();
+
+                if(where)
+                    model.where(where);
+
+                if(populate)
+                    populating(populate, model);
+
+                model.exec(function(err, found) {
+                    if(err) {
+                        result['message'] = 'Error when updating';
+                        result['status'] = 0;
+                        checkThenLog(log,err);
+                        callback(result);
+                        return;
+                    }
+                    else {
+                        // perform a loop through all object in that array
+                        for(var j = 0; j < found.length; j++) {
+                            // if add is provide
+                            // then perform the adding for the association
+                            if(add) {
+                                if(populate) {
+                                    for( var n = 0 ; n < (Object.keys(add)).length; n++) {
+                                        var key = (Object.keys(add))[n];
+                                        // for each key in "add"
+                                        // get the name of the key
+                                        for( var m = 0 ; m < add[key].length ; m++ ) {
+                                            // loop through all the values of that key
+                                            // add that value into the joint table
+                                            var value = add[key][m];
+                                            found[j][key].add(value);
+                                        }
+                                    }
+                                }
+                                else {
+                                    result['message'] = 'Missing input for update';
+                                    result['status'] = 0;
+                                    checkThenLog(log,err);
+                                    callback(result);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+
+                    // save all the changes that we just applied to the records
+                    for(var i = 0; i < found.length; i++) {
+                        found[i].save(function(err2) {
+                            if(err2) {
+                                result['message'] = 'error when updating';
+                                result['status'] = 0;
+                                checkThenLog(log,err2);
+                                callback(result);
+                                return;
+                            }
+                            else {
+                                result['message'] = 'success';
+                                result['status'] = 1;
+                                checkThenLog(log,err2);
+                                result[modelNameLowerCase] = found;
+                                callback(result);
+                                return;
+                            }
+                        });
+                    }
+                });
+            }
+        }
         else {
-            var model = global[modelName].find()
+            var model = global[modelName].find();
         }
     }
     catch(err) {
@@ -342,136 +425,65 @@ module.exports = function(params, callback) {
 
     // if action is find or update
     // then apply where and populate to model
-    if(action != 'create') {
+    if(action == 'find' || action == 'destroy') {
         // if the user provide the input where.
         // if not then find all
-        if(input.where) {
-            // get the where clause from the user input.where which is in json format
-            var where = input.where;
-            // apply where clause to model
-            model.where(where);
-        }
+        // apply where clause to model
+        if(where)
+             model.where(where);
 
         if(populate) 
             populating(populate, model);
-    }
 
-    //execute the finding function for model
-    model.exec(function (err, found) {
-        // is there is some errors
-        // then assgign 'error' to result['message']
-        if(err) {
-            result['message'] = 'error when finding';
-            checkThenLog(log,err);
-        }
-
-        // if no match found
-        // then assign a message to result['message']
-        if(!found || !found.length) {
-            result['message'] = 'can not find any ' + modelName;
-            result[modelNameLowerCase] = new Array();
-
-            checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
-            checkThenLog(log,getCriteria(model));
-            
-            callback(result);
-            return;
-        }
-
-        // if data or add is provided and action is update
-        // then do the update for the found record
-        if(action == 'update') {
-            if(data || add) {
-                // perform a loop through all object in that array
-                for(var j = 0; j < found.length; j++) {
-
-                    // if data is provide
-                    // then perform the update
-                    if(data){
-                        for(var i = 0; i < Object.keys(data).length; i++) {
-                            // for each object in data
-                            // which is containing the column and the value to be data
-                            // apply that to every found record
-                            found[j][Object.keys(data)[i]] = data[Object.keys(data)[i]];
-                        }
-                    }
-
-                    // if add is provide
-                    // then perform the adding for the association
-                    if(add) {
-                        if(populate) {
-                            for( var n = 0 ; n < (Object.keys(add)).length; n++) {
-                                var key = (Object.keys(add))[n];
-                                // for each key in "add"
-                                // get the name of the key
-                                for( var m = 0 ; m < add[key].length ; m++ ) {
-                                    // loop through all the values of that key
-                                    // add that value into the joint table
-                                    var value = add[key][m];
-                                    found[j][key].add(value);
-                                }
-                            }
-                        }
-                        else {
-                            result['message'] = 'Missing input for update';
-                            result['status'] = 0;
-                            checkThenLog(log,err);
-                            callback(result);
-                            return;
-                        }
-                    }
-                }
-
-                // save all the changes that we just applied to the records
-                for(var i = 0; i < found.length; i++) {
-                    found[i].save(function(err) {
-                        if(err) {
-                            result['message'] = 'error when updating';
-                            result['status'] = 0;
-                            checkThenLog(log,err);
-                            callback(result);
-                            return;
-                        }
-                    });
-                }
+        //execute the finding function for model
+        model.exec(function (err, found) {
+            // is there is some errors
+            // then assgign 'error' to result['message']
+            if(err) {
+                result['message'] = 'error when finding';
+                checkThenLog(log,err);
             }
-            else {
-                // if neither data or add is provide
-                // then return with fail message and status
-                result['message'] = 'Missing input for update';
-                result['status'] = 0;
-                checkThenLog(log, result['message']);
+
+            // if no match found
+            // then assign a message to result['message']
+            if(!found || !found.length) {
+                result['message'] = 'can not find any ' + modelName;
+                result[modelNameLowerCase] = new Array();
+
+                checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
+                checkThenLog(log,getCriteria(model));
+                
                 callback(result);
                 return;
             }
-        }
 
-        // if finding success
-        // then assign result['model name'] = found
-        // else
-        // then data status to 0
-        if(result['message'] == 'success') {
-            result[modelNameLowerCase] = found;
-        }
-        else {
-            result['status'] = 0;
-        }
-
-        checkThenLog(log,result['message']);
-
-        // if there is a call back function
-        // then do the callback function
-        if(callback) {
-            // if input for message is true
-            // then return the object result (which containing message and status)
+            // if finding success
+            // then assign result['model name'] = found
             // else
-            // return found variable (which only contain the matches found)
-            if(message == true) {
-                callback(result);
+            // then data status to 0
+            if(result['message'] == 'success') {
+                result[modelNameLowerCase] = found;
             }
             else {
-                callback(found);
+                result['status'] = 0;
             }
-        }
-    });
+
+            checkThenLog(log,result['message']);
+
+            // if there is a call back function
+            // then do the callback function
+            if(callback) {
+                // if input for message is true
+                // then return the object result (which containing message and status)
+                // else
+                // return found variable (which only contain the matches found)
+                if(message == true) {
+                    callback(result);
+                }
+                else {
+                    callback(found);
+                }
+            }
+        });
+    }
 }
