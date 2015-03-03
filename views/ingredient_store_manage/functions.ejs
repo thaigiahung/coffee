@@ -151,11 +151,13 @@ function save () {
       var store = $('#object-store').val();
       var instock = $('#object-instock').val();
       var limit = $('#object-limit').val();
-      
+      var status = $('input[name=object-status]:checked').val();
+
       var obj = {
                   "ingredient": ingredient,
                   "store": store,
                   "instock": instock,
+                  "deleted": status,
                   "limit": limit
               };
       //If type == 0 -> action is update
@@ -177,8 +179,7 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj),
-                      "log": true
+                      "createdata": JSON.stringify(obj)
                   };
       }
 

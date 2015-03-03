@@ -19,6 +19,15 @@ module.exports = {
     instock: { type: 'integer', required: true, defaultsTo: 0 },
 
     deleted: { type: 'boolean', defaultsTo: false },
-  }
+
+    ingredient_store: { type: 'string', unique: true },
+  },
+
+    beforeValidation : function(values,cb) {
+        if(values.store && values.ingredient) {
+            values.ingredient_store = values.store+"_"+values.ingredient;
+        }
+        cb();
+    }
 };
 
