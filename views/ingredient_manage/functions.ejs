@@ -97,7 +97,58 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var description = $('#object-description').val();
+  var unit = $('#object-unit').val();
+  var category = $('#object-category').val();
+  if(description == "") //description is null
+  {
+    $('#message').text("Mô tả không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(category == null) //category is null
+  {
+    $('#message').text("Loại nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(unit == "") //unit is null
+  {
+    $('#message').text("Đơn vị không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(unit != "g" 
+  && unit != "mg"
+  && unit != "p"
+  && unit != "kg"
+  && unit != "ml"
+  && unit != "l") //unit is not defined
+  {
+    $('#message').text("Đơn vị phải là 1 trong các loại sau : p, mg, ml, g, l, kg!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var description = $('#object-description').val();
@@ -131,8 +182,9 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj),
-                      "populate": ["IngredientCategory"]
+                      "createdata": JSON.stringify(obj)
+                      // create don't have populate
+                      // ,"populate": ["IngredientCategory"]
                   };
       }
       
@@ -178,6 +230,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {
