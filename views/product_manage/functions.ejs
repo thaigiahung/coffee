@@ -92,7 +92,53 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var description = $('#object-description').val();
+  var category = $('#object-category').val();
+  var price = $('#object-price').val();
+  if(description == "") //description is null
+  {
+    $('#message').text("Mô tả không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(category == null) //category is null
+  {
+    $('#message').text("Loại sản phẩm không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(price == "") //price is null
+  {
+    $('#message').text("Giá không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(price)) //price is null
+  {
+    $('#message').text("Giá ko hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên sản phẩm không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var category = $('#object-category').val();
@@ -175,6 +221,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

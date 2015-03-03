@@ -91,7 +91,55 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var address = $('#object-address').val();
+  var phone = $('#object-phone').val();
+  var manager = $('#object-manager').val();
+  var phoneReg = /0[1-9][0-9]{8,13}/;    
+
+  if(address == "") //address is null
+  {
+    $('#message').text("Địa chỉ không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(phone == "") //phone is null
+  {
+    $('#message').text("Số điện thoại không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(!phoneReg.exec(phone)) //phone is null
+  {
+    $('#message').text("Số điện thoại không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(manager == null) //manager is null
+  {
+    $('#message').text("Quản lý cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var address = $('#object-address').val();
@@ -130,7 +178,6 @@ function save () {
                       "createdata": JSON.stringify(obj)
                   };
       }
-      
       $.post("/services/model", data)
         .done(function(data) 
         {
@@ -173,6 +220,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

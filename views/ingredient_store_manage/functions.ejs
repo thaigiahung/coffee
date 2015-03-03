@@ -92,17 +92,72 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var ingredient = $('#object-ingredient').val();
+  var store = $('#object-store').val();
+  var instock = $('#object-instock').val();
+  var limit = $('#object-limit').val();
+
+  if(ingredient == null) //ingredient is null
+  {
+    $('#message').text("Nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(store == null) //ingredient is null
+  {
+    $('#message').text("Cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(instock == "") //instock is null
+  {
+    $('#message').text("Số lượng tồn không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(limit == "") //limit is null
+  {
+    $('#message').text("Mức báo động không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(limit)) //limit is null
+  {
+    $('#message').text("Mức báo động không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(instock)) //instock is null
+  {
+    $('#message').text("Số lượng tồn không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var ingredient = $('#object-ingredient').val();
       var store = $('#object-store').val();
       var instock = $('#object-instock').val();
       var limit = $('#object-limit').val();
-      
+      var status = $('input[name=object-status]:checked').val();
+
       var obj = {
                   "ingredient": ingredient,
                   "store": store,
                   "instock": instock,
+                  "deleted": status,
                   "limit": limit
               };
       //If type == 0 -> action is update
@@ -124,8 +179,7 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj),
-                      "log": true
+                      "createdata": JSON.stringify(obj)
                   };
       }
 
@@ -173,6 +227,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {
