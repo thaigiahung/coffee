@@ -125,7 +125,8 @@ module.exports = {
             return res.view('manage_view', {
                 data: found,
                 _name: "cửa hàng",
-                _directory: "store_manage/"
+                _directory: "store_manage/",
+                _add: true
             }); 
         });
     },

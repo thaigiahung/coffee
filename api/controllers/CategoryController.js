@@ -11,7 +11,8 @@ module.exports = {
             return res.view('manage_view', {
                 data: found,
                 _name: "loại sản phẩm",
-                _directory: "product_category_manage/"
+                _directory: "product_category_manage/",
+                _add: true
             }); 
         });
     },
