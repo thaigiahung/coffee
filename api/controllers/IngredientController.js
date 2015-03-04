@@ -318,7 +318,8 @@ module.exports = {
             return res.view('manage_view', {
                 data: found,
                 _name: "nguyên liệu",
-                _directory: "ingredient_manage/"
+                _directory: "ingredient_manage/",
+                _add: true
             }); 
         });
 	},

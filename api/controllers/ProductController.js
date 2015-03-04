@@ -11,7 +11,8 @@ module.exports = {
             return res.view('manage_view', {
                 data: found,
                 _name: "sản phẩm",
-                _directory: "product_manage/"
+                _directory: "product_manage/",
+                _add: true
             }); 
         });
 	},

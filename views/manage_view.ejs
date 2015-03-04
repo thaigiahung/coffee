@@ -24,7 +24,7 @@
                 </div>
                 <!-- /.table-responsive -->
                 <div class="text-center">
-                    <button type="submit" id="btnAdd" onClick="add()" class="btn btn-lg btn-primary add">Thêm <%= _name %></button>
+                    <% if (_add == true) { %><button type="submit" id="btnAdd" onClick="add()" class="btn btn-lg btn-primary add">Thêm <%= _name %></button><% } %>
                 </div>
             </div>
             <!-- /.panel-body -->
@@ -36,7 +36,7 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Thêm <%= _name %></h4>
+                <h4 class="modal-title">Thêm<%= _name %></h4>
               </div>
                 <%- partial (_directory+'/form.ejs') %>
               <div class="modal-footer">
