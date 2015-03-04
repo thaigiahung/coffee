@@ -17,8 +17,12 @@ function update (object) {
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      
   $('#object-address').val(object.address);      
-  $('#object-phone').val(object.phone);      
-  $('#object-manager').val((object.manager == undefined) ? "" : object.manager.id);
+  $('#object-phone').val(object.phone);   
+
+  //Because when we load modal for the first time, we have an object manager
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  $('#object-manager').val((object.manager.id != undefined) ? String(object.manager.id) : object.manager);
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -46,9 +50,9 @@ function drawObject(object, button) {
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
-  listItem.row.add(_object).draw();;
+  listItem.row.add(_object).draw();
 }
 
 function removeObject (object) {
