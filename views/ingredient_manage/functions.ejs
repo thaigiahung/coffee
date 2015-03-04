@@ -193,6 +193,23 @@ function save () {
         {
           if(data.status == 1)
           {
+            //Auto add new ingredient to main store
+            obj = {
+                  "store": 1,
+                  "ingredient": data.Ingredient.id,
+                  "limit": 0,
+                  "instock": 0,
+                  "deleted": 0,
+                  "ingredient_store": data.Ingredient.id+"-1"
+              };
+            var query = {
+                          "from": "IngredientStore",
+                          "action": "create",
+                          "createdata": JSON.stringify(obj)
+                        };
+            $.post("/services/model", query)
+              .done(function(result) {});
+
             object = data.Ingredient;
             //Get datatable
             var listItem = $('#list-item').DataTable();
