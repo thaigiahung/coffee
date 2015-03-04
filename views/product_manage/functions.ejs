@@ -3,6 +3,7 @@ var model = "Product";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm sản phẩm");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,6 +14,7 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật sản phẩm");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      

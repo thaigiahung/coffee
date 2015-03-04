@@ -3,6 +3,7 @@ var model = "ingredientCategory";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm loại nguyên liệu");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,6 +14,7 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật loại nguyên liệu");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      

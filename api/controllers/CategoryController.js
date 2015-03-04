@@ -10,7 +10,7 @@ module.exports = {
         Category.find().exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
-                _name: "loại sản phẩm",
+                _name: " loại sản phẩm",
                 _directory: "product_category_manage/",
                 _add: true
             }); 

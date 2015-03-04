@@ -13,7 +13,7 @@ function add()
 }
 
 function update (object) {
-  console.log(object);
+  $('.modal-title').text("Cập nhật số lượng tồn");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
 
@@ -78,8 +78,6 @@ function removeObject (object) {
             //Get selected row id
             // var rowId = table.row( row ).index();
             listItem.row(row).remove();
-
-            console.log(JSON.stringify(object));
 
             drawObject(object);
             
@@ -185,8 +183,6 @@ function save () {
                       "createdata": JSON.stringify(obj)
                   };
       }
-
-      console.log(data);
       
       $.post("/services/model", data)
         .done(function(data) 
