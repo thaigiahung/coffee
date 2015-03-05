@@ -13,10 +13,14 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật số lượng tồn");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
-  $('#object-ingredient').val(object.ingredient.id);      
-  $('#object-store').val(object.store.id);      
+
+  $('#object-ingredient').val((object.ingredient.id != undefined) ? String(object.ingredient.id) : object.ingredient);
+  $('#object-store').val((object.store.id != undefined) ? String(object.store.id) : object.store);
+  $('#object-instock').val(object.instock);  
+  $('#object-limit').val(object.limit);   
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -44,8 +48,7 @@ function drawObject(object, button) {
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
-
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
   listItem.row.add(_object).draw();
 }
@@ -76,8 +79,6 @@ function removeObject (object) {
             // var rowId = table.row( row ).index();
             listItem.row(row).remove();
 
-            console.log(JSON.stringify(object));
-
             drawObject(object);
             
             $('#errorModelMessage').text(data.message);
@@ -92,17 +93,72 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var ingredient = $('#object-ingredient').val();
+  var store = $('#object-store').val();
+  var instock = $('#object-instock').val();
+  var limit = $('#object-limit').val();
+
+  if(ingredient == null) //ingredient is null
+  {
+    $('#message').text("Nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(store == null) //ingredient is null
+  {
+    $('#message').text("Cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(instock == "") //instock is null
+  {
+    $('#message').text("Số lượng tồn không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(limit == "") //limit is null
+  {
+    $('#message').text("Mức báo động không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(limit)) //limit is null
+  {
+    $('#message').text("Mức báo động không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(instock)) //instock is null
+  {
+    $('#message').text("Số lượng tồn không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var ingredient = $('#object-ingredient').val();
       var store = $('#object-store').val();
       var instock = $('#object-instock').val();
       var limit = $('#object-limit').val();
-      
+      var status = $('input[name=object-status]:checked').val();
+
       var obj = {
                   "ingredient": ingredient,
                   "store": store,
                   "instock": instock,
+                  "deleted": status,
                   "limit": limit
               };
       //If type == 0 -> action is update
@@ -124,12 +180,9 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj),
-                      "log": true
+                      "createdata": JSON.stringify(obj)
                   };
       }
-
-      console.log(data);
       
       $.post("/services/model", data)
         .done(function(data) 
@@ -173,6 +226,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

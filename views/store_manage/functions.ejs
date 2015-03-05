@@ -3,6 +3,7 @@ var model = "Store";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm cửa hàng");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,12 +14,17 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật cửa hàng");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      
   $('#object-address').val(object.address);      
-  $('#object-phone').val(object.phone);      
-  $('#object-manager').val((object.manager == undefined) ? "" : object.manager.id);
+  $('#object-phone').val(object.phone);   
+
+  //Because when we load modal for the first time, we have an object manager
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  $('#object-manager').val((object.manager.id != undefined) ? String(object.manager.id) : object.manager);
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -46,9 +52,9 @@ function drawObject(object, button) {
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
-  listItem.row.add(_object).draw();;
+  listItem.row.add(_object).draw();
 }
 
 function removeObject (object) {
@@ -91,7 +97,55 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var address = $('#object-address').val();
+  var phone = $('#object-phone').val();
+  var manager = $('#object-manager').val();
+  var phoneReg = /0[1-9][0-9]{8,13}/;    
+
+  if(address == "") //address is null
+  {
+    $('#message').text("Địa chỉ không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(phone == "") //phone is null
+  {
+    $('#message').text("Số điện thoại không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(!phoneReg.exec(phone)) //phone is null
+  {
+    $('#message').text("Số điện thoại không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(manager == null) //manager is null
+  {
+    $('#message').text("Quản lý cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var address = $('#object-address').val();
@@ -130,7 +184,6 @@ function save () {
                       "createdata": JSON.stringify(obj)
                   };
       }
-      
       $.post("/services/model", data)
         .done(function(data) 
         {
@@ -173,6 +226,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

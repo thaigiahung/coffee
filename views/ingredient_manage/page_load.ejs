@@ -21,4 +21,10 @@ $(document).ready(function() {
         $('#object-category').append('<option value='+value.id+'>'+value.name+'</option>');
       });
     });
+
+    var units = ['p','mg','ml','g','l','kg'];
+    $('#object-unit').append('<option value='+units[0]+' selected="selected">'+units[0]+'</option>');
+    for(var i = 1 ; i < units.length; i++) {
+      $('#object-unit').append('<option value='+units[i]+'>'+units[i]+'</option>');
+    }
 });

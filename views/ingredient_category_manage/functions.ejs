@@ -3,6 +3,7 @@ var model = "ingredientCategory";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm loại nguyên liệu");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,6 +14,7 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật loại nguyên liệu");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      
@@ -42,7 +44,7 @@ function drawObject(object, button) {
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
   listItem.row.add(_object).draw();
 }
@@ -90,9 +92,16 @@ function removeObject (object) {
 
 function validate () {
   var name = $('#object-name').val();
-  if(name == "") //name is null
+  var description = $('#object-description').val();
+  if(description == "") //description is null
   {
-    $('#message').text("Tên nguyên liệu không được để trống!");
+    $('#message').text("Mô tả không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên loại nguyên liệu không được để trống!");
     $('#message').show();
     return false;
   }

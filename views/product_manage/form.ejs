@@ -2,25 +2,25 @@
   <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
   <form role="form">
     <div class="form-group">
-      <label for="object-name">Tên <%= _name %></label>
+      <label for="object-name">Tên <%= _name %> *</label>
       <input type="hidden" class="form-control" id="hd-action-type">
       <input type="hidden" class="form-control" id="hd-object-id">
-      <input type="text" class="form-control" id="object-name" placeholder="Tên <%= _name %>">
+      <input type="text" class="form-control" id="object-name" placeholder="Tên <%= _name %>" maxlength="20">
     </div>
     <div class="form-group">
-      <label for="object-category">Loại <%= _name %></label>
+      <label for="object-category">Loại <%= _name %> *</label>
       <select class="form-control" id="object-category"></select>
     </div>
     <div class="form-group">
-      <label for="object-price">Giá</label>
-      <input type="text" class="form-control" id="object-price" placeholder="Giá">
+      <label for="object-price">Giá *</label>
+      <input type="text" class="form-control" id="object-price" placeholder="Giá" maxlength="20">
     </div>
     <!-- <div class="form-group">
       <label for="object-image">Hình ảnh</label>
       <input type="file" id="object-image">
     </div> -->
     <div class="form-group">
-      <label for="object-description">Mô tả</label>
+      <label for="object-description">Mô tả *</label>
       <input type="text" class="form-control" id="object-description" placeholder="Mô tả">
     </div>
     <div class="form-group" id="div-status">

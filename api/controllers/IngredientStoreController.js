@@ -10,7 +10,7 @@ module.exports = {
         IngredientStore.find().populate('store').populate('ingredient').exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
-                _name: "nguyên liệu",
+                _name: " số lượng tồn",
                 _directory: "ingredient_store_manage/",
                 _add: false
             }); 

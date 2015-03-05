@@ -317,7 +317,7 @@ module.exports = {
         Ingredient.find().populate('category').exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
-                _name: "nguyên liệu",
+                _name: " nguyên liệu",
                 _directory: "ingredient_manage/",
                 _add: true
             }); 

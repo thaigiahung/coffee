@@ -3,6 +3,7 @@ var model = "Product";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm sản phẩm");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,10 +14,17 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật sản phẩm");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      
-  $('#object-category').val((object.category == undefined) ? "" : object.category.id);
+
+  //Because when we load modal for the first time, we have an object category
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  $('#object-category').val((object.category.id != undefined) ? String(object.category.id) : object.category);
+  // $('#object-category').val((object.category == undefined) ? "" : object.category.id);
+
   $('#object-price').val(object.price);      
   $('#object-description').val((object.description == undefined) ? "" : object.description);
 
@@ -40,16 +48,15 @@ function drawObject(object, button) {
     object.name,
     $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     object.price,
-    'null',
     (object.description == undefined) ? "" : object.description,
     (deleted == false) ? "Kích hoạt" : "Đã xóa"
   ];
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
-  listItem.row.add(_object).draw();;
+  listItem.row.add(_object).draw();
 }
 
 function removeObject (object) {
@@ -92,7 +99,53 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var description = $('#object-description').val();
+  var category = $('#object-category').val();
+  var price = $('#object-price').val();
+  if(description == "") //description is null
+  {
+    $('#message').text("Mô tả không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(category == null) //category is null
+  {
+    $('#message').text("Loại sản phẩm không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(price == "") //price is null
+  {
+    $('#message').text("Giá không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(isNaN(price)) //price is null
+  {
+    $('#message').text("Giá ko hợp lệ!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên sản phẩm không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var category = $('#object-category').val();
@@ -175,6 +228,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

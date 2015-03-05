@@ -3,6 +3,7 @@ var model = "ingredient";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Thêm nguyên liệu");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,6 +14,7 @@ function add()
 }
 
 function update (object) {
+  $('.modal-title').text("Cập nhật nguyên liệu");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);  
@@ -51,7 +53,7 @@ function drawObject(object, button) {
 
   _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+object.id+"' onClick=removeObject("+JSON.stringify(object)+") class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
 
 
   listItem.row.add(_object).draw();
@@ -97,7 +99,58 @@ function removeObject (object) {
           $('#errorModal').modal('hide');
         });
 }
+
+function validate () {
+  var name = $('#object-name').val();
+  var description = $('#object-description').val();
+  var unit = $('#object-unit').val();
+  var category = $('#object-category').val();
+  if(description == "") //description is null
+  {
+    $('#message').text("Mô tả không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Tên nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(category == null) //category is null
+  {
+    $('#message').text("Loại nguyên liệu không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(unit == "") //unit is null
+  {
+    $('#message').text("Đơn vị không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(unit != "g" 
+  && unit != "mg"
+  && unit != "p"
+  && unit != "kg"
+  && unit != "ml"
+  && unit != "l") //unit is not defined
+  {
+    $('#message').text("Đơn vị phải là 1 trong các loại sau : p, mg, ml, g, l, kg!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
 function save () {
+  var status = validate();
+  if(status)
+  {
       var type = $('#hd-action-type').val();
       var name = $('#object-name').val();
       var description = $('#object-description').val();
@@ -131,8 +184,9 @@ function save () {
         data = {
                       "from": model,
                       "action": "create",
-                      "createdata": JSON.stringify(obj),
-                      "populate": ["IngredientCategory"]
+                      "createdata": JSON.stringify(obj)
+                      // create don't have populate
+                      // ,"populate": ["IngredientCategory"]
                   };
       }
       
@@ -141,6 +195,23 @@ function save () {
         {
           if(data.status == 1)
           {
+            //Auto add new ingredient to main store
+            obj = {
+                  "store": 1,
+                  "ingredient": data.Ingredient.id,
+                  "limit": 0,
+                  "instock": 0,
+                  "deleted": 0,
+                  "ingredient_store": data.Ingredient.id+"-1"
+              };
+            var query = {
+                          "from": "IngredientStore",
+                          "action": "create",
+                          "createdata": JSON.stringify(obj)
+                        };
+            $.post("/services/model", query)
+              .done(function(result) {});
+
             object = data.Ingredient;
             //Get datatable
             var listItem = $('#list-item').DataTable();
@@ -178,6 +249,7 @@ function save () {
           $('#message').text('Không thể cập nhật '+_name);
           $('#message').show();
         });
+  }
 }
 function resetForm()
 {

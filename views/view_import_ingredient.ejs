@@ -2,14 +2,31 @@
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
 <div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Nhập kho</h1>
+    </div> 
+</div>
+<div id="deleteform" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Cảnh báo</h4>
+              </div>
+              <div class="modal-body">
+                Bạn có chắc muốn hủy bỏ tất cả mọi thông tin đã nhập không?
+
+              </div>
+              <div class="modal-footer">
+                <button type="button"  class="btn btn-primary update" data-dismiss="modal">Không</button>
+                <button type="button" id="btncancel3" class="btn btn-danger remove">Có</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+<div class="row">
         <div class="col-lg-12">
             <div class="panel panel-default">
-                <div id="warningpopup" title="Cảnh báo">
-                    Bạn có chắc muốn hủy bỏ mọi thông tin đã nhập?
-                </div>
-                <div class="panel-heading">
-                    <b>Nhập kho</b>
-                </div>
                 <div class= "panel-body">
                     <div class="table-responsive">
                         <div  id="onestore">
@@ -58,7 +75,7 @@
         </div>
 </div>
 </div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnchange1" value="Nhập"></input> <input type="button" id="btncancel1" value="Hủy"></input>  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnchange1" class="btn btn-primary update" value="Nhập"></input> <input type="button" id="btncancel1" class="btn btn-danger remove" value="Hủy"></input>  
 </form>
 <script type="text/javascript" charset="utf-8">
 var y = 5;
@@ -110,27 +127,12 @@ var y = 5;
     };
     $("#btncancel1").click(function()//cancel all choices from onestore table
     {
-        /*for (var i = 6; i <= y; i++) 
-        {
-            $("#onestoretr"+i+"").remove();
-        };
-        y=5;*/
-        
-    $("#warningpopup").dialog({
-      resizable: false,
-      height:200,
-      modal: true,
-      buttons: {
-        "Vâng": function() 
-        {  
-          $( this ).dialog( "close" );
-           window.location.reload();
-        },
-        Không: function() {
-          $( this ).dialog( "close" );
-        }
-      }
+        $("#deleteform").modal();
     });
+    
+    $("#btncancel3").click(function()//cancel all choices from onestore table
+    {
+    window.location.reload();
     });
     
     function ChangeIngredient(row)
@@ -168,6 +170,11 @@ var y = 5;
     };
     $("#btnadd1").click(function()
     {
+        if(y>=20)
+        {
+            alert("Bạn đã vượt quá số lượng hàng cho phép (20)!");
+            return false;
+        }
         y=y+1;
         $("#tbody1").append("<tr id='onestoretr"+y+"'><td><select id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label id='mainstorage"+y+"'></label></td><td><input type='text' id='mainstorageaddstock"+y+"'></input></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
         $("#ingredientlist"+y+"").empty();
