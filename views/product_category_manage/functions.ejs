@@ -93,14 +93,8 @@ function removeObject (object) {
 
 function validate () {
   var name = $('#object-name').val();
-  var description = $('#object-description').val();
-  if(description == "") //description is null
-  {
-    $('#message').text("Mô tả không được để trống!");
-    $('#message').show();
-    return false;
-  }
-  else if(name == "") //name is null
+  
+  if(name == "") //name is null
   {
     $('#message').text("Tên loại sản phẩm không được để trống!");
     $('#message').show();

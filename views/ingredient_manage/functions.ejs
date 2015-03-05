@@ -26,6 +26,7 @@ function update (object) {
   
   $('#object-description').val((object.description == undefined) ? "" : object.description);
   $('#object-unit').val(object.unit);
+  $('#object-price').val(object.price);
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -48,6 +49,7 @@ function drawObject(object, button) {
     $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     (object.description == undefined) ? "" : object.description,
     object.unit,
+    object.price,
     (deleted == false) ? "Kích hoạt" : "Đã xóa",
   ];
 
@@ -102,16 +104,11 @@ function removeObject (object) {
 
 function validate () {
   var name = $('#object-name').val();
-  var description = $('#object-description').val();
   var unit = $('#object-unit').val();
+  var price = $('#object-price').val();
   var category = $('#object-category').val();
-  if(description == "") //description is null
-  {
-    $('#message').text("Mô tả không được để trống!");
-    $('#message').show();
-    return false;
-  }
-  else if(name == "") //name is null
+
+  if(name == "") //name is null
   {
     $('#message').text("Tên nguyên liệu không được để trống!");
     $('#message').show();
@@ -140,6 +137,18 @@ function validate () {
     $('#message').show();
     return false;
   }
+  else if(price == "") //price is null
+  {
+    $('#message').text("Giá không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(!validatePrice(price)) //price is null
+  {
+    $('#message').text("Giá không hợp lệ!");
+    $('#message').show();
+    return false;
+  }
   else
   {
     $('#message').hide();
@@ -156,11 +165,13 @@ function save () {
       var description = $('#object-description').val();
       var status = $('input[name=object-status]:checked').val();
       var category = $('#object-category').val();
+      var price = $('#object-price').val();
       var unit = $('#object-unit').val();
       
       var obj = {
                   "name": name,
                   "category": category,
+                  "price": price,
                   "description": description,
                   "unit": unit,
                   "deleted": status
@@ -202,6 +213,7 @@ function save () {
                   "limit": 0,
                   "instock": 0,
                   "deleted": 0,
+                  "price": 0,
                   "ingredient_store": data.Ingredient.id+"-1"
               };
             var query = {
@@ -256,5 +268,6 @@ function resetForm()
   $('#object-name').val("");
   $('#object-description').val("");
   $('#object-unit').val("");
+  $('#object-price').val("");
   $('input[name=object-status]').attr("checked", false);
 }
