@@ -189,6 +189,32 @@ function save () {
         {
           if(data.status == 1)
           {
+            //Auto add all ingredient to this store
+            $.post("/services/model",{ from: "ingredient", where: JSON.stringify({ "deleted": 0})},function(result){
+                if(result.status == 1)
+                {
+                  var ingredients = result.Ingredient;
+                  for(var i = 0; i < ingredients.length; i++)
+                  {
+                    obj = {
+                          "store": data.Store.id,
+                          "ingredient": ingredients[i].id,
+                          "limit": 0,
+                          "instock": 0,
+                          "deleted": 0,
+                          "ingredient_store": ingredients[i].id+"-"+data.Store.id
+                      };
+                    var query = {
+                                  "from": "IngredientStore",
+                                  "action": "create",
+                                  "createdata": JSON.stringify(obj)
+                                };
+                    $.post("/services/model", query)
+                      .done(function(result) {});
+                  }
+                }
+              });
+
             object = data.Store;
             //Get datatable
             var listItem = $('#list-item').DataTable();
