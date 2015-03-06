@@ -125,13 +125,7 @@ function validate () {
     $('#message').text("Đơn vị không được để trống!");
     $('#message').show();
     return false;
-  }
-  else if(price == "") //price is null
-  {
-    $('#message').text("Đơn giá không được để trống!");
-    $('#message').show();
-    return false;
-  }
+  }  
   else if(unit != "g" 
   && unit != "mg"
   && unit != "p"
@@ -145,7 +139,7 @@ function validate () {
   }
   else if(price == "") //price is null
   {
-    $('#message').text("Giá không được để trống!");
+    $('#message').text("Đơn giá không được để trống!");
     $('#message').show();
     return false;
   }
