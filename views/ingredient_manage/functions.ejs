@@ -208,7 +208,6 @@ function save () {
         {
           if(data.status == 1)
           {
-<<<<<<< HEAD
             //Auto add new ingredient to main store
             obj = {
                   "store": 1,
@@ -226,7 +225,7 @@ function save () {
                         };
             $.post("/services/model", query)
               .done(function(result) {});
-=======
+
             //Auto add new ingredient to all store
             $.post("/services/model",{ from: "store", where: JSON.stringify({ "deleted": 0})},function(result){
                 if(result.status == 1)
@@ -252,7 +251,6 @@ function save () {
                   }
                 }
               });
->>>>>>> hung_262_AutoAddIngredientStore
 
             object = data.Ingredient;
             //Get datatable
