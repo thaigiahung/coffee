@@ -32,6 +32,18 @@
                 
                         <div  id="onestore">
                             <form>
+                                 <select id="allstoreslist" onchange="ChangeStore();" class="form-control">
+                                    <p>Date: <input type="text" id="datepicker"></p>
+                                                    <option value="0">Cửa hàng</option>
+                                                    <script type="text/javascript">
+                                                        $.getJSON("http://localhost:1337/store/view/0",function(datas){
+                                                       for (var i = 0; i < datas.store.length; i++) {
+                                                           $("#allstoreslist").append("<option value ='"+datas.store[i].id+"'  id='store"+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
+                                                       };
+                                                    });
+                                                    </script>
+                                                </select>
+                                                <br></br>
                                 <table class="table table-striped table-bordered table-hover" >
                                     <thead>
                                         <th>
@@ -56,16 +68,7 @@
                                     <tbody id="tbody1">
                                         <tr id="onestoretr1">
                                             <td>
-                                                <b>#1</b> <select id="allstoreslist" onchange="ChangeStore();">
-                                                    <option value="0">Cửa hàng</option>
-                                                    <script type="text/javascript">
-                                                        $.getJSON("http://localhost:1337/store/view/0",function(datas){
-                                                       for (var i = 0; i < datas.store.length; i++) {
-                                                           $("#allstoreslist").append("<option value ='"+datas.store[i].id+"'  id='store"+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
-                                                       };
-                                                    });
-                                                    </script>
-                                                </select>
+                                                <b>#1</b>
                                             </td>
                                             <td>
                                                 <select id="onestoreingredientlist1" onchange="ChangeIngredient(1);">
@@ -310,4 +313,8 @@ var y = 5;
             }
         });
     });
+  $(function() {//datepicker code
+    $( "#datepicker" ).datepicker();
+  });
+
 </script>
