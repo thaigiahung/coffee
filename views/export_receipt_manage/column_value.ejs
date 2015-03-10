@@ -1,0 +1,15 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+
+    <td><%= obj.receiptid %></td>
+    <td><%= obj.store.name %></td>
+    <td><%= obj.user.name %></td>
+    <td><%= obj.time %></td>
+    <td><%= obj.note %></td>
+
+    <td>
+      <button type="button" id="btnDetail<%= obj.id %>" onClick="detail(<%= obj.billid %>)" class="btn btn-primary update">Chi tiết</button> 
+    </td>
+
+  </tr>
+<% }) %>

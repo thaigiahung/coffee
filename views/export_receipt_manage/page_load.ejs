@@ -1,0 +1,19 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+
+    //Load Product Category
+    $.get( '/services/model?from=user&where={"deleted": false}', function( data ) {
+      var users = data.User;
+      $.each( users, function( key, value ) {
+        $('#object-user').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+    
+    //Load Product Category
+    $.get( '/services/model?from=store&where={"deleted": false}', function( data ) {
+      var store = data.Store;
+      $.each( store, function( key, value ) {
+        $('#object-store').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

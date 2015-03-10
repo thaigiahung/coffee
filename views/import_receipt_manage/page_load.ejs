@@ -1,0 +1,11 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+
+    //Load Product Category
+    $.get( '/services/model?from=user&where={"deleted": false}', function( data ) {
+      var users = data.User;
+      $.each( users, function( key, value ) {
+        $('#object-user').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

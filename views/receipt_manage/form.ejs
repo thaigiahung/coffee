@@ -1,0 +1,55 @@
+<div class="modal-body">
+<div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
+  <form role="form">
+    <div class="form-group">
+      <label for="object-billid">Mã <%= _name %> *</label>
+      <input type="hidden" class="form-control" id="hd-action-type">
+      <input type="hidden" class="form-control" id="hd-object-id">
+      <input type="text" class="form-control" id="object-billid" placeholder="Mã <%= _name %>" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-customer">Khách hàng *</label>
+      <select class="form-control" id="object-customer"></select>
+    </div>
+    <div class="form-group">
+      <label for="object-user">Nhân viên *</label>
+      <select class="form-control" id="object-user"></select>
+    </div>
+    <div class="form-group">
+      <label for="object-store">Cửa hàng *</label>
+      <select class="form-control" id="object-store"></select>
+    </div>
+    <div class="form-group">
+      <label for="object-tax">Thuế (%)*</label>
+      <input type="text" class="form-control" id="object-tax" placeholder="Thuế" maxlength="5">
+    </div>
+    <div class="form-group">
+      <label for="object-discount">Giảm giá (%)</label>
+      <input type="text" class="form-control" id="object-discount" placeholder="Giảm giá" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-coupon">Coupon</label>
+      <input type="text" class="form-control" id="object-coupon" placeholder="Coupon" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-time">Thời gian *</label>
+      <input type="text" class="form-control" id="object-time" placeholder="Thời gian" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-subtotal">Tổng tạm tính *</label>
+      <input type="text" class="form-control" id="object-subtotal" placeholder="Tổng tạm tính" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-total">Tổng tiền *</label>
+      <input type="text" class="form-control" id="object-total" placeholder="Tổng tiền" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-received">Tiền khách đưa *</label>
+      <input type="text" class="form-control" id="object-received" placeholder="Tiền khách đưa" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-totalitem">Tổng số mặt hàng *</label>
+      <input type="text" class="form-control" id="object-totalitem" placeholder="Tổng số mặt hàng" maxlength="20">
+    </div>
+  </form>
+</div>
