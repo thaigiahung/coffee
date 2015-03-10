@@ -73,8 +73,12 @@ module.exports.routes = {
   'get /import': {
     view: 'view_import_ingredient'
   },
-  'get /export': {
+  /*'get /export': {
     view: 'view_export_ingredient'
+  },*/
+  '/export': {
+    controller: 'IngredientController',
+    action: 'viewExportIngredient'
   },
   'get /export1': {
     view: 'view_export_ingredient1'
