@@ -15,9 +15,11 @@ module.exports = {
 
         time: {type: 'datetime'},
 
-        user: {type: 'user'},
+        user: {model: 'user'},
 
         note: {type: 'string'},
+
+        store: { model: 'store' },
   }
 };
 
