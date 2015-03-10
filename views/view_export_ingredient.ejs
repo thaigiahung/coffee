@@ -55,8 +55,12 @@
                                                     <option value="0">Cửa hàng</option>
                                                     <script type="text/javascript">
                                                         $.getJSON("http://localhost:1337/store/view/0",function(datas){
-                                                       for (var i = 0; i < datas.store.length; i++) {
+                                                       for (var i = 0; i < datas.store.length; i++) 
+                                                       {
+                                                        if(datas.store[i].deleted==0)
+                                                        {
                                                            $("#allstoreslist").append("<option  value ='"+datas.store[i].id+"'  id='store"+datas.store[i].id+"'>"+datas.store[i].name+"</option>");
+                                                       }
                                                        };
                                                     });
                                                     </script>
@@ -394,7 +398,6 @@ var y = 5;
             alert("Bạn phải chuyển ít nhất một nguyên liệu!");
             return false;
         }
-        
         $.post("services/model",{"from":"ExportReceipt"},function(result)
         {
             for (var i = 0; i < result.ExportReceipt.length; i++) 
@@ -410,80 +413,154 @@ var y = 5;
             if(error==1)
             {
                 return false;
-            };
-            //Input Receipt Information
-            //var user= 1;//save for editing later
-            var note = $("#note").val();
-            var time = $( "#datepicker" ).datepicker( "option", "dateFormat", "mm/dd/yy" ).val();//format date to input into db
-            var data1 = {"receiptid":receiptid,"time":time,"note":note};
-            $.post("services/model",{"from":"ExportReceipt","action":"create","createdata":JSON.stringify(data1)},function(result)
+            }
+            if(error==0)
             {
-                if(result.status ==1)
+                //Input Receipt Information
+                //var user= 1;//save for editing later
+                var note = $("#note").val();
+                var time = $( "#datepicker" ).datepicker( "option", "dateFormat", "mm/dd/yy" ).val();//format date to input into db
+                var amount=[];
+                var ingreid=[];
+                var price = [];
+                var dem =1;
+                var data1 = {"receiptid":receiptid,"time":time,"note":note};
+                $.post("services/model",{"from":"ExportReceipt","action":"create","createdata":JSON.stringify(data1)},function(result)
                 {
-                    //input receiptitem
-                    for (var i = 1; i <=y; i++) 
+                    if(result.status ==1)
                     {
-                        if($("#onestoretr"+i+"").length)//check if the row is deleted or not
+                        
+                        var where2= {"receiptid":receiptid};
+                        //get the id of Receipt
+                        $.post("services/model",{"from":"ExportReceipt","where":JSON.stringify(where2)},function(result3)
                         {
-                            if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()!="")
+                            if(result3.status==1)
                             {
-                                //gather receiptitem information
-                                var amount = parseInt($("#onestoreaddstock"+i+"").val());
-                                var id = $("#onestoreingredientlist"+i+"").val();
-                                var where2 = {"id":id};
-                                $.post("services/model",{"from":"IngredientStore","where":JSON.stringify(where2)},function(result)
+                                var idreceipt = result3.ExportReceipt[0].id;
+                                //get id of the main ingredient
+                                for (var i = 1; i <=y; i++) 
                                 {
-                                    if(result.status==1)
+                                    if($("#onestoretr"+i+"").length)//check if the row is deleted or not
                                     {
-                                        var ingreid= result.IngredientStore[0].ingredient;
-                                        var where3 = {"id":ingreid};
-                                        $.post("services/model",{"from":"Ingredient","where":JSON.stringify(where3)},function(result)
-                                        {
-                                            var finalid= result.Ingredient[0].id;
-                                            var price = result.Ingredient[0].price;
-                                            alert(finalid);
-                                            alert(price);
-                                            var total = amount*price;
-                                            alert(total);
-                                            
+                                        if($("#onestoreingredientlist"+i+"").val()!=0&&$("#onestoreaddstock"+i+"").val()!="")
+                                         {
 
-                                        });
+                                    
+                                            amount.push(parseFloat($("#onestoreaddstock"+i+"").val()));
+                                            var ingredientid1 = parseInt($("#onestoreingredientlist"+i+"").val());
+                                            var where3={"id":ingredientid1};
+                                    $.post("services/model",{"from":"IngredientStore","where":JSON.stringify(where3)},function(result4){
+                                        if(result4.status==1)
+                                        {
+                                             ingreid.push(result4.IngredientStore[0].ingredient);
+                                            var ingreid1 = result4.IngredientStore[0].ingredient;
+                                            //get unitprice
+                                            var where4 = {"id":ingreid1};
+                                            $.post("services/model",{"from":"ingredient","where":JSON.stringify(where4)},function(result5){
+                                                if(result5.status==1)
+                                                {
+                                                    
+                                                        
+                                                        price.push(result5.Ingredient[0].price);
+                                                        if(dem==amount.length)
+                                                        {
+                                                        for (var i = 0; i < amount.length; i++) 
+                                                            {
+                                                                var total = amount[i]*price[i];
+                                                                alert(idreceipt);
+                                                                alert(ingreid[i]);
+                                                                alert(amount[i]);
+                                                                alert(price[i]);
+                                                                alert(total);
+                                                                var receiptitemdata= {"receiptid":idreceipt,"ingredient":ingreid[i],"amount":amount[i],"unitprice":price[i],"total":total};
+                                                                $.post("services/model",{"from":"ExportReceiptItem","action":"create","createdata":JSON.stringify(receiptitemdata)},function(result6)
+                                                                {
+                                                                    if(result6.status==1)
+                                                                    {
+                                                                        
+                                                                    }
+                                                                    if(result6.status==0)
+                                                                    {
+                                                                        alert("Thất bại");
+                                                                        return false;
+                                                                    };
+                                                                });
+
+                                                            };
+                                                            window.location.reload();
+                                                        }
+                                                        else
+                                                        {
+                                                            dem=dem+1;
+                                                        }
+                                                        /*var receiptitemdata = {"receiptid":idreceipt,"amount":amount[d],"ingredient":};
+                                                        $.post("services/model",{"from":"ExportReceiptItem","action":"create","createdata"},);*/
+
+                                                    
+                                                    /*var price = result5.Ingredient[0].price;
+                                                    alert(idreceipt);
+                                                    alert(ingreid);
+                                                    alert(amount);
+                                                    alert(price);
+                                                    var total = amount*price;
+                                                    alert(total);*/
+                                                }
+
+                                            });
+                                        
+                                        }
+                                    });
                                     }
-                                    if(result.status==0)
-                                    {
-                                        alert("Không thể tạo chi tiết hóa đơn, xin vui lòng thử lại");
-                                        //code developed in future
-                                        return false;
-                                    }
-                                });
+                                }
+
+                            };
                             }
-                        }
+                                
+                            if(result3.status==0)
+                            {
+                                return false;
+                            }
+                        });
                     }
-                    //
-                }
-                if(result.status==0)
+                    if(result.status==0)
+                    {
+                        alert("Không thể lưu thông tin hóa đơn xuất kho!");
+                        return false;
+                    }
+                });
+            }
+        });
+
+            /* //Input Receipt Information
+                //var user= 1;//save for editing later
+                var note = $("#note").val();
+                var time = $( "#datepicker" ).datepicker( "option", "dateFormat", "mm/dd/yy" ).val();//format date to input into db
+                var data1 = {"receiptid":receiptid,"time":time,"note":note};
+                $.post("services/model",{"from":"ExportReceipt","action":"create","createdata":JSON.stringify(data1)},function(result)
                 {
-                    alert("Không thể lưu thông tin hóa đơn xuất kho!");
-                    return false;
-                }
-            });
-                    
-            /*$.post("/ingredient/export/set",{option:1,data:JSON.stringify(data)},function(result2)
+                    if(result.status ==1)
+                    {
+                        //input receiptitem
+                        alert("Lưu hóa đơn thành công");
+                    }
+                    if(result.status==0)
+                    {
+                        alert("Không thể lưu thông tin hóa đơn xuất kho!");
+                        return false;
+                    }
+                });*/  
+            $.post("/ingredient/export/set",{option:1,data:JSON.stringify(data)},function(result2)
         {
             if(result2.status==1)
             {
             alert(result2.message);
-            window.location.reload();
             }
             if(result2.status==0)
             {
                 alert(result2.message+", xin vui lòng kiểm tra lại số lượng đã nhập.");
                 return false;
             }
-        });*/
         });
-        
-    
     });
   $(function() {//datepicker code
     $( "#datepicker" ).datepicker();
