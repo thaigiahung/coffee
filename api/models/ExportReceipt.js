@@ -18,6 +18,8 @@ module.exports = {
         user: {model: 'user'},
 
         note: {type: 'string'},
+
+        store: { model: 'store' },
   }
 };
 
