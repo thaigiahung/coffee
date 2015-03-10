@@ -1,0 +1,211 @@
+$(function() {
+$( "#object-time" ).datepicker();
+// $( "#object-time" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+});
+
+var model = "exportReceipt";
+
+function add()
+{
+  resetForm();
+  $('.modal-title').text("Thêm hóa đơn");
+  $('#message').hide();
+  $('#form').modal();
+  $('#hd-action-type').val("1");
+
+  //Hide status because new category should always be activated
+  $('#div-status').hide();
+  $( "#rdoStatus2" ).prop( "checked", true );
+}
+
+function validate () {
+  var receiptid = $('#object-receiptid').val();
+  var user = $('#object-user').val();
+  var time = $('#object-time').val();
+  var store = $('#object-store').val();
+  var note = $('#object-note').val();
+
+  if(time == "")
+  {
+    $('#message').text("Thời gian không được để trống!");
+    $('#message').show();
+    return false;
+  } 
+  else if(validateDate(time) == false)
+  {
+    $('#message').text("Thời gian không hợp lệ!");
+    $('#message').show();
+    return false;
+  } 
+  else if(user == "")
+  {
+    $('#message').text("Nhân viên không được để trống!");
+    $('#message').show();
+    return false;
+  } 
+  else if(store == "")
+  {
+    $('#message').text("Cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  } 
+  else if(receiptid == "")
+  {
+    $('#message').text("Số hóa đơn không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
+function detail(id)
+{
+  //Hide status because new category should always be activated
+  $('#div-status').hide();
+  $( "#rdoStatus2" ).prop( "checked", true );
+    var receiptid = id;
+    var data = {
+                      "from": model+'Item',
+                      "where": JSON.stringify({ "receiptid": receiptid}),
+                      "populate": ["ingredient"]
+                  };
+      $.post("/services/model", data)
+        .done(function(data) {
+          if(data.status == 1)
+          {
+            var bills = data.ExportReceiptItem;
+            // var listItem = $('#list-item').DataTable();
+            $('#detail').modal();
+            // $.each( bills, function( key, value ) {
+            for(var i = 0 ; i < bills.length; i++) {
+              $('#detailItem').append('<tr><td>' +bills[i].receiptid+ '</td><td>' +bills[i].ingredient.name+ '</td><td>' +bills[i].unitprice+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');
+            }
+            // }
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Không thể tìm thấy chi tiết '+_name);
+          $('#message').show();
+        });
+}
+
+function drawObject(object, button) {
+  var listItem = $('#list-item').DataTable();
+
+  //If action is update => object.deleted will be a string => convert it to boolean
+// $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+  var _object = [
+    object.receiptid,
+    object.store,
+    object.user,
+    object.time,
+    object.note,
+    '<button type="button" id="btnDetail'+object.id+'" onClick="detail('+object.receiptid+')" class="btn btn-primary update">Chi tiết</button>'
+  ];
+
+  listItem.row.add(_object).draw();
+}
+
+function save () {
+  var status = validate();
+  if(status)
+  {
+      var type = $('#hd-action-type').val();
+      var receiptid = $('#object-receiptid').val();
+      var user = $('#object-user').val();
+      var time = $('#object-time').val();
+      var note = $('#object-note').val();
+      var store = $('#object-store').val();
+
+
+      var obj = 
+                {
+                  "receiptid": receiptid,
+                  "user": user,
+                  "time": time,
+                  "store": store,
+                  "note": note
+                };
+      //If type == 0 -> action is update
+      //Else action is create
+      var data = null;
+      if(type == 0)
+      {
+        var objectId = $('#hd-object-id').val();
+        
+        data = {
+                      "from": model,
+                      "action": "update",
+                      "where": JSON.stringify({ "id": objectId}),
+                      "updatedata": JSON.stringify(obj)
+                  };
+      }
+      else
+      {
+        data = {
+                      "from": model,
+                      "action": "create",
+                      "createdata": JSON.stringify(obj),
+                      "log": true
+                  };
+      }
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            object = data.ExportReceipt;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+
+            if(type == 0) //If action is update => remove old row
+            {
+              //Because we can update multiple rows => object will be an array not an object like insert
+              object = object[0];
+
+              //Get selected row
+              var row = $("#btnUpdate"+object.id).closest('tr');
+              row = row[0];
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove();
+            }
+
+            
+            drawObject(object, true);
+            //.draw(false) to prevent datatable reload to page 1
+            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
+            
+            $('#form').modal('hide');
+            resetForm();
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Không thể cập nhật '+_name);
+          $('#message').show();
+        });
+  }
+}
+function resetForm()
+{
+  $('#object-name').val("");
+  // $('#object-description').val("");
+  // $('#object-price').val("");
+  $('input[name=object-status]').attr("checked", false);
+}

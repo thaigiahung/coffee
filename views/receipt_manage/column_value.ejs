@@ -1,0 +1,22 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+
+    <td><%= obj.billid %></td>
+    <td><%= obj.customer.name %></td>
+    <td><%= obj.tax %></td>
+    <td><%= obj.discount %></td>
+    <td><%= obj.coupon %></td>
+    <td><%= obj.user.name %></td>
+    <td><%= obj.time %></td>
+    <td><%= obj.store.name %></td>
+    <td><%= obj.subtotal %></td>
+    <td><%= obj.total %></td>
+    <td><%= obj.totalitem %></td>
+    <td><%= obj.received %></td>
+
+    <td>
+      <button type="button" id="btnDetail<%= obj.id %>" onClick="detail(<%= obj.billid %>)" class="btn btn-primary update">Chi tiết</button> 
+    </td>
+
+  </tr>
+<% }) %>

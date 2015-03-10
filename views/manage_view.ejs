@@ -68,6 +68,11 @@
         </div>
         <!-- /.modal -->
 
+        <% if(typeof(_detail) !== 'undefined')
+        if(_detail) { %>
+                <%- partial (_directory+'/detail.ejs') %>
+        <% } %>
+
     </div>
     <!-- /.col-lg-12 -->
 </div>

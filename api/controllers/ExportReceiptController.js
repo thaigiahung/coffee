@@ -7,5 +7,19 @@
 
 module.exports = {
 	
+    viewManage: function(req, res) {
+        ExportReceipt.find()
+        .populate('user')
+        .populate('store')
+        .exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "hóa đơn xuất",
+                _directory: "export_receipt_manage/",
+                _add: true,
+                _detail: true
+            }); 
+        });
+    },
 };
 
