@@ -6,5 +6,19 @@
  */
 
 module.exports = {
+    viewManage: function(req, res) {
+        Bill.find()
+        .populate('customer')
+        .populate('user')
+        .populate('store')
+        .exec(function (err, found) {
+            return res.view('manage_view', {
+                data: found,
+                _name: "hóa đơn",
+                _directory: "receipt_manage/",
+                _add: true
+            }); 
+        });
+    },
 };
 

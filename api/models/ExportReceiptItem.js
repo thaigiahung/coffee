@@ -11,11 +11,11 @@ module.exports = {
 
         id: {type: 'integer', autoIncrement: true, primaryKey: true},
 
-        receiptid: {type: 'string', unique: true, required: true},
+        receiptid: {model: 'ExportReceipt'},
 
         amount: {type: 'float'},
 
-        ingredient: {type: 'ingredient'},
+        ingredient: {model: 'ingredient'},
 
         unitprice: {type: 'float'},
 
