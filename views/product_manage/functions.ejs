@@ -102,16 +102,10 @@ function removeObject (object) {
 
 function validate () {
   var name = $('#object-name').val();
-  var description = $('#object-description').val();
   var category = $('#object-category').val();
   var price = $('#object-price').val();
-  if(description == "") //description is null
-  {
-    $('#message').text("Mô tả không được để trống!");
-    $('#message').show();
-    return false;
-  }
-  else if(category == null) //category is null
+
+  if(category == null) //category is null
   {
     $('#message').text("Loại sản phẩm không được để trống!");
     $('#message').show();
@@ -123,7 +117,7 @@ function validate () {
     $('#message').show();
     return false;
   }
-  else if(isNaN(price)) //price is null
+  else if(!validationPrice(price)) //price is null
   {
     $('#message').text("Giá ko hợp lệ!");
     $('#message').show();

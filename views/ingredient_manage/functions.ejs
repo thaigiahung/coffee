@@ -26,6 +26,7 @@ function update (object) {
   
   $('#object-description').val((object.description == undefined) ? "" : object.description);
   $('#object-unit').val(object.unit);
+  $('#object-price').val(object.price); 
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -48,6 +49,7 @@ function drawObject(object, button) {
     $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
     (object.description == undefined) ? "" : object.description,
     object.unit,
+    object.price,
     (deleted == false) ? "Kích hoạt" : "Đã xóa",
   ];
 
@@ -102,16 +104,11 @@ function removeObject (object) {
 
 function validate () {
   var name = $('#object-name').val();
-  var description = $('#object-description').val();
   var unit = $('#object-unit').val();
+  var price = $('#object-price').val();
   var category = $('#object-category').val();
-  if(description == "") //description is null
-  {
-    $('#message').text("Mô tả không được để trống!");
-    $('#message').show();
-    return false;
-  }
-  else if(name == "") //name is null
+
+  if(name == "") //name is null
   {
     $('#message').text("Tên nguyên liệu không được để trống!");
     $('#message').show();
@@ -128,7 +125,7 @@ function validate () {
     $('#message').text("Đơn vị không được để trống!");
     $('#message').show();
     return false;
-  }
+  }  
   else if(unit != "g" 
   && unit != "mg"
   && unit != "p"
@@ -137,6 +134,18 @@ function validate () {
   && unit != "l") //unit is not defined
   {
     $('#message').text("Đơn vị phải là 1 trong các loại sau : p, mg, ml, g, l, kg!");
+    $('#message').show();
+    return false;
+  }
+  else if(price == "") //price is null
+  {
+    $('#message').text("Đơn giá không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else if(!validatePrice(price)) //price is null
+  {
+    $('#message').text("Giá không hợp lệ!");
     $('#message').show();
     return false;
   }
@@ -156,13 +165,17 @@ function save () {
       var description = $('#object-description').val();
       var status = $('input[name=object-status]:checked').val();
       var category = $('#object-category').val();
+      var price = $('#object-price').val();
       var unit = $('#object-unit').val();
+      var price = $('#object-price').val();
       
       var obj = {
                   "name": name,
                   "category": category,
+                  "price": price,
                   "description": description,
                   "unit": unit,
+                  "price": price,
                   "deleted": status
               };
       //If type == 0 -> action is update
@@ -195,6 +208,7 @@ function save () {
         {
           if(data.status == 1)
           {
+<<<<<<< HEAD
             //Auto add new ingredient to main store
             obj = {
                   "store": 1,
@@ -202,6 +216,7 @@ function save () {
                   "limit": 0,
                   "instock": 0,
                   "deleted": 0,
+                  "price": 0,
                   "ingredient_store": data.Ingredient.id+"-1"
               };
             var query = {
@@ -211,6 +226,33 @@ function save () {
                         };
             $.post("/services/model", query)
               .done(function(result) {});
+=======
+            //Auto add new ingredient to all store
+            $.post("/services/model",{ from: "store", where: JSON.stringify({ "deleted": 0})},function(result){
+                if(result.status == 1)
+                {
+                  var stores = result.Store;
+                  for(var i = 0; i < stores.length; i++)
+                  {
+                    obj = {
+                          "store": stores[i].id,
+                          "ingredient": data.Ingredient.id,
+                          "limit": 0,
+                          "instock": 0,
+                          "deleted": 0,
+                          "ingredient_store": data.Ingredient.id+"-"+stores[i].id
+                      };
+                    var query = {
+                                  "from": "IngredientStore",
+                                  "action": "create",
+                                  "createdata": JSON.stringify(obj)
+                                };
+                    $.post("/services/model", query)
+                      .done(function(result) {});
+                  }
+                }
+              });
+>>>>>>> hung_262_AutoAddIngredientStore
 
             object = data.Ingredient;
             //Get datatable
@@ -256,5 +298,6 @@ function resetForm()
   $('#object-name').val("");
   $('#object-description').val("");
   $('#object-unit').val("");
+  $('#object-price').val("");
   $('input[name=object-status]').attr("checked", false);
 }

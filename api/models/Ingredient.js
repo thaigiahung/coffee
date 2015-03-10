@@ -18,8 +18,11 @@ module.exports = {
 
         deleted: { type: 'boolean', defaultsTo: false },
 
+
+        //price per unit
+        price: { type: 'float', required: true },
+        
         unit: { type: 'string', size: 5, required: true, enum: ['p', 'mg', 'ml' , 'g' , 'l' , 'kg'] },
-        // unit: { type: 'string', size: 5, required: true, enum: ['p', 'mg', 'ml'], defaultsTo: 'cái'},
 
         // limit: {type: 'integer'},
 
