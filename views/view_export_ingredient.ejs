@@ -299,7 +299,9 @@ var y = 5;
             $("#tbody-notification").empty();
             if(result.IngredientStore.length > 0) {
                 for(var i = 0; i < result.IngredientStore.length; i++) {
-                    $("#tbody-notification").append("<tr id='tr-notification"+i+"'><td>"+result.IngredientStore[i].id+"</td><td>"+result.IngredientStore[i].ingredient.name+"</td><td>"+result.IngredientStore[i].ingredient.description+"</td><td>"+result.IngredientStore[i].ingredient.price+"</td><td>"+result.IngredientStore[i].ingredient.unit+"</td></tr>");                    
+                    if(result.IngredientStore[i].instock <= result.IngredientStore[i].limit) {
+                        $("#tbody-notification").append("<tr id='tr-notification"+i+"'><td>"+result.IngredientStore[i].id+"</td><td>"+result.IngredientStore[i].ingredient.name+"</td><td>"+result.IngredientStore[i].ingredient.description+"</td><td>"+result.IngredientStore[i].ingredient.price+"</td><td>"+result.IngredientStore[i].ingredient.unit+"</td></tr>");    
+                    }                                    
                 }
             }            
         });
