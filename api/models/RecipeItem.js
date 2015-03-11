@@ -15,7 +15,16 @@ module.exports = {
 
         ingredient: { model: 'ingredient' },
 
-        amount: { type: 'integer' }
+        amount: { type: 'integer' },
+
+        product_ingredient: { type: 'string', unique: true },
+    },
+
+    beforeValidation : function(values,cb) {
+        if(values.product && values.ingredient) {
+            values.product_ingredient = values.product+"_"+values.ingredient;
+        }
+        cb();
     }
 };
 
