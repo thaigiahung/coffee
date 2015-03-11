@@ -186,8 +186,7 @@
 <script type="text/javascript" charset="utf-8">
 var y = 5;
     $( document ).ready(function()
-    {
-        
+    {        
         for (var y = 2; y <= 5; y++) 
         {
             $("#tbody1").append("<tr id='onestoretr"+y+"'><td><b>#"+y+"</b></td><td><div id='onestoreingredientlistdiv"+y+"' class='form-group'><select id='onestoreingredientlist"+y+"' onchange='ChangeIngredient("+y+");' class='form-control'><option value='0'>Nguyên liệu</option></select></div></td><td><label id='onestoreMain"+y+"' class='form-control-static'></label></td><td><label class='form-control-static' id='onestoreLocal"+y+"'></label></td><td><div id='onestoreaddstockdiv"+y+"' class='form-group'><input class='form-control' type='text' id='onestoreaddstock"+y+"' onkeyup='validate("+y+");' onpaste='validate("+y+");' oninput='validate("+y+");'></input><label id='lbvalidate"+y+"' class='form-control-static'></label></div></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
@@ -208,7 +207,8 @@ var y = 5;
     //All functions related to table one store
     function deleterow1(row)//delete one row in one store table
     {
-        
+        console.log(row);
+        console.log(y);
         if(row==y)//case: user delete the lastest row
         {
             y=y-1;
@@ -372,20 +372,32 @@ var y = 5;
 
     function add() {  
         //Get all tr
-        var tds_id = $("#tbody-notification").find("tr");
-        if(tds_id.length > 0) {
+        var trs = $("#tbody-notification").find("tr");
+        var tbody1 = $("#tbody1").find("tr");
+        //If low inventory
+        if(trs.length > 0) {
+            //If the table below has less row than the above one => add more
+            if(tbody1.length < trs.length) {
+                for(var i = tbody1.length+1; i <= trs.length; i++) {
+                    appendRow(i);
+                }
+                y = trs.length;
+            }
+            //If the table below has more row than the above one => delete
+            else {
+                for(var i = tbody1.length; i > trs.length; i--)
+                {
+                    deleterow1(i);
+                }
+            }
+            
+            
             var ingredient_id, count = 1;
 
-            $.each(tds_id, function() {
-                //By default, we only have 5 row
-                //If tds_id > 5, we must append new row
-                if(count > 5) {
-                    appendRow(count);
-                }
-
+            $.each(trs, function() {
                 //Get First td
                 ingredient_id = $(this).find("td:nth-child(1)").text();
-                console.log(ingredient_id);
+                
                 //Set value to dropdownlist
                 $("#onestoreingredientlist"+count).val(ingredient_id);
 
@@ -415,13 +427,14 @@ var y = 5;
 
         if(store!=0)
         {
-            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+            $("#onestoreingredientlist"+row+"").append($("#onestoreingredientlist1").html());
+            /*$.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
             {
                 for (var i = 0; i < datas1.ingredient.length; i++) 
                 {
                     $("#onestoreingredientlist"+row+"").append("<option value ='"+datas1.ingredient[i].ingredientid+"'  id='ingredient1? "+datas1.ingredient[i].ingredientid+"'>"+datas1.ingredient[i].ingredientname+"</option>");
                 };
-            });
+            });*/
         }
     }
 

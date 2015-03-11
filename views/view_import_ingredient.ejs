@@ -200,17 +200,21 @@ var y = 5;
 
     function add() {
         //Get all tr
-        var tds_id = $("#tbody-notification").find("tr");
-        if(tds_id.length > 0) {
+        var trs = $("#tbody-notification").find("tr");
+        var tbody1 = $("#tbody1").find("tr");
+
+        if(trs.length > 0) {
+            //If the table below has less row than the above one => add more
+            if(tbody1.length < trs.length) {
+                for(var i = tbody1.length+1; i <= trs.length; i++) {
+                    appendRow(i);
+                }
+                y = trs.length;
+            }
+
             var ingredient_id, count = 1;
 
-            $.each(tds_id, function() {
-                //By default, we only have 5 row
-                //If tds_id > 5, we must append new row
-                if(count > 5) {
-                    appendRow(count);
-                }
-
+            $.each(trs, function() {
                 //Get First td
                 ingredient_id = $(this).find("td:nth-child(1)").text();
                 
