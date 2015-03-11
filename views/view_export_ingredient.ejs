@@ -544,7 +544,10 @@ var y = 5;
                 var ingreid=[];
                 var price = [];
                 var dem =1;
-                var data1 = {"receiptid":receiptid,"time":time,"note":note};
+                var store_id = $("#allstoreslist").val();
+                var user_id = 1; //TODO: change user_id with the id of current login user
+                var data1 = {"receiptid":receiptid,"time":time,"note":note,"user": user_id,"store": store_id};
+
                 $.post("services/model",{"from":"ExportReceipt","action":"create","createdata":JSON.stringify(data1)},function(result)
                 {
                     if(result.status ==1)

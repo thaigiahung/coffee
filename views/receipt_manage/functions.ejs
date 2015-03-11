@@ -146,6 +146,7 @@ function detail(id)
             // alert(JSON.stringify(bills));
             // var listItem = $('#list-item').DataTable();
             $('#detail').modal();
+            $('#detailItem').empty();
             // $.each( bills, function( key, value ) {
             for(var i = 0 ; i < bills.length; i++) {
               $('#detailItem').append('<tr><td>' +bills[i].bill+ '</td><td>' +bills[i].product.name+ '</td><td>' +bills[i].price+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');

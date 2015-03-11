@@ -74,6 +74,7 @@ function detail(id)
             // alert(JSON.stringify(bills[0].receiptid));
             // var listItem = $('#list-item').DataTable();
             $('#detail').modal();
+            $('#detailItem').empty();
             // $.each( bills, function( key, value ) {
             for(var i = 0 ; i < bills.length; i++) {
               $('#detailItem').append('<tr><td>' +bills[i].receiptid+ '</td><td>' +bills[i].ingredient.name+ '</td><td>' +bills[i].unitprice+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');
