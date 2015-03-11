@@ -273,7 +273,62 @@ var y = 5;
         {
             $("#allstoreslistdiv").attr('class','form-group has-success');
             //get ingredient list depend on chosen store
-            $.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
+            
+            var name1 = [];
+            var idlist = [];
+            $.post("services/model",{"from":"ingredient"},function(result7)
+            {
+                if(result7.status==0)
+                {
+                    alert("Không tìm thấy nguyên liệu nào trên hệ thống, vui lòng kiểm tra lại!");
+                    return false;
+                }
+                if(result7.status==1)
+                {
+                    var dem=1;
+                    for (var i = 0; i < result7.Ingredient.length; i++) 
+                    {
+                        if(result7.Ingredient[i].deleted==0)
+                        {
+                            var idmainingre=result7.Ingredient[i].id;
+                            name1.push(result7.Ingredient[i].name);
+                            var where5 = {"store":store,"ingredient":idmainingre};
+                            $.post("services/model",{"from":"IngredientStore",where:JSON.stringify(where5)},function(result8)
+                            {
+                                if(result8.status==1)
+                                {
+                                idlist.push(result8.IngredientStore[0].id);
+                                 if(dem==name1.length)
+                                 {
+                                    for (var l = 1; l <=y; l++) 
+                                    {
+                                        for (var m = 0; m < dem; m++) 
+                                        {
+                                        $("#onestoreingredientlist"+l+"").append("<option value ='"+idlist[m]+"'  id='ingredient1? "+idlist[m]+"'>"+name1[m]+"</option>");
+                                        };
+                                    };
+                                    
+                                 }
+                                 else
+                                 {
+                                    dem=dem+1;
+                                 }
+                                    
+                                    
+                                /*$("#onestoreingredientlist"+l+"").append("<option value ='"+result8.IngredientStore[0].ingredient+"'  id='ingredient1? "+result8.IngredientStore[0].ingredient+"'>"+name1+"</option>");*/
+                                }
+                                if(result8.status==0)
+                                {
+                                    alert("fail");
+                                }
+                            });
+                        }
+                    };
+                }
+            })
+
+
+            /*$.getJSON("http://localhost:1337/ingredient/show/"+store+"",function(datas1)
             {
                 if(datas1.status==0)//check if the store has any kinds of ingredient
                 {
@@ -294,7 +349,7 @@ var y = 5;
                 };
                 };
                 
-            });
+            });*/
         };
     };
 
