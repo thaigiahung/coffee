@@ -574,11 +574,7 @@ var y = 5;
                                                         for (var i = 0; i < amount.length; i++) 
                                                             {
                                                                 var total = amount[i]*price[i];
-                                                                alert(idreceipt);
-                                                                alert(ingreid[i]);
-                                                                alert(amount[i]);
-                                                                alert(price[i]);
-                                                                alert(total);
+                
                                                                 var receiptitemdata= {"receiptid":idreceipt,"ingredient":ingreid[i],"amount":amount[i],"unitprice":price[i],"total":total};
                                                                 $.post("services/model",{"from":"ExportReceiptItem","action":"create","createdata":JSON.stringify(receiptitemdata)},function(result6)
                                                                 {
