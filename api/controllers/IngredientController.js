@@ -554,7 +554,7 @@ module.exports = {
 											IngredientStore.update({store: 1, ingredient:obj.ingredient},{instock:obj.mainstock - data.stock}).exec(function(err,updated){});
 
 											//Update Local Store
-											IngredientStore.update({id: obj.id},{instock:obj.instock + data.stock}).exec(function(err,updated){});
+											IngredientStore.update({id: obj.id},{instock:obj.instock + data.stock}, {deleted: 0}).exec(function(err,updated){});
 										}
 									});
 								});
@@ -622,7 +622,7 @@ module.exports = {
 									else //Exist => update
 									{
 										//Update amount of this ingredient in local store	
-										IngredientStore.update({id: foundLocalStore.id},{instock: foundLocalStore.instock + store.stock}).exec(function(err,updated){});
+										IngredientStore.update({id: foundLocalStore.id},{instock: foundLocalStore.instock + store.stock}, {deleted: 0}).exec(function(err,updated){});
 									}
 								});								
 							});			
