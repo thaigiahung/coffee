@@ -561,7 +561,7 @@ module.exports = {
 								return res.json(
 									{
 										"status": 1, 
-										"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+										"message": "Xuất nguyên liệu thành công!"
 									}
 								);
 							}
@@ -629,7 +629,7 @@ module.exports = {
 							return res.json(
 								{
 									"status": 1, 
-									"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+									"message": "Xuất nguyên liệu thành công!"
 								}
 							);			
 						}
