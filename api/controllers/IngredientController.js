@@ -648,9 +648,9 @@ module.exports = {
 	},
 
 	viewExportIngredient: function(req, res) {
-		var query = "SELECT DISTINCT i.`store`,s.`name` FROM `ingredientstore` i JOIN `store` s ON s.`id` = i.`store` where i.store != 1 AND i.`instock` <= i.`limit` ORDER BY i.store";
+		var query = "SELECT DISTINCT i.`store`,s.`name` FROM `ingredientstore` i JOIN `store` s ON s.`id` = i.`store` where s.deleted = 0 AND i.store != 1 AND i.`instock` <= i.`limit` ORDER BY i.store";
 	    IngredientStore.query(query, function(err, stores) {
-	    	Store.find({ id: { '!': 1 }}).exec(function (err, allStores) {
+	    	Store.find({ id: { '!': 1 }, deleted: 0}).exec(function (err, allStores) {
 	    		return res.view('view_export_ingredient', {
 	    		    stores: stores,
 	    		    allStores: allStores
