@@ -1,5 +1,6 @@
 $(document).ready(function() {
     $('#list-item').DataTable();
+    $('#btnAdd').hide();
 
     //Load Product Category
     $.get( '/services/model?from=user&where={"deleted": false}', function( data ) {
