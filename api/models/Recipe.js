@@ -12,9 +12,9 @@ module.exports = {
 
         product: { model: 'product', required: true },
 
-        ingredient: { model: 'ingredient', required: true },
+        // ingredient: { model: 'ingredient', required: true },
 
-        amount: { type: 'integer', required: true },
+        // amount: { type: 'integer', required: true },
 
   }
 };

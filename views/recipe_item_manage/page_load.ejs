@@ -1,0 +1,46 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+    $('.page-header').text('Quản lý công thức của : <%= data[0].product.name %>');
+
+    //Load Product Category
+    $.get( '/services/model?from=product&where={"deleted": false}', function( data ) {
+      var products = data.Product;
+      $.each( products, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj category
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#object-product').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+
+    //Load Product Category
+    $.get( '/services/model?from=ingredient&where={"deleted": false}', function( data ) {
+      var ingredients = data.Ingredient;
+      $.each( ingredients, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj category
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#object-ingredient').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

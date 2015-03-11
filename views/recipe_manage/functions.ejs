@@ -1,0 +1,211 @@
+var model = "Recipe";
+
+function add()
+{
+  resetForm();
+  $('.modal-title').text("Thêm công thức");
+  $('#message').hide();
+  $('#form').modal();
+  $('#hd-action-type').val("1");
+
+  //Hide status because new category should always be activated
+  $('#div-status').hide();
+  $( "#rdoStatus2" ).prop( "checked", true );
+}
+
+function update (object) {
+  $('.modal-title').text("Cập nhật công thức");
+  $('#hd-action-type').val("0");      
+  $('#hd-object-id').val(object.id);
+  $('#object-product').val((object.product.id != undefined) ? String(object.product.id) : object.product);
+
+  //Because when we load modal for the first time, we have an object manager
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  // $('#object-manager').val((object.manager.id != undefined) ? String(object.manager.id) : object.manager);
+
+  // $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
+  $('#div-status').show();
+
+  $('#message').hide();
+  $('#form').modal();
+}
+
+function drawObject(object, button) {
+  var listItem = $('#list-item').DataTable();
+
+  var _object = [
+    object.id,
+    $("#object-product option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+  ];
+
+  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
+  _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnDetail"+ object.product.id +"' onClick='\"location.href = '/recipeitem/manage/view/"+ object.id +"';\"' class='btn btn-danger remove'>Chi tiết</button>";
+
+  listItem.row.add(_object).draw();
+}
+
+// function removeObject (object) {
+//       var obj = {"deleted": true};
+//       var data = {
+//                     "from": model,
+//                     "action": "update",
+//                     "where": JSON.stringify({ "id": object.id}),
+//                     "updatedata": JSON.stringify(obj)
+//                 };
+
+//       $.post("/services/model", data)
+//         .done(function(data) 
+//         {
+//           if(data.status == 1)
+//           {
+//             object = data.Store;
+//             //Get datatable
+//             var listItem = $('#list-item').DataTable();
+//             object = object[0];
+
+//             //Get selected row
+//             var row = $("#btnUpdate"+object.id).closest('tr');
+//             row = row[0];
+//             //Get selected row id
+//             // var rowId = table.row( row ).index();
+//             listItem.row(row).remove();
+
+//             drawObject(object);
+            
+//             $('#errorModelMessage').text(data.message);
+//             $('#errorModelMessage').show();
+//             $('#errorModal').modal('hide');
+//           }
+//         })
+//         .fail(function(error)
+//         {
+//           $('#errorModelMessage').text("Không thể xóa dữ liệu!");
+//           $('#errorModelMessage').show();
+//           $('#errorModal').modal('hide');
+//         });
+// }
+
+function validate () {
+  var product = $('#object-product').val();
+
+  if(product == "") //product is null
+  {
+    $('#message').text("Tên cửa hàng không được để trống!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
+function save () {
+  var status = validate();
+  if(status)
+  {
+      var type = $('#hd-action-type').val();
+      var product = $('#object-product').val();
+      
+      var obj = 
+                {
+                  "product": product,
+                };
+      //If type == 0 -> action is update
+      //Else action is create
+      var data = null;
+      if(type == 0)
+      {
+        var objectId = $('#hd-object-id').val();
+        
+        data = {
+                      "from": model,
+                      "action": "update",
+                      "where": JSON.stringify({ "id": objectId}),
+                      "updatedata": JSON.stringify(obj)
+                  };
+      }
+      else
+      {
+        obj.status = true;
+        data = {
+                      "from": model,
+                      "action": "create",
+                      "createdata": JSON.stringify(obj),
+                      "populate": ["product"]
+                  };
+      }
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            //Auto add all ingredient to this store
+            // $.post("/services/model",{ from: "ingredient", where: JSON.stringify({ "deleted": 0})},function(result){
+            //     if(result.status == 1)
+            //     {
+            //       var ingredients = result.Ingredient;
+            //       for(var i = 0; i < ingredients.length; i++)
+            //       {
+            //         obj = {
+            //               "store": data.Store.id,
+            //           };
+            //         var query = {
+            //                       "from": "IngredientStore",
+            //                       "action": "create",
+            //                       "createdata": JSON.stringify(obj)
+            //                     };
+            //         $.post("/services/model", query)
+            //           .done(function(result) {});
+            //       }
+            //     }
+            //   });
+
+            object = data.Recipe;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+
+            
+            if(type == 0) //If action is update => remove old row
+            {
+              //Because we can update multiple rows => object will be an array not an object like insert
+              object = object[0];
+
+              //Get selected row
+              var row = $("#btnUpdate"+object.id).closest('tr');
+              row = row[0];
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove();
+            }
+
+            
+            drawObject(object, true);
+            //.draw(false) to prevent datatable reload to page 1
+            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
+            
+            $('#form').modal('hide');
+            resetForm();
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Không thể cập nhật '+_name);
+          $('#message').show();
+        });
+  }
+}
+function resetForm()
+{
+  $('#object-product').val("");
+  // $('#object-description').val("");
+  // $('#object-price').val("");
+  $('input[name=object-status]').attr("checked", false);
+}

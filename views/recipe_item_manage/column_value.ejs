@@ -1,0 +1,12 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+    <td><%= obj.ingredient.name %></td>
+    <td><%= obj.amount %></td>
+
+    <td>
+      <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
+      <button type="button" id="btnRemove<%= obj.id %>" onClick="removeObject(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
+    </td>
+  </tr>
+<% }) %>

@@ -103,6 +103,8 @@ module.exports.routes = {
   '/receipt/manage/view': 'BillController.viewManage',
   '/importreceipt/manage/view': 'ImportReceiptController.viewManage',
   '/exportreceipt/manage/view': 'ExportReceiptController.viewManage',
+  '/recipe/manage/view': 'RecipeController.viewManage',
+  '/recipeitem/manage/view/:id': 'RecipeItemController.viewManage',
 /*  '/user/manage/view': 'UserController.viewManage',
   '/chain/manage/view': 'ChainController.viewManage',
   '/store/manage/view': 'StoreController.viewManage',*/

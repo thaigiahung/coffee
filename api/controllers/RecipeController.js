@@ -7,18 +7,17 @@
 
 module.exports = {
     viewManage: function(req, res) {
-        Bill.find()
-        .populate('customer')
-        .populate('user')
-        .populate('store')
+        Recipe.find()
+        .populate('product')
         .exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
-                _name: "hóa đơn",
-                _directory: "receipt_manage/",
+                _name: "công thức",
+                _directory: "recipe_manage/",
                 _add: true
             }); 
         });
     },
 };
+
 

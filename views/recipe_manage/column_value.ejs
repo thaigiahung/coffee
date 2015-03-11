@@ -1,0 +1,10 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+    <td><%= obj.product.name %></td>
+    <td>
+      <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
+      <button type='button' id='btnDetail<%= obj.id %>' onClick="location.href = '/recipeitem/manage/view/<%= obj.product.id %>'" class='btn btn-danger remove'>Chi tiết</button>
+    </td>                            
+  </tr>
+<% }) %>
