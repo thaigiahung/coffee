@@ -80,6 +80,7 @@ function detail(id)
             var bills = data.ExportReceiptItem;
             // var listItem = $('#list-item').DataTable();
             $('#detail').modal();
+            $('#detailItem').empty();
             // $.each( bills, function( key, value ) {
             for(var i = 0 ; i < bills.length; i++) {
               $('#detailItem').append('<tr><td>' +bills[i].receiptid+ '</td><td>' +bills[i].ingredient.name+ '</td><td>' +bills[i].unitprice+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');
@@ -101,7 +102,6 @@ function detail(id)
 
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
-
   //If action is update => object.deleted will be a string => convert it to boolean
 // $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
   var _object = [
