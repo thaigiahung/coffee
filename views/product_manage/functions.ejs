@@ -117,7 +117,7 @@ function validate () {
     $('#message').show();
     return false;
   }
-  else if(!validationPrice(price)) //price is null
+  else if(!validatePrice(price)) //price is null
   {
     $('#message').text("Giá ko hợp lệ!");
     $('#message').show();
