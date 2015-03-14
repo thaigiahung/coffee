@@ -14,7 +14,7 @@ module.exports = {
 
         ingredient: { model: 'ingredient', required: true },
 
-        amount: { type: 'integer', required: true },
+        amount: { type: 'float', required: true },
 
   }
 };
