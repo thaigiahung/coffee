@@ -260,14 +260,39 @@ function ChangeProduct()
 					var dem=1;
 					row = result.Recipe.length;
 					var ingredientlist = [];
+					var units = [];
 					$("#tbodytrtd1").append("<img src='"+result.Recipe[0].product.image+"' width='100%' height='100%'>");
 					$("#tbodytrtd2").append("<h3>"+result.Recipe[0].product.name+"</h3>");
 					for (var i = 0; i < result.Recipe.length; i++) 
 					{
 						var z=i+1;
 						ingredientlist.push(result.Recipe[i].ingredient.id);
-						$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+result.Recipe[i].amount+""+result.Recipe[i].ingredient.unit+"<br></br>");
-						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control' value='"+result.Recipe[i].amount+"'></input></div></td><td><label id='ingredientunitlb"+z+"' class='form-control-static'>"+result.Recipe[i].ingredient.unit+"</label></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
+						units.push(result.Recipe[i].unit);
+						if(units[i]==2)
+						{
+							var newamount = result.Recipe[i].amount*1000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"g<br></br>");
+							
+						}
+						if(units[i]==3)
+						{
+							var newamount = result.Recipe[i].amount*1000000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"mg<br></br>");
+							
+						}
+						if(units[i]==5)
+						{
+							var newamount = result.Recipe[i].amount*1000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"ml<br></br>");
+							
+						}
+						if(units[i]==1||units[i]==4||units[i]==6)
+						{
+							var newamount = result.Recipe[i].amount;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+""+result.Recipe[i].ingredient.unit+"<br></br>");
+							
+						}
+						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control' value='"+newamount+"'></input></div></td><td><select id='ingredientunit"+z+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
 						if(dem==result.Recipe.length)
 						{
 							$.post("services/model",{from:"ingredient"},function(result1)
@@ -287,6 +312,8 @@ function ChangeProduct()
 												{
 													var c= n+1;
 													$("#ingredientlist"+c+"").val(ingredientlist[n]);
+													$("#ingredientunit"+c+"").val(units[n]);
+
 												};
 										};
 									}
@@ -307,6 +334,8 @@ function ChangeProduct()
 						{
 							dem=dem+1;
 						}
+						
+						
 					};
 				}
 				else//product does not have recipe
@@ -318,7 +347,7 @@ function ChangeProduct()
 					row = 5;
 					for (var z = 1; z <=row; z++) 
 					{
-						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control'></input></div></td><td><label id='ingredientunitlb"+z+"' class='form-control-static'></label></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
+						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control'></input></div></td><td><select id='ingredientunit"+z+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
 					};
 					$.post("services/model",{from:"ingredient"},function(result1)
 					{
@@ -358,7 +387,7 @@ function ChangeIngredient(y)
 	if($("#ingredientlist"+y+"").val()==0)
 	{
 		$("#ingredientamount"+y+"").val("");
-		$("#ingredientunitlb"+y+"").text("");
+		
 	}
 	else
 	{
@@ -370,7 +399,6 @@ function ChangeIngredient(y)
 				alert("Bạn đã chọn nguyên liệu này!");
 				$("#ingredientlist"+y+"").val(0);
 				$("#ingredientamount"+y+"").val("");
-				$("#ingredientunitlb"+y+"").text("");
 				return false;
 			}
 		};
@@ -381,7 +409,7 @@ function ChangeIngredient(y)
 			{
 				if(result.message=="success")
 				{
-					$("#ingredientunitlb"+y+"").text(result.Ingredient[0].unit);
+					
 				}
 				else
 				{
@@ -409,7 +437,7 @@ $("#btnaddingredient").click(function()
 	}
 	else
 	{
-		$("#productrecipetbody").append("<tr id='productrecipetbodytr"+row+"'><td>"+row+"</td><td><div id='ingredientlistdiv"+row+"' class='form-group'><select id='ingredientlist"+row+"' class='form-control' onchange='ChangeIngredient("+row+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+row+"' class='form-group'><input type='text' id='ingredientamount"+row+"' class='form-control'></input></div></td><td><label id='ingredientunitlb"+row+"'></label></td><td><img src='images/minus.png' height='20' width='20' id='"+row+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+row+");'></td></tr>");
+		$("#productrecipetbody").append("<tr id='productrecipetbodytr"+row+"'><td>"+row+"</td><td><div id='ingredientlistdiv"+row+"' class='form-group'><select id='ingredientlist"+row+"' class='form-control' onchange='ChangeIngredient("+row+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+row+"' class='form-group'><input type='text' id='ingredientamount"+row+"' class='form-control'></input></div></td><td><select id='ingredientunit"+row+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+row+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+row+");'></td></tr>");
 		$.post("services/model",{from:"ingredient"},function(result1)
 		{
 			if(result1.status==1)
@@ -445,6 +473,7 @@ $("#btnchange1").click(function()
 	var ingredient = [];
 	var amount = [];
 	var oldingre = [];
+	var unit=[];
 	var check = 0;
 	$("#confirmform").modal('hide');
 	if($("#productcategorylist").val()==0)
@@ -488,6 +517,7 @@ $("#btnchange1").click(function()
                     		}
                     		else
                     		{
+                    			unit.push($("#ingredientunit"+i+"").val());
 								ingredient.push($("#ingredientlist"+i+"").val());
 								amount.push(parseFloat($("#ingredientamount"+i+"").val()));
 							}
@@ -542,8 +572,19 @@ $("#btnchange1").click(function()
 									  		{
 										    for (var i = 0; i < ingredient.length; i++) 
 											{
-																						
-												var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i]};
+												if(unit[i]==2)
+												{
+													amount[i]=amount[i]/1000;
+												}
+												if(unit[i]==3)
+												{
+													amount[i]=amount[i]/1000000;
+												}
+												if(unit[i]==5)
+												{
+													amount[i]=amount[i]/1000;
+												}									
+												var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i],"unit":unit[i]};
 												$.post("services/model",{from:"Recipe",action:"create",createdata:JSON.stringify(data)},function(result3)
 												{
 													if(result3.status==0)
@@ -579,7 +620,19 @@ $("#btnchange1").click(function()
 									{
 										for (var i = 0; i < ingredient.length; i++) 
 										{
-											var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i]};
+											if(unit[i]==2)
+												{
+													amount[i]=amount[i]/1000;
+												}
+												if(unit[i]==3)
+												{
+													amount[i]=amount[i]/1000000;
+												}
+												if(unit[i]==5)
+												{
+													amount[i]=amount[i]/1000;
+												}				
+											var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i],"unit":unit[i]};
 												$.post("services/model",{from:"Recipe",action:"create",createdata:JSON.stringify(data)},function(result3)
 													{
 														if(result3.status==0)
@@ -628,7 +681,7 @@ function deleterow1(y)//delete one row in one store table
                 var test = $("#ingredientlist"+n+"").val();
                 $("#ingredientlist"+i+"").val(test);
                 $("#ingredientamount"+i+"").val($("#ingredientamount"+n+"").val());
-                $("#ingredientunitlb"+i+"").text($("#ingredientunitlb"+n+"").text());
+               
 
             };
             $("#productrecipetbodytr"+row+"").remove();

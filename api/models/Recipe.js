@@ -14,6 +14,8 @@ module.exports = {
 
         ingredient: { model: 'ingredient', required: true },
 
+        unit:{type:'string'},
+
         amount: { type: 'float', required: true },
 
   }
