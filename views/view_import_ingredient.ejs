@@ -114,6 +114,12 @@
                                             Số lượng nhập
                                         </th>
                                         <th>
+                                            Đơn vị
+                                        </th>
+                                        <th>
+                                            Giá nhập
+                                        </th>
+                                        <th>
                                             
                                         </th>
                                     </thead>
@@ -135,6 +141,15 @@
                                                 <div id="mainstorageaddstockdiv1" class="form-group">
                                                     <input type="text" id="mainstorageaddstock1" class='form-control'></input>
                                                     <label id="mainstorageaddstocklbvalidate1" class="form-control-static"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <label id="mainstorageunit1" class="form-control-static"></label>
+                                            </td>
+                                            <td>
+                                                <div id="mainstoragepricediv1" class="form-group">
+                                                    <input type="text" id="mainstorageprice1" class="form-control"></input>
+                                                    <label id="mainstoragepricelbvalidate1" class="form-control-static"></label>
                                                 </div>
                                             </td>
                                             <td>
@@ -160,7 +175,7 @@ var y = 5;
         var where = {"store": 1};   
         for (var y = 2; y <= 5; y++) 
         {
-            $("#tbody1").append("<tr id='onestoretr"+y+"'><td><div id='ingredientlistdiv"+y+"' class='form-group'><select id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");' class='form-control'><option value='0'>Nguyên liệu</option></select></div></td><td><label id='mainstorage"+y+"'></label></td><td><div id='mainstorageaddstockdiv"+y+"' class='form-group'><input type='text' id='mainstorageaddstock"+y+"' class='form-control'></input><label id='mainstorageaddstocklbvalidate"+y+"' class='form-control-static'></label></div></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
+            $("#tbody1").append("<tr id='onestoretr"+y+"'><td><div id='ingredientlistdiv"+y+"' class='form-group'><select id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");' class='form-control'><option value='0'>Nguyên liệu</option></select></div></td><td><label id='mainstorage"+y+"'></label></td><td><div id='mainstorageaddstockdiv"+y+"' class='form-group'><input type='text' id='mainstorageaddstock"+y+"' class='form-control'></input><label id='mainstorageaddstocklbvalidate"+y+"' class='form-control-static'></label></div></td><td><label id='mainstorageunit"+y+"' class='form-control-static'></label></td><td><div id='mainstoragepricediv"+y+"' class='form-group'><input type='text' id='mainstorageprice"+y+"' class='form-control'></input><label id='mainstoragepricelbvalidate"+y+"' class='form-control-static'></label></div></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
         
         };
         var arrAdded = [];
@@ -214,6 +229,8 @@ var y = 5;
                 $("#ingredientlist"+i+"").val(test);
                 $("#mainstorage"+i+"").text($("#mainstorage"+n+"").text());
                 $("#mainstorageaddstock"+i+"").val($("#mainstorageaddstock"+n+"").val());
+                $("#mainstorageunit"+i+"").text($("#mainstorageunit"+n+"").text());
+                $("#mainstorageprice"+i+"").val($("#mainstorageprice"+n+"").val());
 
             };
             $("#onestoretr"+y+"").remove();
@@ -270,6 +287,8 @@ var y = 5;
                 $("#ingredientlist"+row+"").val(0);
                 $("#mainstorage"+row+"").text("");
                 $("#mainstorageaddstock"+row+"").val("");
+                $("#mainstorageunit"+row+"").text("");
+                $("#mainstorageprice"+row+"").val("");
                 return false;
             };
         };
@@ -279,11 +298,14 @@ var y = 5;
         {
             $("#mainstorage"+row+"").text("");
             $("#mainstorageaddstock"+row+"").val("");
+            $("#mainstorageunit"+row+"").text("");
+            $("#mainstorageprice"+row+"").val("");
             return false;
         };
         var where = {"id":ingredientid};
+        var populate1 = ["ingredient"];
         //get the stock in main storage of chosen ingredient
-        $.post("/services/model",{from:"ingredientStore", where: JSON.stringify(where)},function(result1)
+        $.post("/services/model",{from:"ingredientStore", where: JSON.stringify(where),populate:JSON.stringify(populate1)},function(result1)
             {
                 if(result1.status==0)
                 {
@@ -291,6 +313,8 @@ var y = 5;
                     return false;
                 }
                 $("#mainstorage"+row+"").text(result1.IngredientStore[0].instock);
+                $("#mainstorageunit"+row+"").text(result1.IngredientStore[0].ingredient.unit);
+                $("#mainstorageprice"+row+"").val(result1.IngredientStore[0].ingredient.price);
             });
     };
     $("#btnadd1").click(function()
@@ -305,7 +329,8 @@ var y = 5;
     });
 
     function appendRow(y) {        
-        $("#tbody1").append("<tr id='onestoretr"+y+"'><td><select class='form-control' id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");'><option value='0'>Nguyên liệu</option></select></td><td><label class='form-control-static' id='mainstorage"+y+"'></label></td><td><input class='form-control' type='text' id='mainstorageaddstock"+y+"'></input></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
+        $("#tbody1").append("<tr id='onestoretr"+y+"'><td><select id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");' class='form-control'><option value='0'>Nguyên liệu</option></select></td><td><label id='mainstorage"+y+"'></label></td><td><input type='text' id='mainstorageaddstock"+y+"' class='form-control'></input></td><td><label id='mainstorageunit"+y+"' class='form-control-static'></label></td><td><div id='mainstoragepricediv"+y+"' class='form-group'><input type='text' id='mainstorageprice"+y+"' class='form-control'></input><label id='mainstoragepricelbvalidate"+y+"' class='form-control-static'></label></div></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
+
         $("#ingredientlist"+y+"").empty();
         // $("#ingredientlist"+y+"").append("<option value='0'>Nguyên liệu</option>");
 
@@ -348,7 +373,7 @@ var y = 5;
         {
             if($("#onestoretr"+i+"").length)//check if the row is deleted or not
             {
-                if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()!="")
+                if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()!=""&&$("#mainstorageprice"+i+"").val()!="")
                 {
                     flag =1;
                     if(/^[0-9]+$/.test($("#mainstorageaddstock"+i+"").val())==false)
@@ -356,32 +381,39 @@ var y = 5;
                         alert("#"+i+" Số lượng nguyên liệu cần chuyển không hợp lệ!");
                         return false;
                     };
+                    if(/^[0-9]+$/.test($("#mainstorageprice"+i+"").val())==false)
+                    {
+                        alert("#"+i+" Giá nhập không hợp lệ!");
+                        return false;
+                    };
                     if($("#mainstorageaddstock"+i+"").val()>1000000000)
                     {
                         alert("#"+i+" Số lượng nguyên liệu cần chuyển không được lớn hơn 1000000000");
                         return false;
                     };
-                    //Export inggrdients***************************************
-                    var ingredientid = $("#ingredientlist"+i+"").val();
-                    var oldstock = parseInt($("#mainstorage"+i+"").text());
-                    var stock = parseInt($("#mainstorageaddstock"+i+"").val());
-                    var newstock = oldstock+stock;
-                    var updatedata= {"instock":newstock};
-                    $.post("/services/model",{from:"IngredientStore",action:"update",updatedata:JSON.stringify(updatedata),where:ingredientid},function(result3)
+                    if($("#mainstorageprice"+i+"").val()>1000000000)
                     {
-                        if(result3.status==0)
-                        {
-                            alert("#"+i+""+result3.message+"");
-                            return false;
-                        }
-                    });            
+                        alert("#"+i+" Giá nhập quá lớn");
+                        return false;
+                    };
+                    
                 };
                 if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()=="")
                 {
                     alert("#"+i+" Bạn chưa nhập số lượng nguyên liệu cần chuyển!");
                     return false;
                 };
+                if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageprice"+i+"").val()=="")
+                {
+                    alert("#"+i+" Bạn chưa nhập giá nhập của nguyên liệu!");
+                    return false;
+                };
                 if($("#ingredientlist"+i+"").val()==0&&$("#mainstorageaddstock"+i+"").val()!="")
+                {
+                    alert("#"+i+" Bạn chưa chọn nguyên liệu cần chuyển!");
+                    return false;
+                };
+                if($("#ingredientlist"+i+"").val()==0&&$("#mainstorageprice"+i+"").val()!="")
                 {
                     alert("#"+i+" Bạn chưa chọn nguyên liệu cần chuyển!");
                     return false;
@@ -408,12 +440,13 @@ var y = 5;
         //input importreceipt
             if(error==0)
             {
-        // var time = $( "#datepicker" ).datepicker( "option", "dateFormat", "mm/dd/yy" ).val();
+        var time = $( "#datepicker" ).datepicker( "option", "dateFormat", "mm/dd/yy" ).val();
         var note = $("#note").val();
         var user = 1;//edit later
         var amount= [];
         var idlist = [];
         var price = [];
+        var unit = [];
         var dem = 1;
         var ImportReceiptData = {"receiptid":receiptid,"time":time,"note":note,"user":user};
         $.post("services/model",{"from":"ImportReceipt","action":"create","createdata":JSON.stringify(ImportReceiptData)},function(result4)
@@ -432,9 +465,11 @@ var y = 5;
                         {
                             if($("#onestoretr"+i+"").length)//check if the row is deleted or not
                             {
-                                if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()!="")
+                                if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()!=""&&$("#mainstorageprice"+i+"").val()!="")
                                 {
                                     amount.push(parseFloat($("#mainstorageaddstock"+i+"").val()));
+                                    unit.push($("#mainstorageunit"+i+"").text());
+                                    price.push($("#mainstorageprice"+i+"").val());
                                     var ingreid = $("#ingredientlist"+i+"").val();
                                     var where2 = {"id":ingreid};
                                     $.post("services/model",{"from":"IngredientStore","where":JSON.stringify(where2)},function(result6)
@@ -445,49 +480,76 @@ var y = 5;
                                                 //get unit price
                                                 var idingre = result6.IngredientStore[0].ingredient;
                                                 var where3 = {"id":idingre};
-                                                $.post("services/model",{"from":"Ingredient","where":JSON.stringify(where3)},function(result7)
+                                                if(dem==amount.length)
                                                 {
-                                                    if(result7.status==1)
+                                                    var dem2=1;
+                                                    for (var k = 0; k <amount.length; k++) 
                                                     {
-                                                        price.push(result7.Ingredient[0].price);
-                                                        if(dem==amount.length)
+                                                        if(dem2==1)
                                                         {
-                                                            for (var k = 0; k <amount.length; k++) 
-                                                            {
-                                                                var total = amount[k]*price[k];
-                                                                var data= {"receiptid":receiptkeyid,"amount":amount[k],"ingredient":idlist[k],"unitprice":price[k],"total":total};
-                                                                $.post("services/model",{"from":"ImportReceiptItem","action":"create","createdata":JSON.stringify(data)},function(result8)
+                                                            var total = amount[k]*price[k];
+                                                            var data= {"receiptid":receiptkeyid,"amount":amount[k],"ingredient":idlist[k],"unitprice":price[k],"total":total,"unit":unit[k]};
+                                                            $.post("services/model",{"from":"ImportReceiptItem","action":"create","createdata":JSON.stringify(data)},function(result8)
+                                                                {
+                                                                    if(result8.status==1)
                                                                     {
-                                                                        if(result8.status==1)
-                                                                        {
-                                                                            
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            alert("Thất bại");
-                                                                            return false;
-                                                                        }
-                                                                    });
-
-
-
-
-                                                            };
-                                                            /*alert("Bạn đã chuyển nguyên liệu thành công!");*/
-                                                            window.location.reload();
+                                                                        
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        alert("Thất bại");
+                                                                        return false;
+                                                                    }
+                                                                });
                                                         }
                                                         else
                                                         {
-                                                            dem= dem+1;
+                                                            dem2=dem2+1;
                                                         }
+                                                    };
+                                                    //Export inggrdients***************************************
 
-                                                    }
-                                                    else
+                                                    for (var i = 1; i <=y; i++) 
                                                     {
-                                                        alert("Thất bại");
-                                                        return false;
-                                                    }
-                                                });
+                                                        if($("#onestoretr"+i+"").length)//check if the row is deleted or not
+                                                        {
+                                                            if($("#ingredientlist"+i+"").val()!=0&&$("#mainstorageaddstock"+i+"").val()!=""&&$("#mainstorageprice"+i+"").val()!="")
+                                                            {
+                                                                var ingredientid = $("#ingredientlist"+i+"").val();
+                                                                var oldstock = parseInt($("#mainstorage"+i+"").text());
+                                                                var stock = parseInt($("#mainstorageaddstock"+i+"").val());
+                                                                var newstock = oldstock+stock;
+                                                                var updatedata= {"instock":newstock};
+                                                                $.post("/services/model",{from:"IngredientStore",action:"update",updatedata:JSON.stringify(updatedata),where:ingredientid},function(result3)
+                                                                {
+                                                                    if(result3.status==0)
+                                                                    {
+                                                                        alert("#"+i+""+result3.message+"");
+                                                                        return false;
+                                                                    }
+                                                                });
+                                                                var updateprice= $("#mainstorageprice"+i+"").val();
+                                                                var updatedata1={"price":updateprice};
+                                                                $.post("/services/model",{from:"Ingredient",action:"update",updatedata:JSON.stringify(updatedata1),where:ingredientid},function(result3)
+                                                                {
+                                                                    if(result3.status==0)
+                                                                    {
+                                                                        alert("#"+i+""+result3.message+"");
+                                                                        return false;
+                                                                    }
+                                                                });              
+                                                                alert("Bạn đã chuyển nguyên liệu thành công!");
+                                                                window.location.reload(); 
+                                                                }
+                                                                }         
+                                                    };  
+                                                }
+                                                else
+                                                {
+                                                    dem=dem+1;
+                                                }
+                                                
+                                                        
                                             }
                                             if(result6.status==0)
                                             {
