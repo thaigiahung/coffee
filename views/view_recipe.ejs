@@ -1,0 +1,684 @@
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script> 
+
+<!--Delete modal -->
+<div id="deleteform" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Cảnh báo</h4>
+              </div>
+              <div class="modal-body">
+                Bạn có chắc muốn hủy bỏ tất cả mọi thông tin đã nhập không?
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="btncancel3" class="btn btn-primary update">Có</button>
+                <button type="button" class="btn btn-danger remove" data-dismiss="modal">Không</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+<!--Confirm modal -->        
+<div id="confirmform" class="modal fade">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Xác nhận</h4>
+              </div>
+              <div class="modal-body">
+                Bạn có chắc muốn thay đổi công thức của sản phẩm đã chọn không?
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="btnchange1" data-dismiss="modal" class="btn btn-primary update">Có</button>
+                <button type="button" class="btn btn-danger remove"  data-dismiss="modal">Không</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+
+<!--view content -->
+<!--category dropdown list -->
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">Công thức</h1>
+    </div> 
+</div>
+<div id="productcategorydiv" class="form-group">
+	<select id="productcategorylist" class="form-control" onchange="ChangeProductCategory();">
+		<option value="0">
+			Loại sản phẩm
+		</option>
+		<script type="text/javascript">
+			var where = {"deleted":0};
+			$.post("services/model",{from:"category",where:JSON.stringify(where)},function(result)
+				{
+					if(result.status==0)//can not get any categories
+					{
+						alert("Không lấy được danh sách loại sản phẩm!");
+						return false;
+					}
+					else//get categories successfully
+					{
+						for (var i = 0; i < result.Category.length; i++) 
+						{
+							$("#productcategorylist").append("<option value='"+result.Category[i].id+"'>"+result.Category[i].name+"</option>");
+						};
+					}
+				});
+		</script>
+	</select>
+	<label id="productcategoryvalidate" class="form-control-static"></label>
+</div>
+<!--product list -->
+<div id="productlistdiv" class="form-group">
+	<select id="productlist" class="form-control" onchange="ChangeProduct();">
+		<option value="0">
+			Sản phẩm
+		</option>
+	</select>
+	<label id="productlistvalidate" class="form-control-static"></label>
+</div>
+<!--recipe detail-->
+
+<div class="row" id="productrecipediv">
+    <div class="col-lg-12">
+    <div class="panel panel-default">
+    <div class= "panel-body">
+    <div class="table-responsive">
+    <form>
+    	<b>Chi tiết công thức:</b>
+        <table class="table table-striped table-bordered table-hover">
+        	<tbody id="tbody" class="form-group">
+        		<tr id="tbodytr">
+        			<td id="tbodytrtd2">
+
+        			</td>
+        		</tr>
+        	</tbody>
+        </table>
+    </form>
+	</div>
+    </div>
+    </div>
+   	</div>
+</div>
+<!--product recipe-->
+<div id="productrecipeeditdiv" class="row" hide>
+    <div class="col-lg-12">
+    <div class="panel panel-default">
+    <div class= "panel-body">
+    <div class="table-responsive">
+    <form>
+        <table class="table table-striped table-bordered table-hover">
+        	<thead>
+        		<tr>
+        			<th>
+        				Hàng
+        			</th>
+        			<th>
+        				Nguyên liệu
+        			</th>
+        			<th>
+        				Số lượng
+        			</th>
+        			<th>
+        				Đơn vị
+        			</th>
+        			<th>
+        				
+        			</th>
+        		</tr>
+        	</thead>
+        	<tbody id="productrecipetbody">
+
+        	</tbody>
+        </table>
+        <img src="images/plus.png" height="20" width="20" id="btnaddingredient" onmouseover="" style="cursor:pointer;">
+    </form>
+	</div>
+    </div>
+    </div>
+   	</div>
+</div>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnconfirm" class="btn btn-primary update" value="Thực hiện"></input> <input type="button" id="btncancel1" class="btn btn-danger remove" value="Hủy"></input> 
+
+<!--Function code-->
+<script type="text/javascript">
+var row=5;
+//Pageload codes
+$( document ).ready(function()
+{
+	$("#productrecipediv").hide();
+	$("#productrecipeeditdiv").hide();//hide the edit table	
+});
+//Modal codes
+$("#btncancel1").click(function()
+{
+    $("#deleteform").modal();
+});
+$("#btncancel3").click(function()
+{
+	window.location.reload();
+});
+$("#btnconfirm").click(function()
+{
+    $("#confirmform").modal();
+});
+
+//Function codes
+//Change Product Category
+function ChangeProductCategory()
+{
+	var chosenproductcategory = $("#productcategorylist").val();
+	if(chosenproductcategory==0)
+	{
+		$("#productlist").empty();
+		$("#productlist").append("<option value='0'>Sản phẩm</option>");
+		$("#tbodytrtd2").empty();
+		$("#productrecipediv").hide();
+		$("#productrecipeeditdiv").hide();
+		for (var i = 1; i <= row; i++) 
+		{
+			$("#productrecipetbodytr"+i+"").remove();
+		};
+		row=0;
+	}
+	else
+	{
+		$("#tbodytrtd2").empty();
+		for (var i = 1; i <= row; i++) 
+		{
+			$("#productrecipetbodytr"+i+"").remove();
+		};
+		row=0;
+		$("#productrecipediv").hide();
+		$("#productrecipeeditdiv").hide();
+		var where = {"category":chosenproductcategory,"deleted":0};
+		$.post("services/model",{"from":"Product","where":JSON.stringify(where)},function(result)
+			{
+				if(jQuery.isEmptyObject(result.Product[0])==true)
+				{
+					alert("Không có sản phẩm nào trong loại sản phẩm đã chọn!");
+					$("#productcategorylist").val(0);
+					$("#productlist").empty();
+					$("#productlist").append("<option value='0'>Sản phẩm</option>");
+					return false;
+				}
+				if(jQuery.isEmptyObject(result.Product[0])==false)
+				{
+					$("#productlist").empty();
+					$("#productlist").append("<option value='0'>Sản phẩm</option>");
+					for (var i = 0; i < result.Product.length; i++) 
+					{
+						$("#productlist").append("<option value='"+result.Product[i].id+"'>"+result.Product[i].name+"</option>");
+					};
+				}
+			});
+	}
+}
+
+//Change Product
+function ChangeProduct()
+{
+	var chosenproduct = $("#productlist").val();
+	if(chosenproduct==0)
+	{
+		$("#tbodytrtd2").empty();
+		$("#productrecipediv").hide();
+		$("#productrecipeeditdiv").hide();
+		for (var i = 1; i <= row; i++) 
+		{
+			$("#productrecipetbodytr"+i+"").remove();
+		};
+		row=0;
+	}
+	else
+	{
+		$("#tbodytrtd2").empty();
+		$("#productrecipetbody").empty();
+		$("#productrecipediv").show();
+		$("#productrecipeeditdiv").show();
+		var where = {"product":chosenproduct};
+		var populate = ["product","ingredient"];
+		$.post("services/model",{from:"recipe",where:JSON.stringify(where),populate:JSON.stringify(populate)},function(result)
+			{
+				if(result.message=="success")//product has recipe
+				{
+					var dem=1;
+					row = result.Recipe.length;
+					var ingredientlist = [];
+					var units = [];
+					$("#tbodytrtd2").append("<h3>"+result.Recipe[0].product.name+"</h3>");
+					for (var i = 0; i < result.Recipe.length; i++) 
+					{
+						var z=i+1;
+						ingredientlist.push(result.Recipe[i].ingredient.id);
+						units.push(result.Recipe[i].unit);
+						if(units[i]==2)
+						{
+							var newamount = result.Recipe[i].amount*1000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"g<br></br>");
+							
+						}
+						if(units[i]==3)
+						{
+							var newamount = result.Recipe[i].amount*1000000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"mg<br></br>");
+							
+						}
+						if(units[i]==5)
+						{
+							var newamount = result.Recipe[i].amount*1000;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+"ml<br></br>");
+							
+						}
+						if(units[i]==1||units[i]==4||units[i]==6)
+						{
+							var newamount = result.Recipe[i].amount;
+							$("#tbodytrtd2").append("+ "+result.Recipe[i].ingredient.name+" "+newamount+""+result.Recipe[i].ingredient.unit+"<br></br>");
+							
+						}
+						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control' value='"+newamount+"'></input></div></td><td><select id='ingredientunit"+z+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
+						if(dem==result.Recipe.length)
+						{
+							$.post("services/model",{from:"ingredient"},function(result1)
+							{
+								if(result1.status==1)
+								{
+									if(result1.message=="success")
+									{
+										for (var y = 1; y <= z; y++) 
+										{
+											
+												for (var m = 0; m < result1.Ingredient.length; m++) 
+												{
+													$("#ingredientlist"+y+"").append("<option value='"+result1.Ingredient[m].id+"'>"+result1.Ingredient[m].name+"</option>");
+												};
+												for (var n = 0; n < ingredientlist.length; n++)//set ingredient list based on ingredient from the recipe 
+												{
+													var c= n+1;
+													$("#ingredientlist"+c+"").val(ingredientlist[n]);
+													$("#ingredientunit"+c+"").val(units[n]);
+
+												};
+										};
+									}
+									else
+									{
+										alert("Không có nguyên liệu nào trong kho!");
+										return false;
+									}
+								}
+								else
+								{
+									alert("Không lấy được dữ liệu!");
+									return false;
+								}
+							});
+						}
+						else
+						{
+							dem=dem+1;
+						}
+						
+						
+					};
+				}
+				else//product does not have recipe
+				{
+					$("#tbodytrtd2").empty();
+					$("#productrecipetbody").empty();
+					$("#productrecipediv").hide();
+					row = 5;
+					for (var z = 1; z <=row; z++) 
+					{
+						$("#productrecipetbody").append("<tr id='productrecipetbodytr"+z+"'><td>"+z+"</td><td><div id='ingredientlistdiv"+z+"' class='form-group'><select id='ingredientlist"+z+"' class='form-control' onchange='ChangeIngredient("+z+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+z+"' class='form-group'><input type='text' id='ingredientamount"+z+"' class='form-control'></input></div></td><td><select id='ingredientunit"+z+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+z+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+z+");'></td></tr>");
+					};
+					$.post("services/model",{from:"ingredient"},function(result1)
+					{
+						if(result1.status==1)
+						{
+							if(result1.message=="success")
+							{		
+								for (var i = 1; i <= row; i++) 
+								{
+									for (var m = 0; m < result1.Ingredient.length; m++) 
+									{
+										$("#ingredientlist"+i+"").append("<option value='"+result1.Ingredient[m].id+"'>"+result1.Ingredient[m].name+"</option>");
+									};
+								};			
+								
+							}
+							else
+							{
+								alert("Không có nguyên liệu nào trong kho!");
+								return false;
+							}
+						}
+						else
+						{
+							alert("Không lấy được dữ liệu!");
+							return false;
+						}
+					});
+				}
+			});
+	}
+}
+
+//Change ingredient
+function ChangeIngredient(y)
+{
+	if($("#ingredientlist"+y+"").val()==0)
+	{
+		$("#ingredientamount"+y+"").val("");
+		
+	}
+	else
+	{
+		var ingredient = $("#ingredientlist"+y+"").val();
+		for (var i = 1; i <=row; i++) 
+		{
+			if(ingredient==$("#ingredientlist"+i+"").val()&&y!=i)
+			{
+				alert("Bạn đã chọn nguyên liệu này!");
+				$("#ingredientlist"+y+"").val(0);
+				$("#ingredientamount"+y+"").val("");
+				return false;
+			}
+		};
+		var where = {"id":ingredient};
+		$.post("services/model",{from:"ingredient",where:JSON.stringify(where)},function(result)//get ingredient dropdown list
+		{
+			if(result.status==1)
+			{
+				if(result.message=="success")
+				{
+					
+				}
+				else
+				{
+					alert("Kiếm không được nguyên liệu trong kho!");
+					return false;
+				}
+			}
+			else
+			{
+				alert("Xảy ra lỗi, xin kiểm tra lại!");
+				return false;
+			}
+		});
+	}
+};	
+
+//Add row
+$("#btnaddingredient").click(function()
+{
+	row = row+1;
+	if(row>20)
+	{
+		alert("Số hàng cho phép thêm là 20!");
+		return false;
+	}
+	else
+	{
+		$("#productrecipetbody").append("<tr id='productrecipetbodytr"+row+"'><td>"+row+"</td><td><div id='ingredientlistdiv"+row+"' class='form-group'><select id='ingredientlist"+row+"' class='form-control' onchange='ChangeIngredient("+row+")'><option value='0'>Nguyên liệu</option></select></div></td><td><div id='ingredientamountdiv"+row+"' class='form-group'><input type='text' id='ingredientamount"+row+"' class='form-control'></input></div></td><td><select id='ingredientunit"+row+"' class='form-control'><option value='1'>kg</option><option value='2'>g</option><option value='3'>mg</option><option value='4'>l</option><option value='5'>ml</option><option value='6'>p</option></select></td><td><img src='images/minus.png' height='20' width='20' id='"+row+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+row+");'></td></tr>");
+		$.post("services/model",{from:"ingredient"},function(result1)
+		{
+			if(result1.status==1)
+			{
+				if(result1.message=="success")
+				{					
+					for (var m = 0; m < result1.Ingredient.length; m++) 
+					{
+						$("#ingredientlist"+row+"").append("<option value='"+result1.Ingredient[m].id+"'>"+result1.Ingredient[m].name+"</option>");
+					};
+				}
+				else
+					{
+						alert("Không có nguyên liệu nào trong kho!");
+						return false;
+					}
+			}
+			else
+			{
+				alert("Không lấy được dữ liệu!");
+				return false;
+			}
+		});
+	}
+})
+
+//save recipe into database
+
+$("#btnchange1").click(function()
+{
+	var flags=0;
+	var flag=0;
+	var ingredient = [];
+	var amount = [];
+	var oldingre = [];
+	var unit=[];
+	var check = 0;
+	$("#confirmform").modal('hide');
+	if($("#productcategorylist").val()==0)
+	{
+		alert("Bạn chưa chọn loại sản phẩm!");
+		return false;
+	}
+	else
+	{
+		if($("#productlist").val()==0)
+		{
+			alert("Bạn chưa chọn sản phẩm!");
+			return false;
+		}
+		else
+		{
+			if(row==0)
+			{
+				alert("Công thức phải có ít nhất 1 nguyên liệu!");
+				return false;
+			}
+			else
+			{
+				var product = $("#productlist").val();
+				for (var i = 1; i <=row; i++) 
+				{
+					if($("#ingredientlist"+i+"").val()!=0)
+					{
+						flag=1;
+						if($("#ingredientamount"+i+"").val()=="")
+						{
+							alert("Bạn chưa chọn số lượng cho hàng "+i+"!");
+							return false;
+						}
+						else
+						{
+							if(/^[0-9]+$/.test($("#ingredientamount"+i+"").val())==false)
+                    		{
+                        		alert("Số lượng nguyên liệu hàng "+i+" không hợp lệ!");
+                       	 		return false;
+                    		}
+                    		else
+                    		{
+                    			unit.push($("#ingredientunit"+i+"").val());
+								ingredient.push($("#ingredientlist"+i+"").val());
+								amount.push(parseFloat($("#ingredientamount"+i+"").val()));
+							}
+						}
+					}
+					else
+					{
+						if($("#ingredientamount"+i+"").val()!="")
+						{
+							alert("Bạn chưa chọn nguyên liệu cho hàng "+i+"!");
+							return false;
+						}
+					}
+				};
+				if(flag==0)
+				{
+					alert("Công thức phải có ít nhất 1 nguyên liệu!");
+					return false;
+				}
+				else
+				{
+					
+						/*alert(ingredient[i]);
+						alert(amount[i]);*/
+						var dem1=1;
+						var dem2=0;
+						var where1 = {"product":product};
+						$.post("services/model",{from:"Recipe",where:JSON.stringify(where1)},function(result2)
+							{
+								if(result2.status==0)
+								{
+									alert("Không lấy được dữ liệu!");
+									return false;
+								}
+								else
+								{
+									if(result2.message=="success")
+									{
+										var dem3= result2.Recipe.length;
+										for (var i = 0; i < result2.Recipe.length; i++) 
+										{
+											var where2= {"product":product};
+											$.post("services/model",{from:"Recipe",action:"destroy",where:JSON.stringify(where2)},function(result4)
+											{
+												
+											});
+											dem2=dem2+1;
+										};
+										if(dem2==dem3)
+										{
+											setTimeout(function() 
+									  		{
+										    for (var i = 0; i < ingredient.length; i++) 
+											{
+												if(unit[i]==2)
+												{
+													amount[i]=amount[i]/1000;
+												}
+												if(unit[i]==3)
+												{
+													amount[i]=amount[i]/1000000;
+												}
+												if(unit[i]==5)
+												{
+													amount[i]=amount[i]/1000;
+												}									
+												var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i],"unit":unit[i]};
+												$.post("services/model",{from:"Recipe",action:"create",createdata:JSON.stringify(data)},function(result3)
+												{
+													if(result3.status==0)
+													{
+														alert("Không lấy được dữ liệu!!");
+														return false;
+													}
+													else
+													{
+														if(result3.message=="success")
+													{
+																		
+													}
+													else
+													{
+														alert("Không tạo được công thức mới!");
+														return false;
+													}
+												}
+												});
+												
+											};
+											window.location.reload();
+											
+  }, 1000);
+											
+										
+///////////////////////////////////////////////
+										}
+										
+									}
+									else
+									{
+										for (var i = 0; i < ingredient.length; i++) 
+										{
+											if(unit[i]==2)
+												{
+													amount[i]=amount[i]/1000;
+												}
+												if(unit[i]==3)
+												{
+													amount[i]=amount[i]/1000000;
+												}
+												if(unit[i]==5)
+												{
+													amount[i]=amount[i]/1000;
+												}				
+											var data = {"product":product,"ingredient":ingredient[i],"amount":amount[i],"unit":unit[i]};
+												$.post("services/model",{from:"Recipe",action:"create",createdata:JSON.stringify(data)},function(result3)
+													{
+														if(result3.status==0)
+														{
+															alert("Không lấy được dữ liệu!!");
+															return false;
+														}
+														else
+														{
+															if(result3.message=="success")
+															{
+																
+															}
+															else
+															{
+																alert("Không tạo được công thức mới!");
+																return false;
+															}
+														}
+													});
+										};
+										window.location.reload();
+									}
+								}
+							});	
+				}
+			}
+		}
+	}
+})
+
+//delete row
+function deleterow1(y)//delete one row in one store table
+    {
+        
+        if(y==row)//case: user delete the lastest row
+        {
+            row=row-1;
+            $("#productrecipetbodytr"+y+"").remove();
+        };
+        if(y<row)//case: user delete middle row
+        {
+            for (var i = y; i<row; i++) 
+            {
+                var n = i+1;
+                var test = $("#ingredientlist"+n+"").val();
+                $("#ingredientlist"+i+"").val(test);
+                $("#ingredientamount"+i+"").val($("#ingredientamount"+n+"").val());
+               
+
+            };
+            $("#productrecipetbodytr"+row+"").remove();
+            row=row-1;
+        };
+    };
+
+//	
+</script>
