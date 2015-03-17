@@ -80,10 +80,10 @@ function detail(id)
             var bills = data.ExportReceiptItem;
             // var listItem = $('#list-item').DataTable();
             $('#detail').modal();
-            $('#detailItem').empty();
+            $('#detailItem tbody').empty();
             // $.each( bills, function( key, value ) {
             for(var i = 0 ; i < bills.length; i++) {
-              $('#detailItem').append('<tr><td>' +bills[i].receiptid+ '</td><td>' +bills[i].ingredient.name+ '</td><td>' +bills[i].unitprice+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');
+              $('#detailItem tbody').append('<tr><td>' +bills[i].receiptid+ '</td><td>' +bills[i].ingredient.name+ '</td><td>' +bills[i].unitprice+ '</td><td>' +bills[i].amount+ '</td><td>' +bills[i].total+ '</td></tr>');
             }
             // }
           }

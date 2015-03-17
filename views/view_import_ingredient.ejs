@@ -498,7 +498,6 @@ var y = 5;
                                                                     }
                                                                     else
                                                                     {
-                                                                        alert("Thất bại");
                                                                         return false;
                                                                     }
                                                                 });
@@ -524,8 +523,7 @@ var y = 5;
                                                                 $.post("/services/model",{from:"IngredientStore",action:"update",updatedata:JSON.stringify(updatedata),where:ingredientid},function(result3)
                                                                 {
                                                                     if(result3.status==0)
-                                                                    {
-                                                                        alert("#"+i+""+result3.message+"");
+                                                                    {                                                            
                                                                         return false;
                                                                     }
                                                                 });
@@ -535,11 +533,9 @@ var y = 5;
                                                                 {
                                                                     if(result3.status==0)
                                                                     {
-                                                                        alert("#"+i+""+result3.message+"");
                                                                         return false;
                                                                     }
-                                                                });              
-                                                                alert("Bạn đã chuyển nguyên liệu thành công!");
+                                                                }); 
                                                                 window.location.reload(); 
                                                                 }
                                                                 }         
