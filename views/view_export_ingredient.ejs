@@ -303,12 +303,12 @@ var y = 5;
             var idlist = [];
             $.post("services/model",{"from":"ingredient"},function(result7)
             {
-                if(result7.status==0)
+                if(result7.status==0||result7.message!="success")
                 {
                     alert("Không tìm thấy nguyên liệu nào trên hệ thống, vui lòng kiểm tra lại!");
                     return false;
                 }
-                if(result7.status==1)
+                if(result7.message=="success")
                 {
                     var dem=1;
                     for (var i = 0; i < result7.Ingredient.length; i++) 
@@ -319,9 +319,9 @@ var y = 5;
                             var idmainingre=result7.Ingredient[i].id;
                             name1.push(result7.Ingredient[i].name);
                             var where5 = {"store":store,"ingredient":idmainingre};
-                            $.post("services/model",{"from":"IngredientStore",where:JSON.stringify(where5)},function(result8)
+                            $.post("services/model",{from:"IngredientStore",where:JSON.stringify(where5)},function(result8)
                             {
-                                if(result8.status==1)
+                                if(result8.message=="success")
                                 {
                                 idlist.push(result8.IngredientStore[0].id);
                                  if(dem==name1.length)
@@ -344,9 +344,9 @@ var y = 5;
                                     
                                 /*$("#onestoreingredientlist"+l+"").append("<option value ='"+result8.IngredientStore[0].ingredient+"'  id='ingredient1? "+result8.IngredientStore[0].ingredient+"'>"+name1+"</option>");*/
                                 }
-                                if(result8.status==0)
+                                if(result8.status==0||result8.message!="success")
                                 {
-                                    alert("fail");
+                                    return false;
                                 }
                             });
                         }
