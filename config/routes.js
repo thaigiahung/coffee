@@ -87,7 +87,10 @@ module.exports.routes = {
   'get /warninglimit':{
     view: 'view_warninglimit'
   },
-
+  
+  'get /recipe': {
+    view: 'view_recipe'
+  },
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
 

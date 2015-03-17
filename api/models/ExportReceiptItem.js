@@ -19,6 +19,10 @@ module.exports = {
 
         unitprice: {type: 'float'},
 
+        exportprice: {type: 'float'},
+
+        unit: {type: 'string'},
+        
         total: {type: 'float'},
   }
 };
