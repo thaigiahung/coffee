@@ -45,7 +45,7 @@
 </div>
 <!-- End of List of all low inventory ingredient -->
 
-<div class="row">
+<div class="row" id="importSection">
     <div class="col-lg-12">
         <h1 class="page-header">Xuất kho</h1>
     </div> 
@@ -505,6 +505,7 @@ var y = 5;
                 ChangeIngredient(count);
                 count++;
             });
+            smoothScrollTo("#importSection");
         }
     }
 
