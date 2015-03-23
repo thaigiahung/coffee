@@ -601,7 +601,7 @@ var y = 5;
                         alert("#"+i+" Giá xuất nguyên liệu không được lớn hơn 1000000000");
                         return false;
                     };
-                    if($("#onestoreaddstock"+i+"").val()==0)
+                    if($("#onestoreaddstock"+i+"").val()<1)
                     {
                         alert("#"+i+" Số lượng nguyên liệu cần chuyển phải lớn hơn 0");
                         return false;

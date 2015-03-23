@@ -387,6 +387,11 @@ var y = 5;
                         alert("#"+i+" Giá nhập không hợp lệ!");
                         return false;
                     };
+                    if($("#mainstorageaddstock"+i+"").val() < 1)
+                    {
+                        alert("#"+i+" Số lượng nguyên liệu cần chuyển phải lớn hơn 0");
+                        return false;
+                    };
                     if($("#mainstorageaddstock"+i+"").val()>1000000000)
                     {
                         alert("#"+i+" Số lượng nguyên liệu cần chuyển không được lớn hơn 1000000000");
