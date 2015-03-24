@@ -46,7 +46,10 @@ function drawObject(object, button) {
   var _object = [
     object.id,
     object.name,
-    $("#object-category option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+
+    //The response does not include category name => get text from the dropdown list where value = category id
+    $("#object-category [value='" + object.category + "']").text(),    
+    
     object.price,
     (object.description == undefined) ? "" : object.description,
     (deleted == false) ? "Kích hoạt" : "Đã xóa"

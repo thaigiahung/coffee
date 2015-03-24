@@ -39,8 +39,12 @@ function drawObject(object, button) {
 
   var _object = [
     object.id,
-    $("#object-ingredient option:selected").text(), //The response does not include category name => get text from the selected dropdown list
-    $("#object-store option:selected").text(), //The response does not include category name => get text from the selected dropdown list
+
+    //The response does not include category name => get text from the dropdown list where value = category id
+    $("#object-ingredient [value='" + object.ingredient + "']").text(), 
+    //The response does not include category name => get text from the dropdown list where value = category id
+    $("#object-store [value='" + object.store + "']").text(), 
+    
     object.instock,
     object.limit,
     (deleted == false) ? "Kích hoạt" : "Đã xóa"
