@@ -314,14 +314,24 @@ module.exports = {
 	},
 
 	viewManage: function(req, res) {
-        Ingredient.find().populate('category').exec(function (err, found) {
-            return res.view('manage_view', {
-                data: found,
-                _name: " nguyên liệu",
-                _directory: "ingredient_manage/",
-                _add: true
-            }); 
-        });
+		if(!req.session.user) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('login');
+		}
+		else if(req.session.user.role != 1) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('permission-denied');
+		}
+		else {
+		    Ingredient.find().populate('category').exec(function (err, found) {
+		        return res.view('manage_view', {
+		            data: found,
+		            _name: " nguyên liệu",
+		            _directory: "ingredient_manage/",
+		            _add: true
+		        }); 
+		    });
+		}        
 	},
 
 	test: function(req, res) {
@@ -648,14 +658,38 @@ module.exports = {
 	},
 
 	viewExportIngredient: function(req, res) {
-		var query = "SELECT DISTINCT i.`store`,s.`name` FROM `ingredientstore` i JOIN `store` s ON s.`id` = i.`store` where s.deleted = 0 AND i.store != 1 AND i.`instock` <= i.`limit` ORDER BY i.store";
-	    IngredientStore.query(query, function(err, stores) {
-	    	Store.find({ id: { '!': 1 }, deleted: 0}).exec(function (err, allStores) {
-	    		return res.view('view_export_ingredient', {
-	    		    stores: stores,
-	    		    allStores: allStores
-	    		}); 
-	    	});	    	
-	    });
+		if(!req.session.user) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('login');
+		}
+		else if(req.session.user.role != 1) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('permission-denied');
+		}
+		else {
+	    	var query = "SELECT DISTINCT i.`store`,s.`name` FROM `ingredientstore` i JOIN `store` s ON s.`id` = i.`store` where s.deleted = 0 AND i.store != 1 AND i.`instock` <= i.`limit` ORDER BY i.store";
+	        IngredientStore.query(query, function(err, stores) {
+	        	Store.find({ id: { '!': 1 }, deleted: 0}).exec(function (err, allStores) {
+	        		return res.view('view_export_ingredient', {
+	        		    stores: stores,
+	        		    allStores: allStores
+	        		}); 
+	        	});	    	
+	        });
+		}		
+	},
+
+	viewImportIngredient: function(req, res) {
+		if(!req.session.user) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('login');
+		}
+		else if(req.session.user.role != 1) {
+		    res.locals.layout = false; //Don't use layout
+		    res.view('permission-denied');
+		}
+		else {
+	    	return res.view('view_import_ingredient');
+		}		
 	},
 };

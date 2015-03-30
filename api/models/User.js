@@ -19,6 +19,8 @@ module.exports = {
         
         store: { model: 'store' },
 
+        role: { model: 'role' },
+
         mobile: { type: 'string' },
 
         hashedPassword: { type: 'string', required: true, defaultsTo: "NULL" },

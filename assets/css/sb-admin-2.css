@@ -347,3 +347,8 @@ table.dataTable thead .sorting:after {
 .panel-yellow a:hover {
     color: #df8a13;
 }
+
+.errorMessage {
+    color: red;
+    margin-bottom: 10px;
+}

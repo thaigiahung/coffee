@@ -122,12 +122,22 @@ module.exports = {
 	
     viewManage: function(req, res) {
         Store.find().populate('manager').exec(function (err, found) {
-            return res.view('manage_view', {
-                data: found,
-                _name: "cửa hàng",
-                _directory: "store_manage/",
-                _add: true
-            }); 
+        	if(!req.session.user) {
+        	    res.locals.layout = false; //Don't use layout
+        	    res.view('login');
+        	}
+        	else if(req.session.user.role != 1) {
+        	    res.locals.layout = false; //Don't use layout
+        	    res.view('permission-denied');
+        	}
+        	else {
+        		return res.view('manage_view', {
+        		    data: found,
+        		    _name: "cửa hàng",
+        		    _directory: "store_manage/",
+        		    _add: true
+        		});     
+        	}             
         });
     },
 };

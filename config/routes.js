@@ -71,7 +71,8 @@ module.exports.routes = {
   },
   
   'get /import': {
-    view: 'view_import_ingredient'
+    controller: 'IngredientController',
+    action: 'viewImportIngredient'
   },
   /*'get /export': {
     view: 'view_export_ingredient'
@@ -89,7 +90,8 @@ module.exports.routes = {
   },
   
   'get /recipe': {
-    view: 'view_recipe'
+    controller: 'RecipeController',
+    action: 'viewRecipe'
   },
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
@@ -114,4 +116,7 @@ module.exports.routes = {
   'POST /stock/show': 'IngredientController.getIngredientAmount',
   'POST /ingredient/export/set': 'IngredientController.exportIngredient',
   'GET /store/show/:ingredient/:type?': 'StoreController.getStoreByIngredient',
+  'GET /login': 'UserController.viewLogin',
+  'POST /login': 'UserController.login',
+  'GET /logout': 'UserController.logout',
 };

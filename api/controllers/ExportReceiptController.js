@@ -8,18 +8,28 @@
 module.exports = {
 	
     viewManage: function(req, res) {
-        ExportReceipt.find()
-        .populate('user')
-        .populate('store')
-        .exec(function (err, found) {
-            return res.view('manage_view', {
-                data: found,
-                _name: "hóa đơn xuất",
-                _directory: "export_receipt_manage/",
-                _add: true,
-                _detail: true
-            }); 
-        });
+        if(!req.session.user) {
+            res.locals.layout = false; //Don't use layout
+            res.view('login');
+        }
+        else if(req.session.user.role != 1) {
+            res.locals.layout = false; //Don't use layout
+            res.view('permission-denied');
+        }
+        else {
+            ExportReceipt.find()
+            .populate('user')
+            .populate('store')
+            .exec(function (err, found) {
+                return res.view('manage_view', {
+                    data: found,
+                    _name: "hóa đơn xuất",
+                    _directory: "export_receipt_manage/",
+                    _add: true,
+                    _detail: true
+                }); 
+            });
+        }          
     },
 };
 

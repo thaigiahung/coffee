@@ -7,14 +7,24 @@
 
 module.exports = {
     viewManage: function(req, res) {
-        IngredientStore.find().populate('store').populate('ingredient').exec(function (err, found) {
-            return res.view('manage_view', {
-                data: found,
-                _name: " số lượng tồn",
-                _directory: "ingredient_store_manage/",
-                _add: false
-            }); 
-        });
+        if(!req.session.user) {
+            res.locals.layout = false; //Don't use layout
+            res.view('login');
+        }
+        else if(req.session.user.role != 1) {
+            res.locals.layout = false; //Don't use layout
+            res.view('permission-denied');
+        }
+        else {
+            IngredientStore.find().populate('store').populate('ingredient').exec(function (err, found) {
+                return res.view('manage_view', {
+                    data: found,
+                    _name: " số lượng tồn",
+                    _directory: "ingredient_store_manage/",
+                    _add: false
+                }); 
+            });   
+        }        
     },
 };
 
