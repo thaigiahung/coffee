@@ -33,7 +33,8 @@ module.exports.routes = {
   ***************************************************************************/
 
   '/': {
-    view: 'view_import_ingredient'
+    controller: 'IngredientController',
+    action: 'viewImportIngredient'
   },
 
   /***************************************************************************
