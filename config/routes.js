@@ -120,4 +120,5 @@ module.exports.routes = {
   'GET /login': 'UserController.viewLogin',
   'POST /login': 'UserController.login',
   'GET /logout': 'UserController.logout',
+  'GET /role/manage/view': 'RoleController.viewManage',
 };
