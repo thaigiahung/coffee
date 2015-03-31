@@ -1,0 +1,270 @@
+<script type="text/javascript" src="/js/jquery.canvasjs.min.js"></script>
+<div class="row" id="importSection">
+    <div class="col-lg-12">
+        <h1 class="page-header">Thống kê</h1>
+    </div> 
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+        <div class= "panel-body">
+        <div class="table-responsive">
+            <form>
+            	<div id="segmentationtypediv" class="form-group">
+            		<select id="segmentationtypelist" class="form-control">
+            			<option value="0">Doanh số</option>
+            			<option value="1">Doanh thu</option>
+            		</select>
+                    <label id="segmentationtypelabel" class="form-control-static"></label>
+            	</div>
+                <div id="datepickerdiv1" class="form-group">
+                                                <input class="form-control" type="text" id="datepicker1" placeholder=" Từ ngày" onchange="ChangeDate(1);" onkeyup="ChangeDate(1);" onpaste="ChangeDate(1);" oninput="ChangeDate(1);">
+                                                <label id="datepickerlbvalidate1" class="form-control-static"></label>
+                                            </div>
+                <div id="datepickerdiv2" class="form-group">
+                                                <input class="form-control" type="text" id="datepicker2" placeholder=" Đến ngày" onchange="ChangeDate(2);" onkeyup="ChangeDate(2);" onpaste="ChangeDate(2);" oninput="ChangeDate(2);">
+                                                <label id="datepickerlbvalidate2" class="form-control-static"></label>
+                                            </div>
+            	<table class="table table-striped table-bordered table-hover">
+            		<thead>
+                        <tr>
+            			<th>
+            				<b>Cửa hàng</b>
+            			</th>
+            			<th>
+            				<b>Sản phẩm</b>
+            			</th>
+            			<th>
+
+            			</th>
+                    </tr>
+            		</thead>
+            		<tbody id="tbody">
+            		<tr id="row1">
+            			<td>
+            			<div id="storelistdiv1" class="form-group"> 
+            				<select id="storelist1" class="form-control">
+            					<option value="0">Cửa hàng</option>
+                                <option value="1000">Chuỗi Passio</option>
+            				</select>
+            			</div>
+            			</td>
+            			<td>
+            				<div id="productlistdiv1" class="form-group"> 
+            				<select id="productlist1" class="form-control">
+            					<option value="0">Sản phẩm</option>
+                                <option value="1000">Tổng sản phẩm</option>
+            				</select>
+            			</div>
+            			</td>
+            			<td>
+            			</td>
+	            	</tr>
+            		</tbody>
+            	</table>
+                <img src="images/plus.png" height="20" width="20" id="btnadd1" onmouseover="" style="cursor:pointer;">
+                <br>
+                <br>
+            	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnconfirm" class="btn btn-primary update" value="Hiển thị"></input>
+            </form>
+        </div>
+        <br>
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                <td>
+        <div id="barchartdiv" style="height: 300px; width: 100%;">
+
+        </div>
+        </td>
+    </tr>
+        </table>
+        <br>
+        <table class="table table-striped table-bordered table-hover">
+            <thead id="thead">
+                <tr>
+                    <th>
+                        Ngày
+                    </th>
+                    <th>
+                        Cửa hàng
+                    </th>
+                    <th>
+                        Sản phẩm
+                    </th>
+                    <th>
+                        Doanh thu/ Doanh số
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tbody1">
+
+            </tbody>
+        </table>
+        </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">	
+$( document ).ready(function()
+{
+//main code
+    var row = 5;
+    for (var i = 2; i <= row; i++) 
+    {
+        $("#tbody").append("<tr id='row"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control'><option value='0'>Cửa hàng</option><option value='1000'>Chuỗi Passio</option></select></div></td><td><div id='productlistdiv"+i+"' class='form-group'><select id='productlist"+i+"' class='form-control'><option value='0'>Sản phẩm</option><option value='1000'>Tổng sản phẩm</option></select></div></td><td><img src='images/minus.png' height='20' width='20' id='"+i+"' onmouseover='' style='cursor:pointer;' onclick='deleterow("+i+");'></td></tr>");
+    };
+    $.post("services/model",{from:"store"},function(result)
+    {
+        if(result.status==0)
+        {
+            alert("Không lấy được dữ liệu!");
+            return false;
+        }
+        else
+        {
+            if(result.message=="success")
+            {
+                for (var i = 0; i < result.Store.length; i++) 
+                {
+                    if(result.Store[i].id!=1)
+                    {
+                        for (var l = 1; l <= row; l++) 
+                        {   
+                            $("#storelist"+l+"").append("<option value='"+result.Store[i].id+"'>"+result.Store[i].name+"</option>");
+                        };
+                    }
+                };
+            }
+            else
+            {
+                alert("Không có cửa hàng nào trong chuỗi!");
+                return false;
+            }
+        }
+    });
+    $.post("services/model",{from:"product"},function(result)
+    {
+        if(result.status==0)
+        {
+            alert("Không lấy được dữ liệu!");
+            return false;
+        }
+        else
+            {
+                if(result.message=="success")
+                {
+                    for (var i = 0; i < result.Product.length; i++) 
+                    {
+                        for (var l = 1; l <=row; l++) 
+                        {
+                            $("#productlist"+l+"").append("<option value='"+result.Product[i].id+"'>"+result.Product[i].name+"</option>");
+                        };
+                    };
+                }
+                else
+                {
+                    alert("Không có sản phẩm nào!");
+                    return false;
+                }
+            }
+        });
+
+});
+
+//datepicker
+$(function() {//datepicker code
+    $( "#datepicker2" ).datepicker();
+    $( "#datepicker2" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+    $( "#datepicker1" ).datepicker();
+    $( "#datepicker1" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+});
+
+
+
+    //bar chart
+    var chart = new CanvasJS.Chart("barchartdiv",
+        {
+            theme: "theme3",
+                        animationEnabled: true,
+            title:{
+                text: "Biểu đồ thống kê",
+                fontSize: 30
+            },
+            toolTip: {
+                shared: true
+            },          
+            axisY: {
+                title: "Doanh thu/Doanh số"
+            },
+            legend:{
+                verticalAlign: "top",
+                horizontalAlign: "center"
+            },
+            data: [ 
+            {
+                type: "column", 
+                name: "Passio Trần Hưng Đạo/Cam",
+                legendText: "Passio Trần Hưng Đạo/Cam",
+                showInLegend: true, 
+                dataPoints:[
+                {label: "01/03/2015", y: 15000000},
+                {label: "02/03/2015", y: 12000000},
+                {label: "03/03/2015", y: 13000000},
+                {label: "04/03/2015", y: 10000000},
+                {label: "05/03/2015", y: 35000000}
+                ]
+            },
+            {
+                type: "column", 
+                name: "Passio Hai Bà Trưng/Cam",
+                legendText: "Passio Hai Bà Trưng/Cam",
+                showInLegend: true,
+                dataPoints:[
+                {label: "01/03/2015", y: 20000000},
+                {label: "02/03/2015", y: 25000000},
+                {label: "03/03/2015", y: 12000000},
+                {label: "04/03/2015", y: 23000000},
+                {label: "05/03/2015", y: 9000000},
+                ]
+            }
+            
+            ],
+          legend:{
+            cursor:"pointer",
+            itemclick: function(e){
+              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+              }
+              else {
+                e.dataSeries.visible = true;
+              }
+                chart.render();
+            }
+          },
+        });
+
+chart.render();
+
+   
+
+//var test data
+    var testrow = 5;
+    var testdata = [{"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "01/03/2015", "doanhthu": 15000000},
+                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "01/03/2015", "doanhthu": 20000000},
+                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "02/03/2015", "doanhthu": 12000000},
+                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "02/03/2015", "doanhthu": 25000000},
+                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "03/03/2015", "doanhthu": 13000000},
+                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "03/03/2015", "doanhthu": 12000000},
+                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "04/03/2015", "doanhthu": 10000000},
+                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "04/03/2015", "doanhthu": 23000000},
+                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "05/03/2015", "doanhthu": 35000000},
+                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "05/03/2015", "doanhthu": 9000000}
+    ];
+    for (var i = 0; i <= testdata.length; i++) 
+    {
+        var n=i+1;
+        $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+testdata[i].thoigian+"</td><td class='form-control-static'>"+testdata[i].store+"</td><td class='form-control-static'>"+testdata[i].product+"</td><td class='form-control-static'>"+testdata[i].doanhthu+"</td></tr>");
+    };
+
+</script>

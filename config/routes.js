@@ -91,6 +91,10 @@ module.exports.routes = {
   'get /recipe': {
     view: 'view_recipe'
   },
+
+  'get /segmentation': {
+    view: 'view_segmentation'
+  },
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
 
