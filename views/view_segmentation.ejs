@@ -12,20 +12,26 @@
             <form>
             	<div id="segmentationtypediv" class="form-group">
             		<select id="segmentationtypelist" class="form-control">
-            			<option value="0">Doanh số</option>
-            			<option value="1">Doanh thu</option>
+            			<option value="0">Doan thu trên toàn chuỗi</option>
+            			<option value="1">Doanh thu trên từng cửa hàng</option>
+                        <option value="1">Doanh số sản phẩm trên toàn chuỗi</option>
+                        <option value="1">Doanh số sản phẩm trên từng cửa hàng</option>
+
             		</select>
                     <label id="segmentationtypelabel" class="form-control-static"></label>
             	</div>
+                
+                <b>Từ:</b>
                 <div id="datepickerdiv1" class="form-group">
                                                 <input class="form-control" type="text" id="datepicker1" placeholder=" Từ ngày" onchange="ChangeDate(1);" onkeyup="ChangeDate(1);" onpaste="ChangeDate(1);" oninput="ChangeDate(1);">
                                                 <label id="datepickerlbvalidate1" class="form-control-static"></label>
                                             </div>
+                <b>Đến:</b>
                 <div id="datepickerdiv2" class="form-group">
-                                                <input class="form-control" type="text" id="datepicker2" placeholder=" Đến ngày" onchange="ChangeDate(2);" onkeyup="ChangeDate(2);" onpaste="ChangeDate(2);" oninput="ChangeDate(2);">
+                                                <input class="form-control" type="text" id="datepicker2" placeholder=" Ngày" onchange="ChangeDate(2);" onkeyup="ChangeDate(2);" onpaste="ChangeDate(2);" oninput="ChangeDate(2);">
                                                 <label id="datepickerlbvalidate2" class="form-control-static"></label>
                                             </div>
-            	<table class="table table-striped table-bordered table-hover">
+            	<!--<table class="table table-striped table-bordered table-hover">
             		<thead>
                         <tr>
             			<th>
@@ -64,7 +70,7 @@
             	</table>
                 <img src="images/plus.png" height="20" width="20" id="btnadd1" onmouseover="" style="cursor:pointer;">
                 <br>
-                <br>
+                <br>-->
             	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnconfirm" class="btn btn-primary update" value="Hiển thị"></input>
             </form>
         </div>
@@ -89,9 +95,6 @@
                         Cửa hàng
                     </th>
                     <th>
-                        Sản phẩm
-                    </th>
-                    <th>
                         Doanh thu/ Doanh số
                     </th>
                 </tr>
@@ -114,7 +117,7 @@ $( document ).ready(function()
     {
         $("#tbody").append("<tr id='row"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control'><option value='0'>Cửa hàng</option><option value='1000'>Chuỗi Passio</option></select></div></td><td><div id='productlistdiv"+i+"' class='form-group'><select id='productlist"+i+"' class='form-control'><option value='0'>Sản phẩm</option><option value='1000'>Tổng sản phẩm</option></select></div></td><td><img src='images/minus.png' height='20' width='20' id='"+i+"' onmouseover='' style='cursor:pointer;' onclick='deleterow("+i+");'></td></tr>");
     };
-    $.post("services/model",{from:"store"},function(result)
+    /*$.post("services/model",{from:"store"},function(result)
     {
         if(result.status==0)
         {
@@ -168,21 +171,98 @@ $( document ).ready(function()
                     return false;
                 }
             }
-        });
+        });*/
 
 });
 
 //datepicker
 $(function() {//datepicker code
+    var currentDate = new Date();  
     $( "#datepicker2" ).datepicker();
     $( "#datepicker2" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
     $( "#datepicker1" ).datepicker();
     $( "#datepicker1" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
+    $("#datepicker1").datepicker("setDate",currentDate);
 });
+function ChangeDate(row)
+  {
+    if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker"+row+"").val())==true)
+    {
+        $("#datepickerdiv"+row+"").attr('class','form-group has-success');
+        $("#datepickerlbvalidate"+row+"").text("");
+        return true;
+    };
+    if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker"+row+"").val())==false)
+    {
+        $("#datepickerdiv"+row+"").attr('class','form-group has-error');
+        $("#datepickerlbvalidate"+row+"").text("Ngày xuất kho phải theo định dạng mm/dd/yyyy và đúng thực tế!");
+        return false;
+    };
 
+    }
 
 
     //bar chart
+var testdata={"status":0,
+                  "message":"success",
+                  "data":[
+                            {
+                                "storeid": 0, // id= 0 dành cho Chuỗi passio
+                                "storename": "Chuỗi Passio",
+                                "total": 174000000, 
+                                "details":[
+                                            {"date":"01/04/2015","amount":35000000},
+                                            {"date":"02/04/2015","amount":37000000},
+                                            {"date":"03/04/2015","amount":25000000},
+                                            {"date":"04/04/2015","amount":33000000},
+                                            {"date":"05/04/2015","amount":44000000}, 
+                                          ]
+                            },
+                            {
+                                "storeid": 1,
+                                "storename": "Passio Trần Hưng Đạo",
+                                "total": 85000000, 
+                                "details":[
+                                            {"date":"01/04/2015","amount":0},
+                                            {"date":"02/04/2015","amount":12000000},
+                                            {"date":"03/04/2015","amount":13000000},
+                                            {"date":"04/04/2015","amount":10000000},
+                                            {"date":"05/04/2015","amount":35000000}, 
+                                          ]
+                            },
+                            {
+                                "storeid": 2,
+                                "storename": "Passio Hai Bà Trưng",
+                                "total": 89000000,
+                                "details":[
+                                            {"date":"01/04/2015","amount":20000000},
+                                            {"date":"02/04/2015","amount":25000000},
+                                            {"date":"03/04/2015","amount":0},
+                                            {"date":"04/04/2015","amount":23000000},
+                                            {"date":"05/04/2015","amount":9000000}, 
+                                          ]
+                            },
+                        ]
+                 };
+                 var datapoint = [];
+                 
+                 for (var i = 0; i < testdata.data.length; i++) 
+                 {
+                    var childobject = [];
+                    for (var m = 0; m < testdata.data[i].details.length; m++) 
+                    {
+                        var detail = {label:testdata.data[i].details[m].date, y:testdata.data[i].details[m].amount};
+                        childobject.push(detail);
+                    };
+                     var obj ={
+                                 type:"column",
+                                 name:testdata.data[i].storename,
+                                 legendText:testdata.data[i].storename,
+                                 showInLegend: true,
+                                 dataPoints: childobject 
+                              };
+                    datapoint.push(obj);          
+                 };
     var chart = new CanvasJS.Chart("barchartdiv",
         {
             theme: "theme3",
@@ -201,18 +281,19 @@ $(function() {//datepicker code
                 verticalAlign: "top",
                 horizontalAlign: "center"
             },
-            data: [ 
+            data: datapoint, 
+            /*[ 
             {
                 type: "column", 
                 name: "Passio Trần Hưng Đạo/Cam",
                 legendText: "Passio Trần Hưng Đạo/Cam",
                 showInLegend: true, 
                 dataPoints:[
-                {label: "01/03/2015", y: 15000000},
-                {label: "02/03/2015", y: 12000000},
-                {label: "03/03/2015", y: 13000000},
-                {label: "04/03/2015", y: 10000000},
-                {label: "05/03/2015", y: 35000000}
+                {x: new Date(2015, 00, 21), y: 15000000},
+                {x: new Date(2015, 00, 22), y: 12000000},
+                {x: new Date(2015, 00, 23), y: 13000000},
+                {x: new Date(2015, 00, 24), y: 10000000},
+                {x: new Date(2015, 00, 25), y: 35000000}
                 ]
             },
             {
@@ -221,15 +302,15 @@ $(function() {//datepicker code
                 legendText: "Passio Hai Bà Trưng/Cam",
                 showInLegend: true,
                 dataPoints:[
-                {label: "01/03/2015", y: 20000000},
-                {label: "02/03/2015", y: 25000000},
-                {label: "03/03/2015", y: 12000000},
-                {label: "04/03/2015", y: 23000000},
-                {label: "05/03/2015", y: 9000000},
+                {x: new Date(2015, 00, 21), y: testdata.data[0].details[0].amount},
+                {x: new Date(2015, 00, 22), y: 25000000},
+                {x: new Date(2015, 00, 23), y: 12000000},
+                {x: new Date(2015, 00, 24), y: 23000000},
+                {x: new Date(2015, 00, 25), y: 9000000},
                 ]
             }
             
-            ],
+            ]*/
           legend:{
             cursor:"pointer",
             itemclick: function(e){
@@ -249,22 +330,70 @@ chart.render();
    
 
 //var test data
-    var testrow = 5;
-    var testdata = [{"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "01/03/2015", "doanhthu": 15000000},
-                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "01/03/2015", "doanhthu": 20000000},
-                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "02/03/2015", "doanhthu": 12000000},
-                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "02/03/2015", "doanhthu": 25000000},
-                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "03/03/2015", "doanhthu": 13000000},
-                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "03/03/2015", "doanhthu": 12000000},
-                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "04/03/2015", "doanhthu": 10000000},
-                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "04/03/2015", "doanhthu": 23000000},
-                {"store": "Passio Trần Hưng Đạo","product": "Cam", "thoigian": "05/03/2015", "doanhthu": 35000000},
-                {"store": "Passio Hai bà Trưng","product": "Cam", "thoigian": "05/03/2015", "doanhthu": 9000000}
-    ];
-    for (var i = 0; i <= testdata.length; i++) 
+    for (var i = 0; i <= testdata.data.length; i++) 
     {
         var n=i+1;
-        $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+testdata[i].thoigian+"</td><td class='form-control-static'>"+testdata[i].store+"</td><td class='form-control-static'>"+testdata[i].product+"</td><td class='form-control-static'>"+testdata[i].doanhthu+"</td></tr>");
+        for (var m = 0; m < testdata.data[i].details.length; m++) 
+        {
+            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+testdata.data[i].details[m].date+"</td><td class='form-control-static'>"+testdata.data[i].storename+"</td><td class='form-control-static'>"+testdata.data[i].details[m].amount+"</td></tr>");
+        };
+        
     };
+$("#btnconfirm").click(function()
+{
+    var flag = 0;
+    var date1 = $("#datepicker1").val(),
+        correctFormat1 = date1.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
+        myDate1 = new Date(correctFormat1);
+    var date2 = $("#datepicker2").val(),
+        correctFormat2 = date2.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
+        myDate2 = new Date(correctFormat2);
+    var datediff = new Date(myDate2-myDate1)/1000/60/60/24;
+    if(date1!=""&&date2!="")
+    {
+        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker1").val())==false)
+        {
+            $("#datepickerdiv1").attr('class','form-group has-error');
+            flag=1;
+        };
+        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker2").val())==false)
+        {
+            $("#datepickerdiv2").attr('class','form-group has-error');
+            flag=1;
+        };
+        if(flag==1)
+        {
+            alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
+            return false;
+        }
+        else
+        {
+            if(datediff<0)
+            {
+                $("#datepickerdiv1").attr('class','form-group has-error');
+                $("#datepickerdiv2").attr('class','form-group has-error');
+                alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
+                return false;
+            }
+            else
+            {
+                alert("Thành công");
+            }
+        }
+    }
+    else
+    {
+        if(date1=="")
+        {
+            $("#datepickerdiv1").attr('class','form-group has-error');
+        }
+        if(date2=="")
+        {
+            $("#datepickerdiv2").attr('class','form-group has-error');
+        }
 
+            alert("Xin vui lòng chọn thời gian thống kê!");
+            return false;
+    }
+});
 </script>
