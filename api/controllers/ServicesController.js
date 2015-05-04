@@ -87,7 +87,13 @@ module.exports = {
 
             res.json(result);
         });
-    }
+    },
+
+    getModel: function(req, res) {
+        crud(req, function(found){
+            return res.json(found);
+        });
+    },
 };
 
 
