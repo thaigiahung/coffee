@@ -31,6 +31,7 @@ module.exports = {
         var startDate = input.time1;
         var endDate = input.time2;
 
+
         Store.find().exec(function(err, foundStore) {
             var stores = new Array();
             var result = {
@@ -113,6 +114,45 @@ module.exports = {
                                 temp_data[temp_data.length] = newStore; 
                             }
                         }
+                    }
+
+                    var dateRange = new Array();
+                    var lowerBound = new Date(startDate);
+                    var upperBound = new Date(endDate);
+                    var temp = (upperBound - lowerBound) / 86400000;
+
+
+                    for(var i = 0 ; i <= temp ; i ++) {
+                        var newDate = lowerBound.getDate()+i;
+                        if(lowerBound.getMonth()+1 < 10) 
+                            var newMonth = "0" + (lowerBound.getMonth()+1);
+                        else
+                            var newMonth = lowerBound.getMonth()+1;
+                        var newYear = lowerBound.getFullYear();
+                        dateRange.push(newDate+"/"+newMonth+"/"+newYear);
+                    }
+
+
+                    for(var m = 0 ; m < dateRange.length ; m ++) {
+                        for(var i = 0 ; i < temp_data.length ; i ++ ) {
+                            var flag = 0;
+                            for( var j = 0 ; j < temp_data[i].details.length ; j ++) {
+                                var dateNull = new Array();
+                                if(temp_data[i].details[j].date == dateRange[m] && flag == 0) {
+                                    console.log("flag = 1");
+                                    flag = 1;
+                                }
+                                else {
+                                    dateNull.push({
+                                        date: dateRange[m],
+                                        amount: 0
+                                    });
+                                }
+                            }
+                            for(var n = 0 ; n < dateNull.length ; n ++) {
+                                temp_data[i].details[temp_data[i].details.length] = dateNull[n];
+                            }
+                        };
                     }
 
                     result["data"] = temp_data;
