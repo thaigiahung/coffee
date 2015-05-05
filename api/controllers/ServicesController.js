@@ -35,7 +35,7 @@ module.exports = {
             var stores = new Array();
             var result = {
             message: 'failed',
-            status: '1'};
+            status: 0};
 
             if(err) 
                 return res.json(result);
@@ -117,7 +117,7 @@ module.exports = {
 
                     result["data"] = temp_data;
                     result["message"] = 'success';
-                    result["status"] = 0;
+                    result["status"] = 1;
                 }
                 else {
                     console.log(err);
