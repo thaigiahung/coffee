@@ -1,0 +1,253 @@
+var model = "User";
+
+function add()
+{
+  resetForm();
+  $('.modal-title').text("Insert account");
+  $('#message').hide();
+  $('#form').modal();
+  $('#hd-action-type').val("1");
+
+  $( "#object-email" ).prop( "disabled", false );
+
+  //Hide status because new category should always be activated
+  $('#div-status').hide();
+  $( "#rdoStatus2" ).prop( "checked", true );
+}
+
+function update (object) {
+  $('.modal-title').text("Update account");
+  $('#hd-action-type').val("0");      
+  $('#hd-object-id').val(object.id);
+  $('#object-name').val(object.name);      
+  $('#object-email').val(object.email); 
+
+  //Disable textbox email to prevent changing email address
+  $( "#object-email" ).prop( "disabled", true );
+
+  //Because when we load modal for the first time, we have an object role
+  //After we update it, we just have a string
+  //So, we must check if we have an object or a string
+  $('#object-role').val((object.role.id != undefined) ? String(object.role.id) : object.role);
+
+  $('#object-phone').val(object.mobile);   
+  $('#object-password').val(object.hashedPassword); 
+  
+
+  $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
+  $('#div-status').show();
+
+  $('#message').hide();
+  $('#form').modal();
+}
+
+function drawObject(object, button) {
+  var listItem = $('#list-item').DataTable();
+
+  var deleted = object.deleted;
+  //If action is update => object.deleted will be a string => convert it to boolean
+  if(typeof deleted == "string")
+    deleted = (deleted == "true") ? true : false; //Convert string to bool
+
+  var _object = [
+    object.id,
+    object.name,
+    object.email,
+
+    //The response does not include role name => get text from the dropdown list where value = category id
+    $("#object-role [value='" + object.role + "']").text(),
+
+    object.mobile,
+    (deleted == false) ? "Activated" : "Deleted"
+  ];
+
+  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Update</button>");
+  if(deleted == false)
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Delete</button>";
+
+  listItem.row.add(_object).draw();
+}
+
+function removeObject (object) {
+      var obj = {"deleted": true};
+      var data = {
+                    "from": model,
+                    "action": "update",
+                    "where": JSON.stringify({ "id": object.id}),
+                    "updatedata": JSON.stringify(obj)
+                };
+
+      $.post("/services/model", data)
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            object = data.User;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+            object = object[0];
+
+            //Get selected row
+            var row = $("#btnUpdate"+object.id).closest('tr');
+            row = row[0];
+            //Get selected row id
+            // var rowId = table.row( row ).index();
+            listItem.row(row).remove();
+
+            drawObject(object);
+            
+            $('#errorModelMessage').text(data.message);
+            $('#errorModelMessage').show();
+            $('#errorModal').modal('hide');
+          }
+        })
+        .fail(function(error)
+        {
+          $('#errorModelMessage').text("Cannot delete this account!");
+          $('#errorModelMessage').show();
+          $('#errorModal').modal('hide');
+        });
+}
+
+function validate () {
+  var name = $('#object-name').val();
+  var email = $('#object-email').val();
+  var role = $('#object-role').val();
+  var phone = $('#object-phone').val();
+  var password = $('#object-password').val();
+
+  if(email == "") //email is null
+  {
+    $('#message').text("Email is required!");
+    $('#message').show();
+    return false;
+  }
+  else if(!validateEmail(email)) //email is invalid
+  {
+    $('#message').text("Email is not valid!");
+    $('#message').show();
+    return false;
+  }
+  else if(phone == "") //phone is null
+  {
+    $('#message').text("Phone is required!");
+    $('#message').show();
+    return false;
+  }
+  else if(password == "") //password is null
+  {
+    $('#message').text("Password is required!");
+    $('#message').show();
+    return false;
+  }
+  else if(!validatePhone(phone)) //phone is invalid
+  {
+    $('#message').text("Phone number is not valid!");
+    $('#message').show();
+    return false;
+  }
+  else if(role == null) //role is null
+  {
+    $('#message').text("Role is required!");
+    $('#message').show();
+    return false;
+  }
+  else if(name == "") //name is null
+  {
+    $('#message').text("Name is required!");
+    $('#message').show();
+    return false;
+  }
+  else
+  {
+    $('#message').hide();
+    return true; 
+  }
+}
+
+function save () {
+  var status = validate();
+  if(status)
+  {
+      var type = $('#hd-action-type').val();
+      var name = $('#object-name').val();
+      var email = $('#object-email').val();
+      var phone = $('#object-phone').val();
+      var password = $('#object-password').val();
+      var role = $('#object-role').val();
+      var status = $('input[name=object-status]:checked').val();
+      
+      var data = 
+                {
+                  "name": name,
+                  "email": email,
+                  "mobile": phone,
+                  "role": role,
+                  "deleted": status,
+                  "password": password
+                };
+      //If type == 0 -> action is update
+      //Else action is create
+      var url, method;
+      if(type == 0)
+      {
+        url = '/account/' + $('#hd-object-id').val();
+        method = 'PUT';        
+      }
+      else
+      {
+        url = '/account';
+        method = 'POST';
+      }
+      $.ajax({
+          url: url,
+          type: method,
+          data: data
+        })
+        .done(function(data) 
+        {
+          if(data.status == 1)
+          {
+            object = data.User;
+            //Get datatable
+            var listItem = $('#list-item').DataTable();
+            
+            if(type == 0) //If action is update => remove old row
+            {
+              //Get selected row
+              var row = $("#btnUpdate"+object.id).closest('tr');
+              row = row[0];
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove();
+            }
+
+            
+            drawObject(object, true);
+            //.draw(false) to prevent datatable reload to page 1
+            //Hiện tại vẫn còn 1 lỗi nhỏ: khi qua trang mới thì datatable ko tự chuyển trang được (sẽ fix sau)   
+            
+            $('#form').modal('hide');
+            resetForm();
+          }
+          else
+          {
+            $('#message').text(data.message);
+            $('#message').show();
+          }
+        })
+        .fail(function(error)
+        {
+          $('#message').text('Cannot update '+_name);
+          $('#message').show();
+        });
+  }
+}
+function resetForm()
+{
+  $('#object-name').val("");
+  $('#object-email').val("");
+  $('#object-phone').val("");
+  $('#object-password').val("");
+  $('input[name=object-status]').attr("checked", false);
+}

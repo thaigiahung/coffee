@@ -6,7 +6,7 @@
  * @docs		:: http://sailsjs.org/#!documentation/models
  */
 
-var bcrypt = require('bcrypt');
+// var bcrypt = require('bcrypt');
 
 module.exports = {
 
@@ -43,13 +43,13 @@ module.exports = {
         // hashedPassword: 'STRING'
   },
 
-  beforeCreate: function(values, next){
+  /*beforeCreate: function(values, next){
     bcrypt.hash(values.password, 10, function(err, hash) {
       if(err) return next(err);
       values.hashedPassword = hash;
       delete values.password;
       next();
     });
-  }
+  }*/
 
 };

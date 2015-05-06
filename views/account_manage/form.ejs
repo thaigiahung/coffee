@@ -1,0 +1,36 @@
+<div class="modal-body">
+  <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
+  <form role="form">
+    <div class="form-group">
+      <label for="object-name">Name *</label>
+      <input type="hidden" class="form-control" id="hd-action-type">
+      <input type="hidden" class="form-control" id="hd-object-id">
+      <input type="text" class="form-control" id="object-name" placeholder="Name" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label for="object-email">Email *</label>
+      <input type="email" class="form-control" id="object-email" placeholder="Email" maxlength="50">
+    </div>
+    <div class="form-group">
+      <label for="object-phone">Phone *</label>
+      <input type="text" class="form-control" id="object-phone" placeholder="Phone" maxlength="15">
+    </div>
+    <div class="form-group">
+      <label for="object-role">Role *</label>
+      <select class="form-control" id="object-role"></select>
+    </div>
+    <div class="form-group">
+      <label for="object-password">Password *</label>
+      <input type="password" class="form-control" id="object-password" placeholder="Password" maxlength="20">
+    </div>
+    <div class="form-group">
+        <label for="object-status">Status </label>
+        <label class="radio-inline">
+            <input type="radio" name="object-status" id="rdoStatus1" value="true">Deleted
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="object-status" id="rdoStatus2" value="false">Activated
+        </label>
+    </div>
+  </form>
+</div>
