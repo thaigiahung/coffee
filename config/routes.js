@@ -114,4 +114,6 @@ module.exports.routes = {
   'POST /stock/show': 'IngredientController.getIngredientAmount',
   'POST /ingredient/export/set': 'IngredientController.exportIngredient',
   'GET /store/show/:ingredient/:type?': 'StoreController.getStoreByIngredient',
+  'GET /segmentation/sales': 'Services.getSaleNumber',
+  'GET /segmentation/revenue': 'Services.getRevenue',
 };
