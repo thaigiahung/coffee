@@ -23,7 +23,7 @@ module.exports = {
                 mm = "0" + mm;
             var yyyy = date.getFullYear();
             var result = dd + "/" + mm + "/" + yyyy;
-            
+
             return result;
         };
 
@@ -34,9 +34,15 @@ module.exports = {
 
         Store.find().exec(function(err, foundStore) {
             var stores = new Array();
+            var oldStores = new Array();
             var result = {
             message: 'failed',
             status: 0};
+
+            var dateRange = new Array();
+            var lowerBound = new Date(startDate);
+            var upperBound = new Date(endDate);
+            var temp = (upperBound - lowerBound) / 86400000;
 
             if(err) 
                 return res.json(result);
@@ -55,7 +61,6 @@ module.exports = {
 
                 if(!err) {
                     for(var i = 0 ; i < found.length ; i++) {
-                        // console.log(found[i].time);
                         if(temp_data.length == 0 ) {
                             var name = "";
                             for(var m = 0 ; m < stores.length ; m ++) {
@@ -97,8 +102,9 @@ module.exports = {
                             if(flag == 0) {
                                 var name = "";
                                 for(var m = 0 ; m < stores.length ; m ++) {
-                                    if(stores[m].id == found[i].id)
+                                    if(stores[m].id == found[i].id) {
                                         name = stores[m].name;
+                                    }
                                 }
                                 var newStore = {
                                     storeid: found[i].store,
@@ -114,13 +120,32 @@ module.exports = {
                                 temp_data[temp_data.length] = newStore; 
                             }
                         }
+
                     }
-
-                    var dateRange = new Array();
-                    var lowerBound = new Date(startDate);
-                    var upperBound = new Date(endDate);
-                    var temp = (upperBound - lowerBound) / 86400000;
-
+                    for(var s = 0 ; s < stores.length ; s ++ ) {
+                        var flagS = 0;
+                        for(var i = 0 ; i < found.length; i ++) {
+                            if (stores[s].id == found[i].store) {
+                                flagS = 1;
+                            }
+                            if(flagS == 0 && i == found.length-1) {
+                                var newStore = {
+                                    storeid: stores[s].id,
+                                    storename: stores[s].name,
+                                    total: 0,
+                                    details: new Array()
+                                }
+                                for(var d = 0 ; d < dateRange ; d ++) {
+                                    var newDetails = {
+                                        date: convertDate(dateRange[d]),
+                                        amount: 0
+                                    }
+                                    newStore.push(newDetails);
+                                }
+                                temp_data.push(newStore);
+                            }
+                        }
+                    }
 
                     for(var i = 0 ; i <= temp ; i ++) {
                         var newDate = lowerBound.getDate()+i;
@@ -139,7 +164,6 @@ module.exports = {
                             for( var j = 0 ; j < temp_data[i].details.length ; j ++) {
                                 var dateNull = new Array();
                                 if(temp_data[i].details[j].date == dateRange[m] && flag == 0) {
-                                    console.log("flag = 1");
                                     flag = 1;
                                 }
                                 else {
@@ -154,6 +178,12 @@ module.exports = {
                             }
                         };
                     }
+
+                    // for(var s = 0 ; s < stores.length; s++) {
+                    //     for(var d = 0 ; d < dateRange.length ; d++) {
+
+                    //     }
+                    // }
 
                     result["data"] = temp_data;
                     result["message"] = 'success';
