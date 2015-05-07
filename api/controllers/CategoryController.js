@@ -21,7 +21,8 @@ module.exports = {
                     data: found,
                     _name: " loại sản phẩm",
                     _directory: "product_category_manage/",
-                    _add: true
+                    _add: true,
+                    user: req.session.user
                 }); 
             });
         }        

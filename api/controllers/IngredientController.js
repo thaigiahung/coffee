@@ -672,24 +672,36 @@ module.exports = {
 	        	Store.find({ id: { '!': 1 }, deleted: 0}).exec(function (err, allStores) {
 	        		return res.view('view_export_ingredient', {
 	        		    stores: stores,
-	        		    allStores: allStores
+	        		    allStores: allStores,
+                    	user: req.session.user
 	        		}); 
 	        	});	    	
 	        });
 		}		
 	},
 
-	viewImportIngredient: function(req, res) {
+	viewImportIngredient: function(req, res) 
+	{
 		if(!req.session.user) {
 		    res.locals.layout = false; //Don't use layout
 		    res.view('login');
 		}
-		else if(req.session.user.role != 1) {
-		    res.locals.layout = false; //Don't use layout
-		    res.view('permission-denied');
+		else if(req.session.user.role == 2) 
+		{
+		    res.redirect('/product/view');
 		}
-		else {
-	    	return res.view('view_import_ingredient');
+		else if(req.session.user.role == 3) 
+		{
+		    res.redirect('/segmentation/view');
+		}
+		else if(req.session.user.role == 1) 
+		{		    
+	    	return res.view('view_import_ingredient', {user: req.session.user});
+		}
+		else 
+		{
+			res.locals.layout = false; //Don't use layout
+		    res.view('permission-denied');
 		}		
 	},
 };

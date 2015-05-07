@@ -21,7 +21,8 @@ module.exports = {
                     data: found,
                     _name: " loại nguyên liệu",
                     _directory: "ingredient_category_manage/",
-                    _add: true
+                    _add: true,
+                    user: req.session.user
                 }); 
             });
         }        

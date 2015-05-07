@@ -1,0 +1,45 @@
+$(document).ready(function() {
+    $('#list-item').DataTable();
+
+    //Load Product Category
+    $.get( '/services/model?from=store&where={"deleted": false}', function( data ) {
+      var stores = data.Store;
+      $.each( stores, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj store
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#object-store').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+
+    //Load Product Category
+    $.get( '/services/model?from=ingredient&where={"deleted": false}', function( data ) {
+      var ingredients = data.Ingredient;
+      $.each( ingredients, function( key, value ) {
+        //Key: is index
+        // console.log("key: "+key);
+        //Value: is obj ingredient
+        //Ex: 
+          // {
+          //     "id": 1,
+          //     "name": "Sinh tố",
+          //     "description": "Sinh tố trái cây",
+          //     "deleted": null,
+          //     "createdAt": "2015-01-09T08:14:55.000Z",
+          //     "updatedAt": "2015-01-09T08:14:55.000Z"
+          // }
+        // console.log("value: "+value);
+        $('#object-ingredient').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+});

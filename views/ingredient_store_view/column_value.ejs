@@ -1,0 +1,20 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+
+      <% if (obj.ingredient == undefined) {%>
+        <td></td>
+      <%} else {%>
+        <td><%= obj.ingredient.name %></td>
+      <%} %>
+        
+    <td><%= obj.instock %></td>
+    <td><%= obj.limit %></td>
+
+    <% if (obj.deleted == true) { %>
+      <td>Đã xóa</td>
+    <% } else { %>
+      <td>Kích hoạt</td>
+    <% } %>                     
+  </tr>
+<% }) %>

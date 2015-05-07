@@ -25,7 +25,8 @@ module.exports = {
                     data: found,
                     _name: "hóa đơn",
                     _directory: "receipt_manage/",
-                    _add: true
+                    _add: true,
+                    user: req.session.user
                 }); 
             });
         }         
@@ -41,7 +42,7 @@ module.exports = {
             res.view('permission-denied');
         }
         else {
-            return res.view('view_recipe');
+            return res.view('view_recipe',{user: req.session.user});
         }   
     },
 };

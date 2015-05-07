@@ -21,9 +21,39 @@ module.exports = {
                     data: found,
                     _name: " số lượng tồn",
                     _directory: "ingredient_store_manage/",
-                    _add: false
+                    _add: false,
+                    user: req.session.user
                 }); 
             });   
+        }        
+    },
+
+    view: function(req, res) 
+    {
+        if(!req.session.user) 
+        {
+            res.locals.layout = false; //Don't use layout
+            res.view('login');
+        }
+        else if(req.session.user.role != 2) 
+        {
+            res.locals.layout = false; //Don't use layout
+            res.view('permission-denied');
+        }
+        else 
+        {            
+            Store.findOne({manager: req.session.user.id}).exec(function (err, store) 
+            {
+                IngredientStore.find({store: store.id}).populate('store').populate('ingredient').exec(function (err, found) {
+                    return res.view('manage_view', {
+                        data: found,
+                        _name: " số lượng tồn",
+                        _directory: "ingredient_store_view/",
+                        _add: false,
+                        user: req.session.user
+                    }); 
+                });   
+            });            
         }        
     },
 };

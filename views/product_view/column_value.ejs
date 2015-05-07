@@ -1,0 +1,20 @@
+<% _.each(data, function (obj) { %>
+  <tr>
+    <td><%= obj.id %></td>
+    <td><%= obj.name %></td>
+
+      <% if (obj.category == undefined) {%>
+        <td></td>
+      <%} else {%>
+        <td><%= obj.category.name %></td>
+      <%} %>
+        
+    <td><%= obj.price %></td>
+    <!-- <td><%= obj.image %></td> -->
+
+    <td>
+      <% if (obj.description != undefined) %>
+        <%= obj.description %>
+    </td>                          
+  </tr>
+<% }) %>

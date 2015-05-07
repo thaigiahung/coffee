@@ -100,11 +100,13 @@ module.exports.routes = {
   '/services/model': 'ServicesController.getModel',
 
   '/product/manage/view': 'ProductController.viewManage',
+  '/product/view': 'ProductController.view',
 
   '/ingredient/manage/view': 'IngredientController.viewManage',
   '/category/manage/view': 'CategoryController.viewManage',
   '/ingredientcategory/manage/view': 'IngredientCategoryController.viewManage',
   '/ingredientstore/manage/view': 'IngredientStoreController.viewManage',
+  '/inventory/view': 'IngredientStoreController.view',
   '/store/manage/view': 'StoreController.viewManage',
   '/receipt/manage/view': 'BillController.viewManage',
   '/importreceipt/manage/view': 'ImportReceiptController.viewManage',

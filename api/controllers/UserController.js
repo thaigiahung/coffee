@@ -71,7 +71,8 @@ module.exports = {
         		    data: found,
         		    _name: "account",
         		    _directory: "account_manage/",
-        		    _add: true
+        		    _add: true,
+                    user: req.session.user
         		});     
         	}             
         });

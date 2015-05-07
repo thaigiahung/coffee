@@ -135,7 +135,8 @@ module.exports = {
         		    data: found,
         		    _name: "cửa hàng",
         		    _directory: "store_manage/",
-        		    _add: true
+        		    _add: true,
+                    user: req.session.user
         		});     
         	}             
         });

@@ -25,7 +25,8 @@ module.exports = {
                     _name: "hóa đơn nhập",
                     _directory: "import_receipt_manage/",
                     _add: true,
-                    _detail: true
+                    _detail: true,
+                    user: req.session.user
                 }); 
             });
         }          

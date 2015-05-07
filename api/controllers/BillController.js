@@ -61,7 +61,8 @@ module.exports = {
                 _name: "hóa đơn",
                 _directory: "receipt_manage/",
                 _add: true,
-                _detail: true
+                _detail: true,
+                user: req.session.user
             }); 
         });
     },

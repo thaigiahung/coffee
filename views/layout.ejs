@@ -77,56 +77,93 @@
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
                     <ul class="nav" id="side-menu">
-                        <li class="sidebar-search">
-                            <div class="input-group custom-search-form">
-                                <input type="text" class="form-control" placeholder="Search...">
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="button">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </span>
-                            </div>
-                            <!-- /input-group -->
-                        </li>
-                        <li>
-                            <a href="/category/manage/view"><i class="fa fa-dashboard fa-fw"></i> Loại sản phẩm</a>
-                        </li>
-                        <li>
-                            <a href="/product/manage/view"><i class="fa fa-dashboard fa-fw"></i> Sản phẩm</a>
-                        </li>
-                        <li>
-                            <a href="/ingredientcategory/manage/view"><i class="fa fa-dashboard fa-fw"></i> Loại nguyên liệu</a>
-                        </li>
-                        <li>
-                            <a href="/ingredient/manage/view"><i class="fa fa-dashboard fa-fw"></i> Nguyên liệu</a>
-                        </li>                          
-                        <li>
-                            <a href="/ingredientstore/manage/view"><i class="fa fa-dashboard fa-fw"></i> Quản lý kho</a>
-                        </li>
-                        <li>
-                            <a href="/store/manage/view"><i class="fa fa-dashboard fa-fw"></i> Quản lý cửa hàng</a>
-                        </li>                         
-                        <li>
-                            <a href="/export"><i class="fa fa-dashboard fa-fw"></i> Xuất nguyên liệu</a>
-                        </li>
-                        <li>
-                            <a href="/import"><i class="fa fa-dashboard fa-fw"></i> Nhập nguyên liệu</a>
-                        </li>
-                        <li>
-                            <a href="/receipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Hóa đơn bán hàng</a>
-                        </li>
-                        <li>
-                            <a href="/exportreceipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Hóa đơn xuất kho</a>
-                        </li>
-                        <li>
-                            <a href="/importreceipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Hóa đơn nhập kho</a>
-                        </li> 
-                        <li>
-                            <a href="/recipe"><i class="fa fa-dashboard fa-fw"></i> Công thức</a>
-                        </li>  
-                        <li>
-                            <a href="/account/manage/view"><i class="fa fa-dashboard fa-fw"></i> Account</a>
-                        </li>                        
+
+                        <% if (user.role == 1) { %>
+                            <!-- <li>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Sample Pages<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="blank.html">Blank Page</a>
+                                    </li>
+                                    <li>
+                                        <a href="login.html">Login Page</a>
+                                    </li>
+                                </ul>
+                            </li> -->
+                            <li>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Product<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/category/manage/view"><i class="fa fa-dashboard fa-fw"></i> Category</a>
+                                    </li>
+                                    <li>
+                                        <a href="/product/manage/view"><i class="fa fa-dashboard fa-fw"></i> Product</a>
+                                    </li>
+                                    <li>
+                                        <a href="/recipe"><i class="fa fa-dashboard fa-fw"></i> Recipe</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Ingredient<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/ingredientcategory/manage/view"><i class="fa fa-dashboard fa-fw"></i> Category</a>
+                                    </li>
+                                    <li>
+                                        <a href="/ingredient/manage/view"><i class="fa fa-dashboard fa-fw"></i> Ingredient</a>
+                                    </li>  
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Store<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/store/manage/view"><i class="fa fa-dashboard fa-fw"></i> Store</a>
+                                    </li>          
+                                    <li>
+                                        <a href="/ingredientstore/manage/view"><i class="fa fa-dashboard fa-fw"></i> Inventory</a>
+                                    </li>                                                   
+                                    <li>
+                                        <a href="/export"><i class="fa fa-dashboard fa-fw"></i> Export</a>
+                                    </li>
+                                    <li>
+                                        <a href="/import"><i class="fa fa-dashboard fa-fw"></i> Import</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#"><i class="fa fa-files-o fa-fw"></i> Receipt<span class="fa arrow"></span></a>
+                                <ul class="nav nav-second-level">
+                                    <li>
+                                        <a href="/receipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Bill</a>
+                                    </li>
+                                    <li>
+                                        <a href="/exportreceipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Export</a>
+                                    </li>
+                                    <li>
+                                        <a href="/importreceipt/manage/view"><i class="fa fa-dashboard fa-fw"></i> Import</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="/account/manage/view"><i class="fa fa-dashboard fa-fw"></i> Account</a>
+                            </li>
+                        <% } else if(user.role == 2) { %>
+                            <li>
+                                <a href="/product/view"><i class="fa fa-dashboard fa-fw"></i> Product</a>
+                            </li>
+                            <li>
+                                <a href="/inventory/view"><i class="fa fa-dashboard fa-fw"></i> Inventory</a>
+                            </li>
+                            <li>
+                                <a href="/segmentation/view"><i class="fa fa-dashboard fa-fw"></i> Segmentation</a>
+                            </li>
+                        <% } else if(user.role == 3) { %>
+                            <li>
+                                <a href="/segmentation/view"><i class="fa fa-dashboard fa-fw"></i> Segmentation</a>
+                            </li>                        
+                        <% } %>                                                
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
