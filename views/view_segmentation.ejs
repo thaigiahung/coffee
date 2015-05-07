@@ -11,11 +11,11 @@
         <div class="table-responsive">
             <form>
             	<div id="segmentationtypediv" class="form-group">
-            		<select id="segmentationtypelist" class="form-control">
+            		<select id="segmentationtypelist" class="form-control" onchange="ChangeSegmentationType();">
             			<option value="0">Doan thu trên toàn chuỗi</option>
             			<option value="1">Doanh thu trên từng cửa hàng</option>
-                        <option value="1">Doanh số sản phẩm trên toàn chuỗi</option>
-                        <option value="1">Doanh số sản phẩm trên từng cửa hàng</option>
+                        <option value="2">Doanh số sản phẩm trên toàn chuỗi</option>
+                        <option value="3">Doanh số sản phẩm trên từng cửa hàng</option>
 
             		</select>
                     <label id="segmentationtypelabel" class="form-control-static"></label>
@@ -71,11 +71,62 @@
                 <img src="images/plus.png" height="20" width="20" id="btnadd1" onmouseover="" style="cursor:pointer;">
                 <br>
                 <br>-->
+            <table class="table table-striped table-bordered table-hover" id="storeincometable" hidden>
+            <thead>
+                <tr>
+                    <th>
+                        Cửa hàng
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="storelisttbody">
+                <tr id="storelisttr1">
+                    <td>
+                    <div id="storelistdiv1" class="form-group">
+                        <select id="storelist1" class="form-control" onchange="ChangeStore(1);">
+                            <option value="0">Cửa hàng</option>
+                        </select>
+                    </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="table table-striped table-bordered table-hover" id="storesaletable" hidden>
+            <thead>
+                <tr>
+                    <th id="thsalestore">
+                        Cửa hàng
+                    </th>
+                    <th>
+                        Sản phẩm
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="salestorelisttbody">
+                <tr id="salestorelisttr1">
+                    <td id="tdsalestore1">
+                    <div id="salestorelistdiv1" class="form-group">
+                        <select id="salestorelist1" class="form-control" onchange="SaleChangeStore(1);">
+                            <option value="0">Cửa hàng</option>
+                        </select>
+                    </div>
+                    </td>
+                    <td>
+                        <div id="saleproductlistdiv1" class="form-group">
+                        <select id="saleproductlist1" class="form-control" onchange="SaleChangeProduct(1);">
+                            <option value="0">Sản phẩm</option>
+                        </select>
+                    </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
             	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id="btnconfirm" class="btn btn-primary update" value="Hiển thị"></input>
             </form>
         </div>
         <br>
-        <table class="table table-striped table-bordered table-hover">
+
+        <table class="table table-striped table-bordered table-hover" id="barcharttable" hidden>
             <tr>
                 <td>
         <div id="barchartdiv" style="height: 300px; width: 100%;">
@@ -85,7 +136,7 @@
     </tr>
         </table>
         <br>
-        <table class="table table-striped table-bordered table-hover">
+        <table class="table table-striped table-bordered table-hover" id="segmentationtable" hidden>
             <thead id="thead">
                 <tr>
                     <th>
@@ -94,8 +145,11 @@
                     <th>
                         Cửa hàng
                     </th>
-                    <th>
-                        Doanh thu/ Doanh số
+                    <th id="thincome">
+                        Doanh thu
+                    </th>
+                    <th id="thsale">
+                        Doanh số
                     </th>
                 </tr>
             </thead>
@@ -109,32 +163,36 @@
 </div>
 
 <script type="text/javascript">	
+var row = 5;
+var dem=0;
 $( document ).ready(function()
 {
-//main code
-    var row = 5;
+    
     for (var i = 2; i <= row; i++) 
     {
-        $("#tbody").append("<tr id='row"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control'><option value='0'>Cửa hàng</option><option value='1000'>Chuỗi Passio</option></select></div></td><td><div id='productlistdiv"+i+"' class='form-group'><select id='productlist"+i+"' class='form-control'><option value='0'>Sản phẩm</option><option value='1000'>Tổng sản phẩm</option></select></div></td><td><img src='images/minus.png' height='20' width='20' id='"+i+"' onmouseover='' style='cursor:pointer;' onclick='deleterow("+i+");'></td></tr>");
+        $("#storelisttbody").append("<tr id='storelisttr"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control' onchange='ChangeStore("+i+");'><option value='0'>Cửa hàng</option></select></div></td></tr>");
+        $("#salestorelisttbody").append("<tr id='salestorelisttr"+i+"'><td id='tdsalestore"+i+"'><div id='salestorelistdiv"+i+"' class='form-group'><select id='salestorelist"+i+"' class='form-control' onchange='SaleChangeStore("+i+");'><option value='0'>Cửa hàng</option></select></div></td><td><div id='saleproductlistdiv"+i+"' class='form-group'><select id='saleproductlist"+i+"' class='form-control' onchange='SaleChangeProduct("+i+");'><option value='0'>Sản phẩm</option></select></div></td></tr>");
     };
-    /*$.post("services/model",{from:"store"},function(result)
+
+    $.post("services/model",{from:"store"},function(result1)
     {
-        if(result.status==0)
+        if(result1.status==0)
         {
             alert("Không lấy được dữ liệu!");
             return false;
         }
         else
         {
-            if(result.message=="success")
+            if(result1.message=="success")
             {
-                for (var i = 0; i < result.Store.length; i++) 
+                for (var i = 0; i < result1.Store.length; i++) 
                 {
-                    if(result.Store[i].id!=1)
+                    if(result1.Store[i].id!=1)
                     {
                         for (var l = 1; l <= row; l++) 
                         {   
-                            $("#storelist"+l+"").append("<option value='"+result.Store[i].id+"'>"+result.Store[i].name+"</option>");
+                            $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                            $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
                         };
                     }
                 };
@@ -146,22 +204,42 @@ $( document ).ready(function()
             }
         }
     });
-    $.post("services/model",{from:"product"},function(result)
+$.post("services/model",{from:"product"},function(result){
+    if(result.status==0)
     {
-        if(result.status==0)
+        alert("Không lấy được dữ liệu!");
+        return false;
+    }
+    else
+    {
+        if(result.message=="success")
+        {
+            for (var i = 0; i < result.Product.length; i++) 
+            {
+                for (var l = 1; l <=row; l++) 
+                {
+                    $("#saleproductlist"+l+"").append("<option value='"+result.Product[i].id+"'>"+result.Product[i].name+"</option>");
+                };
+            };
+        }
+    }
+});
+    /*$.post("services/model",{from:"product"},function(datatest)
+    {
+        if(datatest.status==0)
         {
             alert("Không lấy được dữ liệu!");
             return false;
         }
         else
             {
-                if(result.message=="success")
+                if(datatest.message=="success")
                 {
-                    for (var i = 0; i < result.Product.length; i++) 
+                    for (var i = 0; i < datatest.Product.length; i++) 
                     {
                         for (var l = 1; l <=row; l++) 
                         {
-                            $("#productlist"+l+"").append("<option value='"+result.Product[i].id+"'>"+result.Product[i].name+"</option>");
+                            $("#productlist"+l+"").append("<option value='"+datatest.Product[i].id+"'>"+datatest.Product[i].name+"</option>");
                         };
                     };
                 }
@@ -200,10 +278,147 @@ function ChangeDate(row)
     };
 
     }
+function ChangeStore(n)
+{
+    for (var i = 1; i <= row; i++) 
+    {
+        if($("#storelist"+i+"").val()==$("#storelist"+n+"").val()&&$("#storelist"+n+"").val()!=0&&n!=i)
+        {
+            alert("Bạn đã chọn cửa hàng này rồi, xin vui lòng chọn lại!");
+            $("#storelist"+n+"").val(0);
+            return false;
+        }
+    };
+};
+function SaleChangeStore(n)
+{
+     for (var i = 1; i <= row; i++) 
+    {
+        if($("#salestorelist"+i+"").val()==$("#salestorelist"+n+"").val()&&$("#salestorelist"+n+"").val()!=0&&n!=i&&$("#saleproductlist"+n+"").val()==$("#saleproductlist"+i+"").val())
+        {
+            alert("Bạn đã chọn thống kê cửa hàng và sản phẩm này rồi!");
+            $("#salestorelist"+n+"").val(0);
+            return false;
+        }
+    };
+}
+function SaleChangeProduct(n)
+{
+    if($("#segmentationtypelist").val()==2)
+    {
+        for (var i = 1; i <= row; i++) 
+        {
+            if($("#saleproductlist"+n+"").val()==$("#saleproductlist"+i+"").val()&&i!=n&&$("#saleproductlist"+n+"").val()!=0)
+            {
+                alert("Bạn đã chọn sản phẩm này rồi!");
+                $("#saleproductlist"+n+"").val(0);
+                return false;
+            }
+        };
+    }
+    if($("#segmentationtypelist").val()==3)
+    {
+        for (var i = 1; i <= row; i++) 
+        {
+            if($("#saleproductlist"+n+"").val()==$("#saleproductlist"+i+"").val()&&i!=n&&$("#saleproductlist"+n+"").val()!=0)
+            {
+                if($("#salestorelist"+n+"").val()==$("#salestorelist"+i+"").val())
+                {
+                    alert("Bạn đã chọn thống kê cửa hàng và sản phẩm này rồi!")
+                    $("#saleproductlist"+n+"").val(0);
+                    return false;
+                }   
+            }
+        };
+    }
+}
+function ChangeSegmentationType()
+{
+    if($("#segmentationtypelist").val()==0)//chain income
+    {
+        $("#storeincometable").hide();
+        $("#storesaletable").hide();
+        $("#segmentationtable").hide();
+        $("#barcharttable").hide();
+        for (var i = 0; i <= row; i++) 
+        {
+            $("#storelist"+i+"").val(0);
+        };
+    }
+    if($("#segmentationtypelist").val()==1)//store income
+    {
+        $("#storeincometable").show();
+        $("#storesaletable").hide();
+        $("#segmentationtable").hide();
+        $("#barcharttable").hide();
+    }
+    if($("#segmentationtypelist").val()==2)//chain product sales
+    {
+        $("#storesaletable").show();
+        $("#storeincometable").hide();
+        $("#segmentationtable").hide();
+        $("#barcharttable").hide();
+        $("#thsalestore").hide();
+        for (var i = 1; i <=row; i++) 
+        {
+            $("#tdsalestore"+i+"").hide();
+        };
+    }
+    if($("#segmentationtypelist").val()==3)// store product sales
+    {
+        $("#storesaletable").show();
+        $("#storeincometable").hide();
+        $("#segmentationtable").hide();
+        $("#barcharttable").hide();
+        $("#thsalestore").show();
+        for (var i = 1; i <=row; i++) 
+        {
+            $("#tdsalestore"+i+"").show();
+        };
+    }
+}
 
-
-    //bar chart
-var testdata={"status":0,
+$("#btnconfirm").click(function()
+{
+    var flag = 0;
+    var date1 = $("#datepicker1").val(),
+        correctFormat1 = date1.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
+        myDate1 = new Date(correctFormat1);
+    var date2 = $("#datepicker2").val(),
+        correctFormat2 = date2.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
+        myDate2 = new Date(correctFormat2);
+    var datediff = new Date(myDate2-myDate1)/1000/60/60/24;
+    if(date1!=""&&date2!="")
+    {
+        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker1").val())==false)
+        {
+            $("#datepickerdiv1").attr('class','form-group has-error');
+            flag=1;
+        };
+        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker2").val())==false)
+        {
+            $("#datepickerdiv2").attr('class','form-group has-error');
+            flag=1;
+        };
+        if(flag==1)
+        {
+            alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
+            return false;
+        }
+        else
+        {
+            if(datediff<0)
+            {
+                $("#datepickerdiv1").attr('class','form-group has-error');
+                $("#datepickerdiv2").attr('class','form-group has-error');
+                alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
+                return false;
+            }
+            else//success case
+            {
+                    //get income data by api
+            var datatest={    
+                  "status":1,
                   "message":"success",
                   "data":[
                             {
@@ -219,7 +434,7 @@ var testdata={"status":0,
                                           ]
                             },
                             {
-                                "storeid": 1,
+                                "storeid": 2,
                                 "storename": "Passio Trần Hưng Đạo",
                                 "total": 85000000, 
                                 "details":[
@@ -231,7 +446,7 @@ var testdata={"status":0,
                                           ]
                             },
                             {
-                                "storeid": 2,
+                                "storeid": 3,
                                 "storename": "Passio Hai Bà Trưng",
                                 "total": 89000000,
                                 "details":[
@@ -244,26 +459,263 @@ var testdata={"status":0,
                             },
                         ]
                  };
-                 var datapoint = [];
-                 
-                 for (var i = 0; i < testdata.data.length; i++) 
-                 {
-                    var childobject = [];
-                    for (var m = 0; m < testdata.data[i].details.length; m++) 
+            //get sales data
+            var saledata={    
+                  "status":1,
+                  "message":"success",
+                  "data":[
+                            {
+                                "storeid": 0, // id= 0 dành cho Chuỗi passio
+                                "storename": "Chuỗi Passio",
+                                "total":2565 , 
+                                "details":[
+                                            {
+                                             "productid": 1,
+                                             "product":"Cà phê sữa",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":200},
+                                                      {"date":"02/04/2015","amount":250},
+                                                      {"date":"03/04/2015","amount":0},
+                                                      {"date":"04/04/2015","amount":230},
+                                                      {"date":"05/04/2015","amount":900}, 
+                                                    ] 
+                                            },
+                                            {
+                                             "productid": 2,
+                                             "product":"Cà phê đá",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":100},
+                                                      {"date":"02/04/2015","amount":150},
+                                                      {"date":"03/04/2015","amount":10},
+                                                      {"date":"04/04/2015","amount":130},
+                                                      {"date":"05/04/2015","amount":400}, 
+                                                    ] 
+                                            },{
+                                             "productid": 3,
+                                             "product":"Cà phê sữa đá",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":300},
+                                                      {"date":"02/04/2015","amount":350},
+                                                      {"date":"03/04/2015","amount":30},
+                                                      {"date":"04/04/2015","amount":330},
+                                                      {"date":"05/04/2015","amount":500}, 
+                                                    ] 
+                                            },
+                                            
+                                          ]
+                            },
+                            {
+                                "storeid": 1, 
+                                "storename": "Passio Trần Hưng Đạo",
+                                "total":2565 , 
+                                "details":[
+                                            {
+                                             "productid": 1,
+                                             "product":"Cà phê sữa",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":200},
+                                                      {"date":"02/04/2015","amount":250},
+                                                      {"date":"03/04/2015","amount":0},
+                                                      {"date":"04/04/2015","amount":230},
+                                                      {"date":"05/04/2015","amount":900}, 
+                                                    ] 
+                                            },
+                                            {
+                                             "productid": 2,
+                                             "product":"Cà phê đá",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":100},
+                                                      {"date":"02/04/2015","amount":150},
+                                                      {"date":"03/04/2015","amount":10},
+                                                      {"date":"04/04/2015","amount":130},
+                                                      {"date":"05/04/2015","amount":400}, 
+                                                    ] 
+                                            },{
+                                             "productid": 3,
+                                             "product":"Cà phê sữa đá",
+                                             "sale":[
+                                                      {"date":"01/04/2015","amount":300},
+                                                      {"date":"02/04/2015","amount":350},
+                                                      {"date":"03/04/2015","amount":30},
+                                                      {"date":"04/04/2015","amount":330},
+                                                      {"date":"05/04/2015","amount":500}, 
+                                                    ] 
+                                            },
+                                            
+                                          ]
+                            },
+                            
+                        ]
+                 };
+
+
+
+
+//main code*********
+if(datatest.status==0)
+{
+    alert("Lỗi hệ thống, xin vui lòng kiểm tra lại!");
+    return false;
+}
+else
+{
+    if(datatest.message=="success")//success
+    {
+        var datapoint = [];
+        if($("#segmentationtypelist").val()==0)//Chain incomes
+        {
+            $("#barcharttable").show();
+            $("#segmentationtable").show();
+            var n=1;
+            for (var i = 1; i <= dem; i++) 
+            {
+                $("#tbody1row"+i+"").remove();
+            };
+            dem=0;
+            for (var i = 0; i < datatest.data.length; i++) 
+            {
+                var childobject = [];
+                if(datatest.data[i].storeid==0)
+                {
+                    for (var m = 0; m < datatest.data[i].details.length; m++) 
                     {
-                        var detail = {label:testdata.data[i].details[m].date, y:testdata.data[i].details[m].amount};
+                        var detail = {label:datatest.data[i].details[m].date, y:datatest.data[i].details[m].amount};
                         childobject.push(detail);
+                        dem=dem+1;
                     };
                      var obj ={
                                  type:"column",
-                                 name:testdata.data[i].storename,
-                                 legendText:testdata.data[i].storename,
+                                 name:datatest.data[i].storename,
+                                 legendText:datatest.data[i].storename,
                                  showInLegend: true,
                                  dataPoints: childobject 
                               };
-                    datapoint.push(obj);          
-                 };
-    var chart = new CanvasJS.Chart("barchartdiv",
+                    datapoint.push(obj);
+                }       
+            };
+            
+        }
+        if($("#segmentationtypelist").val()==1)//Store incomes
+        {
+            var flag1 = 0;
+            var d = 1;
+            for (var i = 1; i <= dem; i++) 
+                {
+                    $("#tbody1row"+i+"").remove();
+                };
+                dem=0;
+            for (var i = 1; i <= row; i++) 
+            {
+                if($("#storelist"+i+"").val()!=0)
+                {
+                    flag1=1;
+                }
+            };
+            if(flag1==0)
+            {
+                alert("Xin vui lòng chọn ít nhất 1 cửa hàng để xem thống kê doanh thu!");
+                return false;
+            }
+            else//get the chosen stores
+            {
+                $("#barcharttable").show();
+                $("#segmentationtable").show();
+                var chosenstores = [];
+                for (var i = 1; i <=row; i++) 
+                {
+                    if($("#storelist"+i+"").val()!=0)
+                    {
+                        for (var m = 0; m < datatest.data.length; m++) 
+                        {
+                            var childobject = [];
+                            if($("#storelist"+i+"").val()==datatest.data[m].storeid)
+                            {
+                                for (var n = 0; n < datatest.data[m].details.length; n++) 
+                                {
+                                    var detail = {label:datatest.data[m].details[n].date, y:datatest.data[m].details[n].amount};
+                                    childobject.push(detail);
+                                    dem=dem+1;
+                                };
+                                 var obj ={
+                                             type:"column",
+                                             name:datatest.data[m].storename,
+                                             legendText:datatest.data[m].storename,
+                                             showInLegend: true,
+                                             dataPoints: childobject 
+                                          };
+                                datapoint.push(obj);
+                            }
+                        };
+                    }
+                };
+
+            }
+        }
+        if($("#segmentationtypelist").val()==2)
+        {
+            var flag2=0;
+            for (var i = 1; i <= dem; i++) 
+                {
+                    $("#tbody1row"+i+"").remove();
+                };
+            dem=0;
+            for (var i = 1; i <= row; i++) 
+            {
+                if($("#saleproductlist"+i+"").val()!=0)
+                {
+                    flag2=1;
+                }
+            };
+            if(flag2==0)
+            {
+                alert("Xin vui lòng chọn ít nhất 1 sản phẩm để xem thống kê doanh số của chuỗi!");
+                return false;
+            }
+            else//get the chosen product
+            {
+                $("#barcharttable").show();
+                $("#segmentationtable").show();
+                var chosenproducts = [];
+                for (var i = 0; i < saledata.data.length; i++) 
+                {
+                    var childobject = [];
+                    if(saledata.data[i].storeid==0)
+                    {
+                        for (var m = 0; m < saledata.data[i].details.length; m++) 
+                        {
+                            for (var n = 0; n < saledata.data[i].details[m].sale.length; n++) 
+                            {
+                                var detail = {label:saledata.data[i].details[m].sale[n].date, y:saledata.data[i].details[m].sale[n].amount};
+                                childobject.push(detail);
+                                dem=dem+1;  
+                            };
+                            alert(childobject[0].label);
+                            alert(childobject[0].y);
+                            alert(childobject[1].label);
+                            alert(childobject[1].y);
+                            alert(childobject[2].label);
+                            alert(childobject[2].y);
+                            var obj ={
+                                     type:"column",
+                                     name:saledata.data[i].details[m].product,
+                                     legendText:saledata.data[i].details[m].product,
+                                     showInLegend: true,
+                                     dataPoints: childobject 
+                                  };
+                            datapoint.push(obj);
+                        };
+                    }   
+                }
+            }
+        }
+        if($("#segmentationtypelist").val()==3)
+        {
+            alert("Doanh số từng cửa hàng");
+        }
+
+
+        //drawing chart
+         var chart = new CanvasJS.Chart("barchartdiv",
         {
             theme: "theme3",
                         animationEnabled: true,
@@ -302,7 +754,7 @@ var testdata={"status":0,
                 legendText: "Passio Hai Bà Trưng/Cam",
                 showInLegend: true,
                 dataPoints:[
-                {x: new Date(2015, 00, 21), y: testdata.data[0].details[0].amount},
+                {x: new Date(2015, 00, 21), y: datatest.data[0].details[0].amount},
                 {x: new Date(2015, 00, 22), y: 25000000},
                 {x: new Date(2015, 00, 23), y: 12000000},
                 {x: new Date(2015, 00, 24), y: 23000000},
@@ -326,58 +778,69 @@ var testdata={"status":0,
         });
 
 chart.render();
-
-   
-
-//var test data
-    for (var i = 0; i <= testdata.data.length; i++) 
-    {
-        var n=i+1;
-        for (var m = 0; m < testdata.data[i].details.length; m++) 
+if($("#segmentationtypelist").val()==0)//Chain incomes
         {
-            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+testdata.data[i].details[m].date+"</td><td class='form-control-static'>"+testdata.data[i].storename+"</td><td class='form-control-static'>"+testdata.data[i].details[m].amount+"</td></tr>");
-        };
+            $("#thincome").show();
+            $("#thsale").hide();
+            for (var i = 0; i <= datatest.data.length; i++) 
+            {
+             if(datatest.data[i].storeid==0)
+             {
+                 for (var m = 0; m < datatest.data[i].details.length; m++) 
+            {
+            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+datatest.data[i].details[m].date+"</td><td class='form-control-static'>"+datatest.data[i].storename+"</td><td class='form-control-static'>"+datatest.data[i].details[m].amount+"</td></tr>");
+            n=n+1;
+            };
+            
+             }
+           
         
-    };
-$("#btnconfirm").click(function()
-{
-    var flag = 0;
-    var date1 = $("#datepicker1").val(),
-        correctFormat1 = date1.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
-        myDate1 = new Date(correctFormat1);
-    var date2 = $("#datepicker2").val(),
-        correctFormat2 = date2.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
-        myDate2 = new Date(correctFormat2);
-    var datediff = new Date(myDate2-myDate1)/1000/60/60/24;
-    if(date1!=""&&date2!="")
-    {
-        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker1").val())==false)
-        {
-            $("#datepickerdiv1").attr('class','form-group has-error');
-            flag=1;
-        };
-        if(/^(?:(?:31(\/)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/)(?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)\d{2})$/.test($("#datepicker2").val())==false)
-        {
-            $("#datepickerdiv2").attr('class','form-group has-error');
-            flag=1;
-        };
-        if(flag==1)
-        {
-            alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
-            return false;
+    };   
         }
-        else
+        if($("#segmentationtypelist").val()==1)//store incomes
         {
-            if(datediff<0)
-            {
-                $("#datepickerdiv1").attr('class','form-group has-error');
-                $("#datepickerdiv2").attr('class','form-group has-error');
-                alert("Xin vui lòng kiểm tra lại thời gian thống kê!");
-                return false;
-            }
-            else
-            {
-                alert("Thành công");
+            $("#thincome").show();
+            $("#thsale").hide();
+            for (var i = 1; i <=row; i++) 
+                {
+                    if($("#storelist"+i+"").val()!=0)
+                    {
+                        for (var m = 0; m < datatest.data.length; m++) 
+                        {
+                            if($("#storelist"+i+"").val()==datatest.data[m].storeid)
+                            {
+                                for (var n = 0; n < datatest.data[m].details.length; n++) 
+                                {
+
+                                    $("#tbody1").append("<tr id='tbody1row"+d+"'><td class='form-control-static'>"+datatest.data[m].details[n].date+"</td><td class='form-control-static'>"+datatest.data[m].storename+"</td><td class='form-control-static'>"+datatest.data[m].details[n].amount+"</td><td hidden></td></tr>");
+                                d=d+1;
+                                };
+                            }
+                        };
+                    }
+                };
+        }
+        if($("#segmentationtypelist").val()==2)//chain product sales
+        {
+            $("#thincome").hide();
+            $("#thsale").show();
+            alert("Doanh số toàn chuỗi");
+        }
+        if($("#segmentationtypelist").val()==3)//store product sales
+        {
+            $("#thincome").show();
+            $("#thsale").hide();
+            alert("Doanh số từng cửa hàng");
+        }
+    }
+    else
+    {
+        alert("Không có dữ liệu thống kê, xin vui lòng kiểm tra lại!");
+        return false;
+    }
+}
+//main code ending
+    
             }
         }
     }
