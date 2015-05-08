@@ -23,7 +23,7 @@ module.exports = {
             .exec(function (err, found) {
                 return res.view('manage_view', {
                     data: found,
-                    _name: "hóa đơn",
+                    _name: " receipt",
                     _directory: "receipt_manage/",
                     _add: true,
                     user: req.session.user

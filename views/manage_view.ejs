@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-lg-12">
-        <h1 class="page-header">Quản lý <%= _name %></h1>
+        <h1 class="page-header">Manage <%= _name %></h1>
     </div>
     <!-- /.col-lg-12 -->
 </div>
@@ -8,7 +8,7 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Danh sách <%= _name %>
+                List of <%= _name %>
             </div>
             <!-- /.panel-heading -->
             <div class="panel-body">
@@ -24,7 +24,7 @@
                 </div>
                 <!-- /.table-responsive -->
                 <div class="text-center">
-                    <button type="submit" id="btnAdd" onClick="add()" class="btn btn-lg btn-primary add">Thêm <%= _name %></button>                    
+                    <button type="submit" id="btnAdd" onClick="add()" class="btn btn-lg btn-primary add">Insert <%= _name %></button>                    
                 </div>
             </div>
             <!-- /.panel-body -->
@@ -36,12 +36,12 @@
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Thêm<%= _name %></h4>
+                <h4 class="modal-title">Insert <%= _name %></h4>
               </div>
                 <%- partial (_directory+'/form.ejs') %>
               <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Thoát</button>
-                <button type="submit" onClick="save()" class="btn btn-primary">Lưu thông tin</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" onClick="save()" class="btn btn-primary">Save</button>
               </div>
             </div><!-- /.modal-content -->
           </div><!-- /.modal-dialog -->
@@ -53,7 +53,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" id="myModalLabel">Lỗi</h4>
+                        <h4 class="modal-title" id="myModalLabel">Error</h4>
                     </div>
                     <div class="modal-body" id="errorModelMessage">
                         

@@ -3,7 +3,7 @@ var model = "ingredientCategory";
 function add()
 {
   resetForm();
-  $('.modal-title').text("Thêm loại nguyên liệu");
+  $('.modal-title').text("Insert ingredient category");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -14,7 +14,7 @@ function add()
 }
 
 function update (object) {
-  $('.modal-title').text("Cập nhật loại nguyên liệu");
+  $('.modal-title').text("Update ingredient category");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
   $('#object-name').val(object.name);      
@@ -39,12 +39,12 @@ function drawObject(object, button) {
     object.id,
     object.name,
     (object.description == undefined) ? "" : object.description,
-    (deleted == false) ? "Kích hoạt" : "Đã xóa"
+    (deleted == false) ? "Activated" : "Deleted"
   ];
 
-  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
+  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Update</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Delete</button>";
 
   listItem.row.add(_object).draw();
 }
@@ -84,7 +84,7 @@ function removeObject (object) {
         })
         .fail(function(error)
         {
-          $('#errorModelMessage').text("Không thể xóa dữ liệu!");
+          $('#errorModelMessage').text("Cannot delete this category!");
           $('#errorModelMessage').show();
           $('#errorModal').modal('hide');
         });
@@ -95,7 +95,7 @@ function validate () {
   
   if(name == "") //name is null
   {
-    $('#message').text("Tên loại nguyên liệu không được để trống!");
+    $('#message').text("Name is required!");
     $('#message').show();
     return false;
   }
@@ -182,7 +182,7 @@ function save () {
       })
       .fail(function(error)
       {
-        $('#message').text('Không thể cập nhật '+_name);
+        $('#message').text('Cannot update '+_name);
         $('#message').show();
       });
   }      

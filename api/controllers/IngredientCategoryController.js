@@ -19,7 +19,7 @@ module.exports = {
             IngredientCategory.find().exec(function (err, found) {
                 return res.view('manage_view', {
                     data: found,
-                    _name: " loại nguyên liệu",
+                    _name: "ingredient category",
                     _directory: "ingredient_category_manage/",
                     _add: true,
                     user: req.session.user

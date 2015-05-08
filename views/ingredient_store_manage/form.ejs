@@ -2,30 +2,30 @@
   <div id="message" class="alert alert-danger" role="alert" style="display: none;"></div>
   <form role="form">
     <div class="form-group">
-      <label for="object-ingredient">Nguyên liệu</label>
+      <label for="object-ingredient">Ingredient *</label>
       <input type="hidden" class="form-control" id="hd-action-type">
       <input type="hidden" class="form-control" id="hd-object-id">
       <select class="form-control" id="object-ingredient"></select>
     </div>
     <div class="form-group">
-      <label for="object-store">Cửa hàng</label>
+      <label for="object-store">Store *</label>
       <select class="form-control" id="object-store"></select>
     </div>
     <div class="form-group">
-      <label for="object-instock">Số lượng tồn *</label>
-      <input type="text" class="form-control" id="object-instock" placeholder="Số lượng tồn">
+      <label for="object-instock">Quantity *</label>
+      <input type="text" class="form-control" id="object-instock" placeholder="Quantity">
     </div>
     <div class="form-group">
-      <label for="object-limit">Mức báo động *</label>
-      <input type="text" class="form-control" id="object-limit" placeholder="Mức báo động">
+      <label for="object-limit">Limit *</label>
+      <input type="text" class="form-control" id="object-limit" placeholder="Limit">
     </div>
     <div class="form-group" id="div-status">
-        <label for="object-status">Trạng thái </label>
+        <label for="object-status">Status </label>
         <label class="radio-inline">
-            <input type="radio" name="object-status" id="rdoStatus1" value="true">Xóa
+            <input type="radio" name="object-status" id="rdoStatus1" value="true">Deleted
         </label>
         <label class="radio-inline">
-            <input type="radio" name="object-status" id="rdoStatus2" value="false">Kích hoạt
+            <input type="radio" name="object-status" id="rdoStatus2" value="false">Activated
         </label>
     </div>
   </form>

@@ -144,13 +144,13 @@ module.exports = {
 			if(!found || !found.length) {
 				res.json({
 					'status': 0,
-					'message': 'can not find any ingredient'
+					'message': 'Cannot find any ingredient!'
 				});
 			}
 
 			res.json({
 				'status': 1,
-				'message': 'success',
+				'message': 'Success',
 				'ingredient': found
 			});
 		});
@@ -161,13 +161,13 @@ module.exports = {
 			if(err) {
 				res.json({
 					'status': 0,
-					'message': 'Lỗi'
+					'message': 'Error'
 				});
 			}
 			else if(typeof founds == "undefined" || founds.length == 0) {
 				res.json(
 				{
-					"message": "Không tìm thấy nguyên liệu!",
+					"message": "Ingredient not found!",
 					"status": 0
 				});
 			}
@@ -180,7 +180,7 @@ module.exports = {
 				});
 				res.json({
 					'status': 1,
-					'message': 'Thành công',
+					'message': 'Success!',
 					'ingredient': arrIngredient
 				});
 			}			
@@ -192,13 +192,13 @@ module.exports = {
 			if(err) {
 				res.json({
 					'status': 0,
-					'message': 'Lỗi'
+					'message': 'Error'
 				});
 			}
 			else if(typeof found == "undefined") {
 				res.json(
 				{
-					"message": "Không tìm thấy nguyên liệu!",
+					"message": "Ingredient not found!",
 					"status": 0
 				});
 			}
@@ -206,7 +206,7 @@ module.exports = {
 			{
 				res.json({
 					'status': 1,
-					'message': 'Thành công',
+					'message': 'Success!',
 					'ingredient': {
 									id: found.id,
 									name: found.ingredient.name,
@@ -252,7 +252,7 @@ module.exports = {
 						res.json(
 							{
 								"status": 0, 
-								"message": "Không thể cập nhật mức cảnh báo của nguyên liệu!"
+								"message": "Cannot update limit!"
 							}
 						);
 					}
@@ -260,7 +260,7 @@ module.exports = {
 						res.json(
 								{
 									"status": 1, 
-									"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+									"message": "Successfully updated!"
 								}
 							);
 				});
@@ -298,7 +298,7 @@ module.exports = {
 							res.json(
 								{
 									"status": 0, 
-									"message": "Không thể cập nhật mức cảnh báo của nguyên liệu!"
+									"message": "Cannot update limit!"
 								}
 							);
 						}
@@ -307,7 +307,7 @@ module.exports = {
 			res.json(
 					{
 						"status": 1, 
-						"message": "Bạn đã cập nhật thành công mức cảnh báo của nguyên liệu!"
+						"message": "Successfully updated!"
 					}
 				);	
 		}
@@ -326,9 +326,10 @@ module.exports = {
 		    Ingredient.find().populate('category').exec(function (err, found) {
 		        return res.view('manage_view', {
 		            data: found,
-		            _name: " nguyên liệu",
+		            _name: " ingredient",
 		            _directory: "ingredient_manage/",
-		            _add: true
+		            _add: true,
+                    user: req.session.user
 		        }); 
 		    });
 		}        
@@ -350,14 +351,14 @@ module.exports = {
 					if(err) {
 						res.json({
 							'status': 0,
-							'message': 'Lỗi'
+							'message': 'Error'
 						});
 					}
 					else if(typeof objIngredientStoreLocal == "undefined") {
 						res.json(
 						{
 							"status": 0,
-							"message": "Không tìm thấy nguyên liệu ở kho phụ!"
+							"message": "Cannot find this ingredient in local store!"
 						});
 					}
 					else {
@@ -365,21 +366,21 @@ module.exports = {
 							if(err) {
 								res.json({
 									'status': 0,
-									'message': 'Lỗi'
+									'message': 'Error'
 								});
 							}
 							else if(typeof objIngredientStoreMain == "undefined") {
 								res.json(
 								{
 									"status": 0,
-									"message": "Không tìm thấy nguyên liệu ở kho chính!"
+									"message": "Cannot find this ingredient in main store!"
 								});
 							}
 							else {
 								res.json(
 								{
 									"status": 1,
-									"message": "Bạn đã xuất nguyên liệu thành công!",
+									"message": "Ingredient exported successfully!",
 									"mainstock": objIngredientStoreMain.instock,
 									"localstock": objIngredientStoreLocal.instock
 								});
@@ -393,14 +394,14 @@ module.exports = {
 					if(err) {
 						res.json({
 							'status': 0,
-							'message': 'Lỗi'
+							'message': 'Error'
 						});
 					}
 					else if(typeof objIngredientStoreLocal == "undefined") {
 						res.json(
 						{
 							"status": 0,
-							"message": "Không tìm thấy nguyên liệu ở kho phụ!"
+							"message": "Cannot find this ingredient in local store!"
 						});
 					}
 					else {
@@ -408,21 +409,21 @@ module.exports = {
 							if(err) {
 								res.json({
 									'status': 0,
-									'message': 'Lỗi'
+									'message': 'Error'
 								});
 							}
 							else if(typeof objIngredientStoreMain == "undefined") {
 								res.json(
 								{
 									"status": 0,
-									"message": "Không tìm thấy nguyên liệu ở kho chính!"
+									"message": "Cannot find this ingredient in main store!"
 								});
 							}
 							else {
 								res.json(
 								{
 									"status": 1,
-									"message": "Bạn đã xuất nguyên liệu thành công!",
+									"message": "Ingredient exported successfully!",
 									"mainstock": objIngredientStoreMain.instock,
 									"localstock": objIngredientStoreLocal.instock
 								});
@@ -435,7 +436,7 @@ module.exports = {
 				res.json(
 					{
 						"status": 0, 
-						"message": "Không thể lấy thông tin nguyên liệu!"
+						"message": "Cannot get ingredient detail!"
 					}
 				);
 				break;
@@ -538,7 +539,7 @@ module.exports = {
 						return res.json(
 							{
 								"status": 0, 
-								"message": "Không tìm thấy nguyên liệu!"
+								"message": "Ingredient not found!"
 							}
 						);
 					}
@@ -550,7 +551,7 @@ module.exports = {
 								return res.json(
 									{
 										"status": 0, 
-										"message": "Không đủ nguyên liệu!"
+										"message": "Not enough ingredient!"
 									}
 								);
 							}
@@ -571,7 +572,7 @@ module.exports = {
 								return res.json(
 									{
 										"status": 1, 
-										"message": "Xuất nguyên liệu thành công!"
+										"message": "Ingredient exported successfully!"
 									}
 								);
 							}
@@ -593,7 +594,7 @@ module.exports = {
 						return res.json(
 							{
 								"status": 0, 
-								"message": "Không thể xuất nguyên liệu!"
+								"message": "Cannot export ingredient!"
 							}
 						);
 					}
@@ -604,7 +605,7 @@ module.exports = {
 							return res.json(
 								{
 									"status": 0, 
-									"message": "Không đủ nguyên liệu!"
+									"message": "Ingredient not enough!"
 								}
 							);
 						}
@@ -639,7 +640,7 @@ module.exports = {
 							return res.json(
 								{
 									"status": 1, 
-									"message": "Xuất nguyên liệu thành công!"
+									"message": "Ingredient exported successfully!"
 								}
 							);			
 						}
@@ -650,7 +651,7 @@ module.exports = {
 				return res.json(
 					{
 						"status": 0, 
-						"message": "Không thể xuất nguyên liệu!"
+						"message": "Cannot export ingredient!"
 					}
 				);
 				break;

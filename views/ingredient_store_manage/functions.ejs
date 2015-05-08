@@ -3,6 +3,7 @@ var model = "IngredientStore";
 function add()
 {
   resetForm();
+  $('.modal-title').text("Insert ingredient");
   $('#message').hide();
   $('#form').modal();
   $('#hd-action-type').val("1");
@@ -13,7 +14,7 @@ function add()
 }
 
 function update (object) {
-  $('.modal-title').text("Cập nhật số lượng tồn");
+  $('.modal-title').text("Update ingredient");
   $('#hd-action-type').val("0");      
   $('#hd-object-id').val(object.id);
 
@@ -47,12 +48,12 @@ function drawObject(object, button) {
     
     object.instock,
     object.limit,
-    (deleted == false) ? "Kích hoạt" : "Đã xóa"
+    (deleted == false) ? "Activated" : "Deleted"
   ];
 
-  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Cập nhật</button>");
+  _object.push("<button type='button' id='btnUpdate"+ object.id +"' onClick='update("+JSON.stringify(object)+")' class='btn btn-primary update'>Update</button>");
   if(deleted == false)
-    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Xóa</button>";
+    _object[_object.length-1] = _object[_object.length-1] + "&nbsp;<button type='button' id='btnRemove"+ object.id +"' onClick='removeObject("+JSON.stringify(object)+")' class='btn btn-danger remove'>Delete</button>";
 
   listItem.row.add(_object).draw();
 }
@@ -92,7 +93,7 @@ function removeObject (object) {
         })
         .fail(function(error)
         {
-          $('#errorModelMessage').text("Không thể xóa dữ liệu!");
+          $('#errorModelMessage').text("Cannot delete this ingredient!");
           $('#errorModelMessage').show();
           $('#errorModal').modal('hide');
         });
@@ -106,37 +107,49 @@ function validate () {
 
   if(ingredient == null) //ingredient is null
   {
-    $('#message').text("Nguyên liệu không được để trống!");
+    $('#message').text("Ingredient is required!");
     $('#message').show();
     return false;
   }
   else if(store == null) //ingredient is null
   {
-    $('#message').text("Cửa hàng không được để trống!");
+    $('#message').text("Store is required!");
     $('#message').show();
     return false;
   }
   else if(instock == "") //instock is null
   {
-    $('#message').text("Số lượng tồn không được để trống!");
+    $('#message').text("Quantity is required!");
     $('#message').show();
     return false;
   }
   else if(limit == "") //limit is null
   {
-    $('#message').text("Mức báo động không được để trống!");
+    $('#message').text("Limit is required!");
     $('#message').show();
     return false;
   }
   else if(isNaN(limit)) //limit is null
   {
-    $('#message').text("Mức báo động không hợp lệ!");
+    $('#message').text("Limit is not valid!");
     $('#message').show();
     return false;
   }
   else if(isNaN(instock)) //instock is null
   {
-    $('#message').text("Số lượng tồn không hợp lệ!");
+    $('#message').text("Quantity is not valid!");
+    $('#message').show();
+    return false;
+  }
+  else if(limit < 0)
+  {
+    $('#message').text("Limit is not valid!");
+    $('#message').show();
+    return false;
+  }
+  else if(instock < 0)
+  {
+    $('#message').text("Limit is not valid!");
     $('#message').show();
     return false;
   }
@@ -227,13 +240,13 @@ function save () {
         })
         .fail(function(error)
         {
-          $('#message').text('Không thể cập nhật '+_name);
+          $('#message').text('Cannot update ingredient');
           $('#message').show();
         });
   }
 }
 function resetForm()
 {
-  $('#object-instockl').val("");
+  $('#object-instock').val("");
   $('#object-limit').val("");
 }

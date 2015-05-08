@@ -22,7 +22,7 @@ module.exports = {
             .exec(function (err, found) {
                 return res.view('manage_view', {
                     data: found,
-                    _name: "hóa đơn nhập",
+                    _name: "import",
                     _directory: "import_receipt_manage/",
                     _add: true,
                     _detail: true,

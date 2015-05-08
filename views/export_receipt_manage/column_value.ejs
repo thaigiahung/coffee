@@ -2,13 +2,12 @@
   <tr>
 
     <td><%= obj.receiptid %></td>
-    <td><%= obj.store.name %></td>
-    <td><%= obj.user.name %></td>
+    <td><%= obj.store.name %></td>    
     <td><%= obj.time %></td>
     <td><%= obj.note %></td>
 
     <td>
-      <button type="button" id="btnDetail<%= obj.id %>" onClick="detail(<%= obj.id %>)" class="btn btn-primary update">Chi tiết</button> 
+      <button type="button" id="btnDetail<%= obj.id %>" onClick="detail(<%= obj.id %>)" class="btn btn-primary update">Detail</button> 
     </td>
 
   </tr>

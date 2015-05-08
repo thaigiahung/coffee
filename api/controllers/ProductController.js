@@ -19,7 +19,7 @@ module.exports = {
             Product.find().populate('category').exec(function (err, found) {
                 return res.view('manage_view', {
                     data: found,
-                    _name: "sản phẩm",
+                    _name: " product",
                     _directory: "product_manage/",
                     _add: true,
                     user: req.session.user

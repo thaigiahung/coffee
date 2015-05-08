@@ -22,20 +22,20 @@ module.exports = {
 			if(err) {
 				res.json({
 					'status': 0,
-					'message': 'Lỗi'
+					'message': 'Error'
 				});
 			}
 			else if(!user) {
 				res.json(
 				{
-					"message": "Tài khoản hoặc mật khẩu không đúng!",
+					"message": "Invalid username or password!",
 					"status": 0
 				});
 			}
 			else if(user.deleted == 1) {
 				res.json(
 				{
-					"message": "Tài khoản bị khóa!",
+					"message": "Account is disabled!",
 					"status": 0
 				});
 			}
@@ -44,7 +44,7 @@ module.exports = {
 				req.session.user = user;
 				res.json(
 				{
-					"message": "Đăng nhập thành công!",
+					"message": "Success!",
 					"status": 1
 				});
 			}			
@@ -84,7 +84,7 @@ module.exports = {
     	{
     		res.json(
     		{
-    			"message": "Bạn chưa đăng nhập!",
+    			"message": "Please login first!",
     			"status": 0
     		});
     	}
@@ -106,7 +106,7 @@ module.exports = {
     			{
     				res.json(
     				{
-    					"message": "Không thể tạo tài khoản!",
+    					"message": "Cannot create account!",
     					"status": 0
     				});
     			}
@@ -115,7 +115,7 @@ module.exports = {
     				User.findOne(created.id).exec(function (err, found) {
     					res.json(
     					{
-    						"message": "Thành công!",
+    						"message": "Success!",
     						"status": 1,
     						"User": found
     					});
@@ -131,7 +131,7 @@ module.exports = {
     	{
     		res.json(
     		{
-    			"message": "Bạn chưa đăng nhập!",
+    			"message": "Please login first!",
     			"status": 0
     		});
     	}
@@ -142,7 +142,7 @@ module.exports = {
     			{
     				res.json(
     				{
-    					"message": "Không tìm thấy tài khoản này!",
+    					"message": "Account not found!",
     					"status": 0
     				});
     			}
@@ -167,7 +167,7 @@ module.exports = {
     					{
     						res.json(
     						{
-    							"message": "Không thể cập nhật tài khoản này!",
+    							"message": "Cannot update this account!",
     							"status": 0
     						});
     					}
@@ -176,7 +176,7 @@ module.exports = {
     						User.findOne(req.param('id')).exec(function (err, found) {
     							res.json(
     							{
-    								"message": "Thành công!",
+    								"message": "Success!",
     								"status": 1,
     								"User": found
     							});

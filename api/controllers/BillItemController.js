@@ -12,19 +12,19 @@ module.exports = {
             if (err) {
                 result = {
                     		"status": 0,
-                    		"message": "Lỗi!"
+                    		"message": "Error!"
                 		}
             }
             else if(typeof billItems == "undefined") {
 	            result = {
     	            		"status": 0,
-    	            		"message": "Không tìm thấy chi tiết hóa đơn!"
+    	            		"message": "Bill item not found!"
     	        		}
             }
             else{
     	        result = {
         	        		"status": 1,
-        	        		"message": "Thành công!",
+        	        		"message": "Success!",
         	        		"data": billItems
         	    		}
             }

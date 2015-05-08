@@ -5,22 +5,22 @@
     <td><%= obj.address %></td>
     <td><%= obj.phone %></td>
 
-      <% if (obj.manager == undefined) {%>
-        <td></td>
-      <%} else {%>
-        <td><%= obj.manager.name %></td>
-      <%} %>
+    <% if (obj.manager == undefined) {%>
+      <td></td>
+    <%} else {%>
+      <td><%= obj.manager.name %></td>
+    <%} %>
     
     <% if (obj.deleted == true) { %>
-      <td>Đã xóa</td>
+      <td>Deleted</td>
     <% } else { %>
-      <td>Kích hoạt</td>
+      <td>Activated</td>
     <% } %> 
 
     <td>
-      <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Cập nhật</button> 
+      <button type="button" id="btnUpdate<%= obj.id %>" onClick="update(<%= JSON.stringify(obj) %>)" class="btn btn-primary update">Update</button> 
       <% if (obj.deleted == false) { %>
-        <button type="button" id="btnRemove<%= obj.id %>" onClick="removeObject(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Xóa</button>
+        <button type="button" id="btnRemove<%= obj.id %>" onClick="removeObject(<%= JSON.stringify(obj) %>)" class="btn btn-danger remove">Delete</button>
       <% }%>
     </td>                            
   </tr>

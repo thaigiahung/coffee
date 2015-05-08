@@ -19,7 +19,7 @@ module.exports = {
             IngredientStore.find().populate('store').populate('ingredient').exec(function (err, found) {
                 return res.view('manage_view', {
                     data: found,
-                    _name: " số lượng tồn",
+                    _name: " inventory",
                     _directory: "ingredient_store_manage/",
                     _add: false,
                     user: req.session.user
@@ -47,7 +47,7 @@ module.exports = {
                 IngredientStore.find({store: store.id}).populate('store').populate('ingredient').exec(function (err, found) {
                     return res.view('manage_view', {
                         data: found,
-                        _name: " số lượng tồn",
+                        _name: " inventory",
                         _directory: "ingredient_store_view/",
                         _add: false,
                         user: req.session.user

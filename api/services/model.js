@@ -238,9 +238,9 @@ exports.crud = function(params, callback) {
                 // then assign a message to result['message']
                 if(!created) {
                     result['status'] = 0;
-                    result['message'] = 'can not create ' + modelName;
+                    result['message'] = 'Cannot create ' + modelName;
 
-                    checkThenLog(log,'Can not create ' + modelName + 'with these data');
+                    checkThenLog(log,'Cannot create ' + modelName + 'with these data');
                     checkThenLog(data);
                 }
 
@@ -320,9 +320,9 @@ exports.crud = function(params, callback) {
         // if no match found
         // then assign a message to result['message']
         if(!found || !found.length) {
-            result['message'] = 'can not find any ' + modelName;
+            result['message'] = 'Cannot find any ' + modelName;
 
-            checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
+            checkThenLog(log,'Cannot find any ' + modelName + 'with these criteria');
             checkThenLog(log,getCriteria(model));
         }
 

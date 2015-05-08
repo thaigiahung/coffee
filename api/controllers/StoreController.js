@@ -17,20 +17,20 @@ module.exports = {
 				if(err) {
 					res.json({
 						'status': 0,
-						'message': 'Lỗi'
+						'message': 'Error'
 					});
 				}
 				else if(typeof found == "undefined" || found.length == 0) {
 					res.json({
 						'status': 0,
-						'message': 'Không tìm thấy cửa hàng!'
+						'message': 'Store not found!'
 					});
 				}
 				else
 				{
 					res.json({
 						'status': 1,
-						'message': 'success',
+						'message': 'Success!',
 						'store': found
 					});
 				}			
@@ -42,20 +42,20 @@ module.exports = {
 				if(err) {
 					res.json({
 						'status': 0,
-						'message': 'Lỗi'
+						'message': 'Error'
 					});
 				}
 				else if(typeof found == "undefined" || found.length == 0) {
 					res.json({
 						'status': 0,
-						'message': 'Không tìm thấy cửa hàng!'
+						'message': 'Store not found!'
 					});
 				}
 				else
 				{
 					res.json({
 						'status': 1,
-						'message': 'success',
+						'message': 'Success!',
 						'store': found
 					});
 				}			
@@ -74,20 +74,20 @@ module.exports = {
 				if(err) {
 					res.json({
 						'status': 0,
-						'message': 'Lỗi'
+						'message': 'Error'
 					});
 				}
 				else if(typeof found == "undefined" || found.length == 0) {
 					res.json({
 						'status': 0,
-						'message': 'Không tìm thấy cửa hàng!'
+						'message': 'Store not found!'
 					});
 				}
 				else
 				{					
 					res.json({
 						'status': 1,
-						'message': 'success',
+						'message': 'Success!',
 						'store': found
 					});
 				}			
@@ -99,20 +99,20 @@ module.exports = {
 				if(err) {
 					res.json({
 						'status': 0,
-						'message': 'Lỗi'
+						'message': 'Error'
 					});
 				}
 				else if(typeof found == "undefined" || found.length == 0) {
 					res.json({
 						'status': 0,
-						'message': 'Không tìm thấy cửa hàng!'
+						'message': 'Store not found!'
 					});
 				}
 				else
 				{
 					res.json({
 						'status': 1,
-						'message': 'success',
+						'message': 'Success!',
 						'store': found
 					});
 				}			
@@ -133,7 +133,7 @@ module.exports = {
         	else {
         		return res.view('manage_view', {
         		    data: found,
-        		    _name: "cửa hàng",
+        		    _name: " store",
         		    _directory: "store_manage/",
         		    _add: true,
                     user: req.session.user

@@ -447,10 +447,10 @@ module.exports = function(params, callback) {
             // if no match found
             // then assign a message to result['message']
             if(!found || !found.length) {
-                result['message'] = 'can not find any ' + modelName;
+                result['message'] = 'Cannot find any ' + modelName;
                 result[modelNameLowerCase] = new Array();
 
-                checkThenLog(log,'Can not find any ' + modelName + 'with these criteria');
+                checkThenLog(log,'Cannot find any ' + modelName + 'with these criteria');
                 checkThenLog(log,getCriteria(model));
                 
                 callback(result);

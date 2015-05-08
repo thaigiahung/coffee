@@ -12,13 +12,13 @@ module.exports = {
             if (err) {
                 result = {
                             "status": 0,
-                            "message": "Lỗi!"
+                            "message": "Error!"
                         }
             }
             else if(typeof bills == "undefined" || bills.length == 0) {
                 result = {
                             "status": 0,
-                            "message": "Không tìm thấy hóa đơn!"
+                            "message": "Bill not found!"
                         }
             }
             else{
@@ -42,7 +42,7 @@ module.exports = {
                 }
                 result = {
                             "status": 1,
-                            "message": "Thành công!",
+                            "message": "Success!",
                             "data": datas
                         }
             }
@@ -58,7 +58,7 @@ module.exports = {
         .exec(function (err, found) {
             return res.view('manage_view', {
                 data: found,
-                _name: "hóa đơn",
+                _name: "bill",
                 _directory: "receipt_manage/",
                 _add: true,
                 _detail: true,

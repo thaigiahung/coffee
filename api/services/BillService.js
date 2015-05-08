@@ -4,13 +4,13 @@ function getBillByStore(id, callback) {
         if (err) {
             result = {
                         "status": 0,
-                        "message": "Lỗi!"
+                        "message": "Error!"
                     }
         }
         else if(typeof bills == "undefined" || bills.length == 0) {
             result = {
                         "status": 0,
-                        "message": "Không tìm thấy hóa đơn!"
+                        "message": "Bill not found!"
                     }
         }
         else{
@@ -34,7 +34,7 @@ function getBillByStore(id, callback) {
             }
             result = {
                         "status": 1,
-                        "message": "Thành công!",
+                        "message": "Success!",
                         "data": datas
                     }
         }
