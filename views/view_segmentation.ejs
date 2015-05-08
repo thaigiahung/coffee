@@ -416,7 +416,8 @@ $("#btnconfirm").click(function()
             }
             else//success case
             {
-                    //get income data by api
+            //get income data by api
+
             var datatest={    
                   "status":1,
                   "message":"success",
@@ -683,26 +684,30 @@ else
                     {
                         for (var m = 0; m < saledata.data[i].details.length; m++) 
                         {
-                            for (var n = 0; n < saledata.data[i].details[m].sale.length; n++) 
+                            for (var n = 1; n <=row; n++) 
                             {
-                                var detail = {label:saledata.data[i].details[m].sale[n].date, y:saledata.data[i].details[m].sale[n].amount};
-                                childobject.push(detail);
-                                dem=dem+1;  
+                                if($("#saleproductlist"+n+"").val()==saledata.data[i].details[m].productid)
+                                {
+                                    for (var l = 0; l < saledata.data[i].details[m].sale.length; l++) 
+                                    {
+                                        alert(saledata.data[i].details[m].product);
+                                        alert(saledata.data[i].details[m].sale[l].date);
+                                        alert(saledata.data[i].details[m].sale[l].amount);
+                                        var detail = {label:saledata.data[i].details[m].sale[l].date, y: saledata.data[i].details[m].sale[l].amount};
+                                        childobject.push(detail);
+                                        dem=dem+1;
+                                    };
+                                    var obj = {
+                                        type:"column",
+                                         name:saledata.data[i].details[m].product,
+                                         legendText:saledata.data[i].details[m].product,
+                                         showInLegend: true,
+                                         dataPoints: childobject 
+                                    };
+                                    datapoint.push(obj);
+                                    childobject=[];
+                                }
                             };
-                            alert(childobject[0].label);
-                            alert(childobject[0].y);
-                            alert(childobject[1].label);
-                            alert(childobject[1].y);
-                            alert(childobject[2].label);
-                            alert(childobject[2].y);
-                            var obj ={
-                                     type:"column",
-                                     name:saledata.data[i].details[m].product,
-                                     legendText:saledata.data[i].details[m].product,
-                                     showInLegend: true,
-                                     dataPoints: childobject 
-                                  };
-                            datapoint.push(obj);
                         };
                     }   
                 }
