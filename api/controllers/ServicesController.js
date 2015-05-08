@@ -17,6 +17,9 @@ module.exports = {
 
         function convertDate(date) {
             var dd = date.getDate();
+            if(dd < 10) {
+                dd = "0" + dd;
+            }
             var mm = date.getMonth()+1;
             if(mm < 10)
                 mm = "0" + mm;
@@ -26,9 +29,23 @@ module.exports = {
             return result;
         };
 
+        function getDateDMY(date) {
+            var components = date.split("/");
+            var dd = components[0];
+            var mm = components[1];
+            var yyyy = components[2];
+            var result = yyyy+"-"+mm+"-"+dd;
+            return result;
+        }
+
         var input = JSON.parse(req.query.input);
-        var startDate = input.time1;
-        var endDate = input.time2;
+        var startDate = getDateDMY(input.time1);
+        var endDate = getDateDMY(input.time2);
+        
+        var result = {
+        message: 'failed',
+        status: 0};
+
         var clone = require('clone');
         var async = require('async');
 
@@ -40,6 +57,7 @@ module.exports = {
             var numberOfDayBetween = (upperBound - lowerBound) / 86400000;
         }
         else {
+            result['message'] = 'Start day is lower than end date';
             res.json(result);
         }
 
@@ -53,9 +71,6 @@ module.exports = {
 
         Store.find().exec(function(err, foundStore) {
             var stores = new Array();
-            var result = {
-            message: 'failed',
-            status: 0};
 
             if(err) 
                 return res.json(result);
@@ -68,7 +83,7 @@ module.exports = {
                     details: new Array()
                 };
                 for(var d = 0; d < dateRange.length; d++ ) {
-                    var newDetails = {date: dateRange[d], amount: 0};
+                    var newDetails = {date: convertDate(dateRange[d]), amount: 0};
                     newStoreInfo.details.push(newDetails);
                 }
                 stores[stores.length] = newStoreInfo;
@@ -85,13 +100,16 @@ module.exports = {
                         for(var s = 0 ; s < stores.length ; s++ ) {
                             if( bills[b].store == stores[s].storeid ) {
                                 for ( var d = 0 ; d < stores[s].details.length ; d ++ ) {
-                                    if(convertDate(stores[s].details[d].date) == convertDate(bills[b].time)) {
+                                    if(stores[s].details[d].date == convertDate(bills[b].time)) {
+                                        stores[s].total += bills[b].total;
                                         stores[s].details[d].amount += bills[b].total;
                                     }
                                 }
                             }
                         }
                     }
+                    result['message'] = 'success';
+                    result['status'] = 1;
                     result['data'] = stores;
                     return res.json(result);
                 }
