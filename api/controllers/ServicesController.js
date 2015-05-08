@@ -38,9 +38,9 @@ module.exports = {
             return result;
         }
 
-        var input = JSON.parse(req.query.input);
-        var startDate = getDateDMY(input.time1);
-        var endDate = getDateDMY(input.time2);
+        // var input = JSON.parse(req.query.input);
+        var startDate = getDateDMY(req.query.time1);
+        var endDate = getDateDMY(req.query.time2);
         
         var result = {
         message: 'failed',
