@@ -16,7 +16,6 @@ module.exports = {
     getRevenue: function(req, res) {
 
         function convertDate(date) {
-            // var strDate = Date.parse(date);
             var dd = date.getDate();
             var mm = date.getMonth()+1;
             if(mm < 10)
@@ -30,170 +29,71 @@ module.exports = {
         var input = JSON.parse(req.query.input);
         var startDate = input.time1;
         var endDate = input.time2;
+        var clone = require('clone');
+        var async = require('async');
 
+        var dateRange = new Array();
+        var lowerBound = new Date(startDate);
+        var upperBound = new Date(endDate);
+        
+        if(upperBound > lowerBound) {
+            var numberOfDayBetween = (upperBound - lowerBound) / 86400000;
+        }
+        else {
+            res.json(result);
+        }
+
+
+        for(var i = 0 ; i <= numberOfDayBetween ; i ++) {
+            var temp = new Date();
+            temp.setTime(lowerBound.getTime() + 86400000*i);
+            var newDate = new Date(temp)
+            dateRange.push(newDate);
+        }
 
         Store.find().exec(function(err, foundStore) {
             var stores = new Array();
-            var oldStores = new Array();
             var result = {
             message: 'failed',
             status: 0};
-
-            var dateRange = new Array();
-            var lowerBound = new Date(startDate);
-            var upperBound = new Date(endDate);
-            var temp = (upperBound - lowerBound) / 86400000;
 
             if(err) 
                 return res.json(result);
 
             for( var i = 0 ; i < foundStore.length ; i ++) {
                 newStoreInfo = {
-                    id: foundStore[i].id,
-                    name: foundStore[i].name};
+                    storeid: foundStore[i].id,
+                    storename: foundStore[i].name,
+                    total: 0,
+                    details: new Array()
+                };
+                for(var d = 0; d < dateRange.length; d++ ) {
+                    var newDetails = {date: dateRange[d], amount: 0};
+                    newStoreInfo.details.push(newDetails);
+                }
                 stores[stores.length] = newStoreInfo;
             }
 
             Bill.find({time: { '>=': startDate}},{time: { '<=': endDate}})
             // Bill.find()
-            .exec(function(err, found) {    
-                var temp_data = new Array();
-
-                if(!err) {
-                    for(var i = 0 ; i < found.length ; i++) {
-                        if(temp_data.length == 0 ) {
-                            var name = "";
-                            for(var m = 0 ; m < stores.length ; m ++) {
-                                if(stores[m].id == found[i].id)
-                                    name = stores[m].name;
-                            }
-                            newStore = {
-                                storeid: found[i].store,
-                                storename: name,
-                                total: found[i].total,
-                                details: [
-                                    {date: convertDate(found[i].time), amount: found[i].total}
-                                ]
-                            }
-                            temp_data[0] = newStore;
-                        }
-                        else {
-                            var flag = 0;
-                            for(var j = 0 ; j < temp_data.length ; j ++) {
-                                if(temp_data[j].store == found[i].store && flag == 0) {
-                                    var flag2 = 0;
-                                    for(var k = 0 ; k < temp_data[j].details.length ; k ++) {
-                                        if(temp_data[j].details[k].date.setHours(0,0,0,0) == found[i].time.setHours(0,0,0,0) && flag2 == 0) {
-                                            temp_data[j].details[k].amount += found[i].total;
-                                            flag2 == 1;
-                                        }
-                                    }
-                                    if(flag2 == 0) {
-                                        var newDate = {
-                                            date : convertDate(found[i].time),
-                                            amount : found[i].total
-                                        }
-                                        temp_data[j].details[temp_data[j].details.length] = newDate;
-                                    }
-                                    flag = 1;
-                                }
-                            }
-
-                            if(flag == 0) {
-                                var name = "";
-                                for(var m = 0 ; m < stores.length ; m ++) {
-                                    if(stores[m].id == found[i].id) {
-                                        name = stores[m].name;
-                                    }
-                                }
-                                var newStore = {
-                                    storeid: found[i].store,
-                                    storename: name,
-                                    total: found[i].total,
-                                    details: [ 
-                                        {
-                                            date: convertDate(found[i].time),
-                                            amount: found[i].total
-                                        }
-                                    ]
-                                };
-                                temp_data[temp_data.length] = newStore; 
-                            }
-                        }
-
-                    }
-                    for(var s = 0 ; s < stores.length ; s ++ ) {
-                        var flagS = 0;
-                        for(var i = 0 ; i < found.length; i ++) {
-                            if (stores[s].id == found[i].store) {
-                                flagS = 1;
-                            }
-                            if(flagS == 0 && i == found.length-1) {
-                                var newStore = {
-                                    storeid: stores[s].id,
-                                    storename: stores[s].name,
-                                    total: 0,
-                                    details: new Array()
-                                }
-                                for(var d = 0 ; d < dateRange ; d ++) {
-                                    var newDetails = {
-                                        date: convertDate(dateRange[d]),
-                                        amount: 0
-                                    }
-                                    newStore.push(newDetails);
-                                }
-                                temp_data.push(newStore);
-                            }
-                        }
-                    }
-
-                    for(var i = 0 ; i <= temp ; i ++) {
-                        var newDate = lowerBound.getDate()+i;
-                        if(lowerBound.getMonth()+1 < 10) 
-                            var newMonth = "0" + (lowerBound.getMonth()+1);
-                        else
-                            var newMonth = lowerBound.getMonth()+1;
-                        var newYear = lowerBound.getFullYear();
-                        dateRange.push(newDate+"/"+newMonth+"/"+newYear);
-                    }
-
-
-                    for(var m = 0 ; m < dateRange.length ; m ++) {
-                        for(var i = 0 ; i < temp_data.length ; i ++ ) {
-                            var flag = 0;
-                            for( var j = 0 ; j < temp_data[i].details.length ; j ++) {
-                                var dateNull = new Array();
-                                if(temp_data[i].details[j].date == dateRange[m] && flag == 0) {
-                                    flag = 1;
-                                }
-                                else {
-                                    dateNull.push({
-                                        date: dateRange[m],
-                                        amount: 0
-                                    });
-                                }
-                            }
-                            for(var n = 0 ; n < dateNull.length ; n ++) {
-                                temp_data[i].details[temp_data[i].details.length] = dateNull[n];
-                            }
-                        };
-                    }
-
-                    // for(var s = 0 ; s < stores.length; s++) {
-                    //     for(var d = 0 ; d < dateRange.length ; d++) {
-
-                    //     }
-                    // }
-
-                    result["data"] = temp_data;
-                    result["message"] = 'success';
-                    result["status"] = 1;
+            .exec(function(err, bills) {
+                if(err) {
+                    res.json(result);
                 }
                 else {
-                    console.log(err);
+                    for(var b = 0 ; b < bills.length ; b ++ ) {
+                        for(var s = 0 ; s < stores.length ; s++ ) {
+                            if( bills[b].store == stores[s].storeid ) {
+                                for ( var d = 0 ; d < stores[s].details.length ; d ++ ) {
+                                    if(convertDate(stores[s].details[d].date) == convertDate(bills[b].time)) {
+                                        stores[s].details[d].amount += bills[b].total;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    res.json(stores);
                 }
-
-                res.json(result);
             });
         });
     },
@@ -204,6 +104,7 @@ module.exports = {
         });
     },
 };
+
 
 
 
