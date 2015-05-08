@@ -416,7 +416,36 @@ $("#btnconfirm").click(function()
             }
             else//success case
             {
-            //get income data by api
+            //get income data by api***********************************
+            if($("#segmentationtypelist").val()==0||$("#segmentationtypelist").val()==1)// income case
+            {
+                alert(date1);
+                alert(date2);
+                var url = "http://localhost:1337/segmentation/revenue?time1="+date1+"&&time2="+date2+"";
+                alert(url);
+                 $.getJSON(url,function(datatest)
+                {
+                    if(datatest.status==0)
+                    {
+                        alert("Hệ thống bị lỗi, xin kiểm tra lại!");
+                        return false;
+                    }
+                    else
+                    {
+                        if(datatest.message=="success")
+                        {
+                            alert("Thành công");
+                        }
+                        else
+                        {
+                            alert("Không thể lấy được dữ liệu, xin kiểm tra lại!");
+                            return false;
+                        }
+                    }
+                });
+            }
+
+
 
             var datatest={    
                   "status":1,
