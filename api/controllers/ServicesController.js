@@ -92,7 +92,8 @@ module.exports = {
                             }
                         }
                     }
-                    res.json(stores);
+                    result['data'] = stores;
+                    return res.json(result);
                 }
             });
         });
