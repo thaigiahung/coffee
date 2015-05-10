@@ -25,21 +25,17 @@ module.exports = {
             return result;
         };
 
-        function convertDate(date) {
-            // var strDate = Date.parse(date);
-            var dd = date.getDate();
-            var mm = date.getMonth()+1;
-            if(mm < 10)
-                mm = "0" + mm;
-            var yyyy = date.getFullYear();
-            var result = dd + "/" + mm + "/" + yyyy;
-            
+        function getDateDMY(date) {
+            var components = date.split("/");
+            var dd = components[0];
+            var mm = components[1];
+            var yyyy = components[2];
+            var result = yyyy+"-"+mm+"-"+dd;
             return result;
         };
 
-        var input = JSON.parse(req.query.input);
-        var startDate = input.time1;
-        var endDate = input.time2;
+        var startDate = getDateDMY(req.query.time1);
+        var endDate = getDateDMY(req.query.time2);
 
         var dateRange = new Array();
 
@@ -88,10 +84,8 @@ module.exports = {
                             amount: 0
                         }
                         newProduct.sale.push(clone(newDate));
-                        // newProduct.sale.push(clone(newDate));
                     }
                     cProducts.push(clone(newProduct));
-                    // cProducts.push(clone(newProduct));
                 }
                 Store.find().exec(function(StoreError, stores) {
                     if(StoreError) {
@@ -106,7 +100,6 @@ module.exports = {
                                 details: cProducts
                             };
                             cStores.push(clone(newStore));
-                            // cStores.push(clone(newStore));
                         }
                     }
                     Bill.find({time: { '>=': startDate}},{time: { '<=': endDate}})
@@ -117,19 +110,20 @@ module.exports = {
                             async.eachSeries(bills, function(bill, callback) {
                                 BillItem.find({bill: bill.id}).exec(function(biErr, items) {
                                     if(biErr) {
+                                        // result['message'] = ''
                                         return res.json(result);
                                     }
                                     else {
                                         for(var i = 0 ; i < items.length; i++) {
                                             for(var s = 0 ; s < cStores.length; s++) {
                                                 if(cStores[s].storeid == bill.store) {
-                                                    // console.log("storeid: " +cStores[s].storeid );
-                                                    // console.log("bill.store: " + bill.store );
                                                     for(var p = 0 ; p < cStores[s].details.length ; p++) {
-                                                            // console.log(items[i].product);
                                                         if(items[i].product == cStores[s].details[p].productid) {
                                                             for(var d = 0 ; d < cStores[s].details[p].sale.length ; d++) {
                                                                 if(convertDate(bill.time) == cStores[s].details[p].sale[d].date) {
+                                                                    cStores[0].details[p].sale[d].amount += items[i].amount;
+                                                                    cStores[0].total+= items[i].amount;
+                                                                    cStores[s].total+= items[i].amount;
                                                                     cStores[s].details[p].sale[d].amount += items[i].amount;
                                                                 }
                                                             }
@@ -139,12 +133,11 @@ module.exports = {
                                             }
                                         }
                                     }
+                                    result['message'] = 'success';
+                                    result['status'] = 1;
                                     if(bill.id == bills[bills.length-1].id) {
                                         result.data=cStores;
-                                        // console.log(cStores[0].details[8]);
-                                        console.log(result);
                                         return res.json(result);
-                                        // return console.log(result.data[0]);
                                     }
                                 });
                                 callback();
