@@ -446,7 +446,7 @@ $("#btnconfirm").click(function()
                                 for (var i = 0; i < datatest.data.length; i++) 
                                 {
                                     var childobject = [];
-                                    if(datatest.data[i].storeid==0)
+                                    if(datatest.data[i].storeid==1)
                                     {
                                         for (var m = 0; m < datatest.data[i].details.length; m++) 
                                         {
@@ -458,7 +458,7 @@ $("#btnconfirm").click(function()
                                         };
                                          var obj ={
                                                      type:"column",
-                                                     name:datatest.data[i].storename,
+                                                     name:"Chuỗi Passio",//datatest.data[i].storename,
                                                      legendText:datatest.data[i].storename,
                                                      showInLegend: true,
                                                      dataPoints: childobject 
@@ -596,11 +596,11 @@ $("#btnconfirm").click(function()
                             $("#thsale").hide();
                             for (var i = 0; i <= datatest.data.length; i++) 
                             {
-                             if(datatest.data[i].storeid==0)
+                             if(datatest.data[i].storeid==1)
                              {
                                  for (var m = 0; m < datatest.data[i].details.length; m++) 
                             {
-                            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+datatest.data[i].details[m].date+"</td><td class='form-control-static'>"+datatest.data[i].storename+"</td><td class='form-control-static'>"+datatest.data[i].details[m].amount+"</td></tr>");
+                            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+datatest.data[i].details[m].date+"</td><td class='form-control-static'>Chuỗi Passio</td><td class='form-control-static'>"+datatest.data[i].details[m].amount+"</td></tr>");
                             n=n+1;
                             };
                             
@@ -615,7 +615,7 @@ $("#btnconfirm").click(function()
                             $("#thsale").hide();
                             for (var i = 1; i <=row; i++) 
                                 {
-                                    if($("#storelist"+i+"").val()!=0)
+                                    if($("#storelist"+i+"").val()!=1)
                                     {
                                         for (var m = 0; m < datatest.data.length; m++) 
                                         {
@@ -623,7 +623,6 @@ $("#btnconfirm").click(function()
                                             {
                                                 for (var n = 0; n < datatest.data[m].details.length; n++) 
                                                 {
-
                                                     $("#tbody1").append("<tr id='tbody1row"+d+"'><td class='form-control-static'>"+datatest.data[m].details[n].date+"</td><td class='form-control-static'>"+datatest.data[m].storename+"</td><td class='form-control-static'>"+datatest.data[m].details[n].amount+"</td><td hidden></td></tr>");
                                                 d=d+1;
                                                 };
@@ -641,7 +640,7 @@ $("#btnconfirm").click(function()
                                     }
                                 });
                             }
-
+//sales case
 
 
             /*var datatest={    
