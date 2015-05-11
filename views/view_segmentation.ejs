@@ -419,10 +419,7 @@ $("#btnconfirm").click(function()
             //get income data by api***********************************
             if($("#segmentationtypelist").val()==0||$("#segmentationtypelist").val()==1)// income case
             {
-                alert(date1);
-                alert(date2);
                 var url = "http://localhost:1337/segmentation/revenue?time1="+date1+"&&time2="+date2+"";
-                alert(url);
                  $.getJSON(url,function(datatest)
                 {
                     if(datatest.status==0)
@@ -435,19 +432,219 @@ $("#btnconfirm").click(function()
                         if(datatest.message=="success")
                         {
                             alert("Thành công");
-                        }
-                        else
+                            var datapoint = [];
+                            if($("#segmentationtypelist").val()==0)//Chain incomes
+                            {
+                                $("#barcharttable").show();
+                                $("#segmentationtable").show();
+                                var n=1;
+                                for (var i = 1; i <= dem; i++) 
+                                {
+                                    $("#tbody1row"+i+"").remove();
+                                };
+                                dem=0;
+                                for (var i = 0; i < datatest.data.length; i++) 
+                                {
+                                    var childobject = [];
+                                    if(datatest.data[i].storeid==0)
+                                    {
+                                        for (var m = 0; m < datatest.data[i].details.length; m++) 
+                                        {
+                                            alert(datatest.data[i].details[m].date);
+                                            alert(datatest.data[i].details[m].amount);
+                                            var detail = {label:datatest.data[i].details[m].date, y:datatest.data[i].details[m].amount};
+                                            childobject.push(detail);
+                                            dem=dem+1;
+                                        };
+                                         var obj ={
+                                                     type:"column",
+                                                     name:datatest.data[i].storename,
+                                                     legendText:datatest.data[i].storename,
+                                                     showInLegend: true,
+                                                     dataPoints: childobject 
+                                                  };
+                                        datapoint.push(obj);
+                                    }       
+                                };
+                            }
+                            if($("#segmentationtypelist").val()==1)
+                            {
+                                var flag1 = 0;
+                                var d = 1;
+                                for (var i = 1; i <= dem; i++) 
+                                    {
+                                        $("#tbody1row"+i+"").remove();
+                                    };
+                                    dem=0;
+                                for (var i = 1; i <= row; i++) 
+                                {
+                                    if($("#storelist"+i+"").val()!=0)
+                                    {
+                                        flag1=1;
+                                    }
+                                };
+                                if(flag1==0)
+                                {
+                                    alert("Xin vui lòng chọn ít nhất 1 cửa hàng để xem thống kê doanh thu!");
+                                    return false;
+                                }
+                                else//get the chosen stores
+                                {
+                                    $("#barcharttable").show();
+                                    $("#segmentationtable").show();
+                                    var chosenstores = [];
+                                    for (var i = 1; i <=row; i++) 
+                                    {
+                                        if($("#storelist"+i+"").val()!=0)
+                                        {
+                                            for (var m = 0; m < datatest.data.length; m++) 
+                                            {
+                                                var childobject = [];
+                                                if($("#storelist"+i+"").val()==datatest.data[m].storeid)
+                                                {
+                                                    for (var n = 0; n < datatest.data[m].details.length; n++) 
+                                                    {
+                                                        var detail = {label:datatest.data[m].details[n].date, y:datatest.data[m].details[n].amount};
+                                                        childobject.push(detail);
+                                                        dem=dem+1;
+                                                    };
+                                                     var obj ={
+                                                                 type:"column",
+                                                                 name:datatest.data[m].storename,
+                                                                 legendText:datatest.data[m].storename,
+                                                                 showInLegend: true,
+                                                                 dataPoints: childobject 
+                                                              };
+                                                    datapoint.push(obj);
+                                                }
+                                            };
+                                        }
+                                    };
+                                }
+                            }
+
+
+//draw chart
+                             var chart = new CanvasJS.Chart("barchartdiv",
+                                {
+                                    theme: "theme3",
+                                                animationEnabled: true,
+                                    title:{
+                                        text: "Biểu đồ thống kê",
+                                        fontSize: 30
+                                    },
+                                    toolTip: {
+                                        shared: true
+                                    },          
+                                    axisY: {
+                                        title: "Doanh thu/Doanh số"
+                                    },
+                                    legend:{
+                                        verticalAlign: "top",
+                                        horizontalAlign: "center"
+                                    },
+                                    data: datapoint, 
+                                    /*[ 
+                                    {
+                                        type: "column", 
+                                        name: "Passio Trần Hưng Đạo/Cam",
+                                        legendText: "Passio Trần Hưng Đạo/Cam",
+                                        showInLegend: true, 
+                                        dataPoints:[
+                                        {x: new Date(2015, 00, 21), y: 15000000},
+                                        {x: new Date(2015, 00, 22), y: 12000000},
+                                        {x: new Date(2015, 00, 23), y: 13000000},
+                                        {x: new Date(2015, 00, 24), y: 10000000},
+                                        {x: new Date(2015, 00, 25), y: 35000000}
+                                        ]
+                                    },
+                                    {
+                                        type: "column", 
+                                        name: "Passio Hai Bà Trưng/Cam",
+                                        legendText: "Passio Hai Bà Trưng/Cam",
+                                        showInLegend: true,
+                                        dataPoints:[
+                                        {x: new Date(2015, 00, 21), y: datatest.data[0].details[0].amount},
+                                        {x: new Date(2015, 00, 22), y: 25000000},
+                                        {x: new Date(2015, 00, 23), y: 12000000},
+                                        {x: new Date(2015, 00, 24), y: 23000000},
+                                        {x: new Date(2015, 00, 25), y: 9000000},
+                                        ]
+                                    }
+                                    
+                                    ]*/
+                                  legend:{
+                                    cursor:"pointer",
+                                    itemclick: function(e){
+                                      if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                                        e.dataSeries.visible = false;
+                                      }
+                                      else {
+                                        e.dataSeries.visible = true;
+                                      }
+                                        chart.render();
+                                    }
+                                  },
+                                });
+
+                        chart.render();
+
+                        //show data table
+                        if($("#segmentationtypelist").val()==0)//Chain incomes
                         {
-                            alert("Không thể lấy được dữ liệu, xin kiểm tra lại!");
-                            return false;
+                            $("#thincome").show();
+                            $("#thsale").hide();
+                            for (var i = 0; i <= datatest.data.length; i++) 
+                            {
+                             if(datatest.data[i].storeid==0)
+                             {
+                                 for (var m = 0; m < datatest.data[i].details.length; m++) 
+                            {
+                            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+datatest.data[i].details[m].date+"</td><td class='form-control-static'>"+datatest.data[i].storename+"</td><td class='form-control-static'>"+datatest.data[i].details[m].amount+"</td></tr>");
+                            n=n+1;
+                            };
+                            
+                             }
+                           
+                        
+                    };   
                         }
-                    }
-                });
-            }
+                        if($("#segmentationtypelist").val()==1)//store incomes
+                        {
+                            $("#thincome").show();
+                            $("#thsale").hide();
+                            for (var i = 1; i <=row; i++) 
+                                {
+                                    if($("#storelist"+i+"").val()!=0)
+                                    {
+                                        for (var m = 0; m < datatest.data.length; m++) 
+                                        {
+                                            if($("#storelist"+i+"").val()==datatest.data[m].storeid)
+                                            {
+                                                for (var n = 0; n < datatest.data[m].details.length; n++) 
+                                                {
+
+                                                    $("#tbody1").append("<tr id='tbody1row"+d+"'><td class='form-control-static'>"+datatest.data[m].details[n].date+"</td><td class='form-control-static'>"+datatest.data[m].storename+"</td><td class='form-control-static'>"+datatest.data[m].details[n].amount+"</td><td hidden></td></tr>");
+                                                d=d+1;
+                                                };
+                                            }
+                                        };
+                                    }
+                                };
+                        }
+                                        }
+                                        else
+                                        {
+                                            alert("Không thể lấy được dữ liệu, xin kiểm tra lại!");
+                                            return false;
+                                        }
+                                    }
+                                });
+                            }
 
 
 
-            var datatest={    
+            /*var datatest={    
                   "status":1,
                   "message":"success",
                   "data":[
@@ -488,7 +685,7 @@ $("#btnconfirm").click(function()
                                           ]
                             },
                         ]
-                 };
+                 };*/
             //get sales data
             var saledata={    
                   "status":1,
@@ -591,7 +788,7 @@ else
 {
     if(datatest.message=="success")//success
     {
-        var datapoint = [];
+        /*var datapoint = [];
         if($("#segmentationtypelist").val()==0)//Chain incomes
         {
             $("#barcharttable").show();
@@ -624,7 +821,7 @@ else
                 }       
             };
             
-        }
+        }*/
         if($("#segmentationtypelist").val()==1)//Store incomes
         {
             var flag1 = 0;
@@ -749,7 +946,7 @@ else
 
 
         //drawing chart
-         var chart = new CanvasJS.Chart("barchartdiv",
+         /*var chart = new CanvasJS.Chart("barchartdiv",
         {
             theme: "theme3",
                         animationEnabled: true,
@@ -796,7 +993,7 @@ else
                 ]
             }
             
-            ]*/
+            ]
           legend:{
             cursor:"pointer",
             itemclick: function(e){
@@ -811,49 +1008,8 @@ else
           },
         });
 
-chart.render();
-if($("#segmentationtypelist").val()==0)//Chain incomes
-        {
-            $("#thincome").show();
-            $("#thsale").hide();
-            for (var i = 0; i <= datatest.data.length; i++) 
-            {
-             if(datatest.data[i].storeid==0)
-             {
-                 for (var m = 0; m < datatest.data[i].details.length; m++) 
-            {
-            $("#tbody1").append("<tr id='tbody1row"+n+"'><td class='form-control-static'>"+datatest.data[i].details[m].date+"</td><td class='form-control-static'>"+datatest.data[i].storename+"</td><td class='form-control-static'>"+datatest.data[i].details[m].amount+"</td></tr>");
-            n=n+1;
-            };
-            
-             }
-           
-        
-    };   
-        }
-        if($("#segmentationtypelist").val()==1)//store incomes
-        {
-            $("#thincome").show();
-            $("#thsale").hide();
-            for (var i = 1; i <=row; i++) 
-                {
-                    if($("#storelist"+i+"").val()!=0)
-                    {
-                        for (var m = 0; m < datatest.data.length; m++) 
-                        {
-                            if($("#storelist"+i+"").val()==datatest.data[m].storeid)
-                            {
-                                for (var n = 0; n < datatest.data[m].details.length; n++) 
-                                {
+chart.render();*/
 
-                                    $("#tbody1").append("<tr id='tbody1row"+d+"'><td class='form-control-static'>"+datatest.data[m].details[n].date+"</td><td class='form-control-static'>"+datatest.data[m].storename+"</td><td class='form-control-static'>"+datatest.data[m].details[n].amount+"</td><td hidden></td></tr>");
-                                d=d+1;
-                                };
-                            }
-                        };
-                    }
-                };
-        }
         if($("#segmentationtypelist").val()==2)//chain product sales
         {
             $("#thincome").hide();
