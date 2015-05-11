@@ -101,7 +101,9 @@ module.exports = {
                             if( bills[b].store == stores[s].storeid ) {
                                 for ( var d = 0 ; d < stores[s].details.length ; d ++ ) {
                                     if(stores[s].details[d].date == convertDate(bills[b].time)) {
+                                        stores[0].total += bills[b].total;
                                         stores[s].total += bills[b].total;
+                                        stores[0].details[d].amount += bills[b].total;
                                         stores[s].details[d].amount += bills[b].total;
                                     }
                                 }
