@@ -116,4 +116,5 @@ module.exports.routes = {
   'GET /store/show/:ingredient/:type?': 'StoreController.getStoreByIngredient',
 
   'GET /segmentation/revenue': 'Services.getRevenue',
+  'GET /segmentation/sales': 'Services.getSaleNumber',
 };
