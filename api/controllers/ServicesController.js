@@ -5,50 +5,62 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+function convertDate(date) {
+    // var strDate = Date.parse(date);
+    var dd = date.getDate();
+    var mm = date.getMonth()+1;
+    if(mm < 10)
+        mm = "0" + mm;
+    var yyyy = date.getFullYear();
+    var result = dd + "/" + mm + "/" + yyyy;
+    
+    return result;
+};
+
+function getDateDMY(date) {
+    var components = date.split("/");
+    var dd = components[0];
+    var mm = components[1];
+    var yyyy = components[2];
+    var result = yyyy+"-"+mm+"-"+dd;
+    return result;
+};
+
+function getDateRange(startDate, endDate) {
+    var dateRange = new Array();
+    var lowerBound = new Date(startDate);
+    var upperBound = new Date(endDate);
+
+    console.log(lowerBound.getTime()+"lowerBound");
+    console.log(upperBound.getTime()+"upperBound");
+
+    if(upperBound > lowerBound) {
+        var numberOfDayBetween = (upperBound - lowerBound) / 86400000;
+        for(var i = 0 ; i <= numberOfDayBetween ; i ++) {
+            var temp = new Date();
+            temp.setTime(lowerBound.getTime() + 86400000*i);
+            var newDate = new Date(temp)
+            dateRange.push(newDate);
+        }
+    }
+    else if(lowerBound.getTime() == upperBound.getTime()) {
+        dateRange.push(upperBound);
+        return dateRange;
+    }
+    else {
+        return false;
+    }
+
+    return dateRange;
+};
 
 module.exports = {
 
-
     getSaleNumber: function(req, res) {
-        function convertDate(date) {
-            // var strDate = Date.parse(date);
-            var dd = date.getDate();
-            var mm = date.getMonth()+1;
-            if(mm < 10)
-                mm = "0" + mm;
-            var yyyy = date.getFullYear();
-            var result = dd + "/" + mm + "/" + yyyy;
-            
-            return result;
-        };
-
-        function getDateDMY(date) {
-            var components = date.split("/");
-            var dd = components[0];
-            var mm = components[1];
-            var yyyy = components[2];
-            var result = yyyy+"-"+mm+"-"+dd;
-            return result;
-        };
 
         var startDate = getDateDMY(req.query.time1);
         var endDate = getDateDMY(req.query.time2);
 
-        var dateRange = new Array();
-
-        var lowerBound = new Date(startDate);
-        var upperBound = new Date(endDate);
-        var temp = (upperBound - lowerBound) / 86400000;
-
-        for(var i = 0 ; i <= temp ; i ++) {
-            var newDate = lowerBound.getDate()+i;
-            if(lowerBound.getMonth()+1 < 10) 
-                var newMonth = "0" + (lowerBound.getMonth()+1);
-            else
-                var newMonth = lowerBound.getMonth()+1;
-            var newYear = lowerBound.getFullYear();
-            dateRange.push(newDate+"/"+newMonth+"/"+newYear);
-        }
 
         var result = {
         message: 'failed',
@@ -63,6 +75,11 @@ module.exports = {
         var newProduct;
         var newStore;
 
+        var dateRange = getDateRange(startDate, endDate);
+        if(dateRange == false) {
+            result['message'] = 'start day must lower than end date';
+            return res.json(result);
+        }
 
         Product.find().exec(function(ProductError, products) {
             if(ProductError) {
@@ -77,7 +94,7 @@ module.exports = {
                     };
                     for(var d = 0; d < dateRange.length; d++) {
                         newDate = {
-                            date: dateRange[d],
+                            date: convertDate(dateRange[d]),
                             amount: 0
                         }
                         newProduct.sale.push(clone(newDate));
@@ -104,24 +121,26 @@ module.exports = {
                         if(BillError)
                             return res.json(result);
                         else {
-                            async.eachSeries(bills, function(bill, callback) {
-                                BillItem.find({bill: bill.id}).exec(function(biErr, items) {
-                                    if(biErr) {
-                                        // result['message'] = ''
-                                        return res.json(result);
-                                    }
-                                    else {
-                                        for(var i = 0 ; i < items.length; i++) {
-                                            for(var s = 0 ; s < cStores.length; s++) {
-                                                if(cStores[s].storeid == bill.store) {
-                                                    for(var p = 0 ; p < cStores[s].details.length ; p++) {
-                                                        if(items[i].product == cStores[s].details[p].productid) {
-                                                            for(var d = 0 ; d < cStores[s].details[p].sale.length ; d++) {
-                                                                if(convertDate(bill.time) == cStores[s].details[p].sale[d].date) {
-                                                                    cStores[0].details[p].sale[d].amount += items[i].amount;
-                                                                    cStores[0].total+= items[i].amount;
-                                                                    cStores[s].total+= items[i].amount;
-                                                                    cStores[s].details[p].sale[d].amount += items[i].amount;
+                            if(bills.length>0) {
+                                async.eachSeries(bills, function(bill, callback) {
+                                    BillItem.find({bill: bill.id}).exec(function(biErr, items) {
+                                        if(biErr) {
+                                            // result['message'] = ''
+                                            return res.json(result);
+                                        }
+                                        else {
+                                            for(var i = 0 ; i < items.length; i++) {
+                                                for(var s = 0 ; s < cStores.length; s++) {
+                                                    if(cStores[s].storeid == bill.store) {
+                                                        for(var p = 0 ; p < cStores[s].details.length ; p++) {
+                                                            if(items[i].product == cStores[s].details[p].productid) {
+                                                                for(var d = 0 ; d < cStores[s].details[p].sale.length ; d++) {
+                                                                    if(convertDate(bill.time) == cStores[s].details[p].sale[d].date) {
+                                                                        cStores[0].details[p].sale[d].amount += items[i].amount;
+                                                                        cStores[0].total+= items[i].amount;
+                                                                        cStores[s].total+= items[i].amount;
+                                                                        cStores[s].details[p].sale[d].amount += items[i].amount;
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -129,20 +148,25 @@ module.exports = {
                                                 }
                                             }
                                         }
-                                    }
-                                    result['message'] = 'success';
-                                    result['status'] = 1;
-                                    if(bill.id == bills[bills.length-1].id) {
-                                        result.data=cStores;
+                                        result['message'] = 'success';
+                                        result['status'] = 1;
+                                        if(bill.id == bills[bills.length-1].id) {
+                                            result.data=cStores;
+                                            return res.json(result);
+                                        }
+                                    });
+                                    callback();
+                                }, function(err) {
+                                    if(err) {
                                         return res.json(result);
                                     }
                                 });
-                                callback();
-                            }, function(err) {
-                                if(err) {
-                                    return res.json(result);
-                                }
-                            });
+                            }
+                            else {
+                                result['status'] = 1;
+                                result['message'] = 'success';
+                                return res.json(result);
+                            }
                         }
                     });
                 });
@@ -153,30 +177,6 @@ module.exports = {
     // 5 hours
     getRevenue: function(req, res) {
 
-        function convertDate(date) {
-            var dd = date.getDate();
-            if(dd < 10) {
-                dd = "0" + dd;
-            }
-            var mm = date.getMonth()+1;
-            if(mm < 10)
-                mm = "0" + mm;
-            var yyyy = date.getFullYear();
-            var result = dd + "/" + mm + "/" + yyyy;
-
-            return result;
-        };
-
-        function getDateDMY(date) {
-            var components = date.split("/");
-            var dd = components[0];
-            var mm = components[1];
-            var yyyy = components[2];
-            var result = yyyy+"-"+mm+"-"+dd;
-            return result;
-        }
-
-        // var input = JSON.parse(req.query.input);
         var startDate = getDateDMY(req.query.time1);
         var endDate = getDateDMY(req.query.time2);
         
@@ -187,24 +187,10 @@ module.exports = {
         var clone = require('clone');
         var async = require('async');
 
-        var dateRange = new Array();
-        var lowerBound = new Date(startDate);
-        var upperBound = new Date(endDate);
-        
-        if(upperBound > lowerBound) {
-            var numberOfDayBetween = (upperBound - lowerBound) / 86400000;
-        }
-        else {
-            result['message'] = 'Start day is lower than end date';
-            res.json(result);
-        }
-
-
-        for(var i = 0 ; i <= numberOfDayBetween ; i ++) {
-            var temp = new Date();
-            temp.setTime(lowerBound.getTime() + 86400000*i);
-            var newDate = new Date(temp)
-            dateRange.push(newDate);
+        var dateRange = getDateRange(startDate, endDate);
+        if(dateRange == false) {
+            result['message'] = 'start day must lower than end date';
+            return res.json(result);
         }
 
         Store.find().exec(function(err, foundStore) {
