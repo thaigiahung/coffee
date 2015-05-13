@@ -431,7 +431,6 @@ $("#btnconfirm").click(function()
                     {
                         if(datatest.message=="success")
                         {
-                            alert("Thành công");
                             var datapoint = [];
                             if($("#segmentationtypelist").val()==0)//Chain incomes
                             {
@@ -522,10 +521,7 @@ $("#btnconfirm").click(function()
                                     };
                                 }
                             }
-
-
-//draw chart
-                             var chart = new CanvasJS.Chart("barchartdiv",
+                            var chart = new CanvasJS.Chart("barchartdiv",
                                 {
                                     theme: "theme3",
                                                 animationEnabled: true,
@@ -588,9 +584,8 @@ $("#btnconfirm").click(function()
                                 });
 
                         chart.render();
-
-                        //show data table
-                        if($("#segmentationtypelist").val()==0)//Chain incomes
+//show data table
+            if($("#segmentationtypelist").val()==0)//Chain incomes
                         {
                             $("#thincome").show();
                             $("#thsale").hide();
@@ -640,9 +635,41 @@ $("#btnconfirm").click(function()
                                     }
                                 });
                             }
+//ending of income case
+
 //sales case
+            if($("#segmentationtypelist").val()==2||$("#segmentationtypelist").val()==3)
+            {
+                alert("Thành công");
+                var url1 = "http://localhost:1337/segmentation/sales?time1="+date1+"&&time2="+date2+"";
+                //var url1="http://localhost:1337/segmentation/sales?time1=12/05/2015&time2=12/04/2015";
+                alert(url1);
+                $.getJSON(url1,function(saledata)
+                {
+                    if(saledata.status==0)
+                    {
+                        alert("Hệ thống bị lỗi, xin vui lòng kiểm tra lại!");
+                        return false;
+                    }
+                    else
+                    {
+                        if(saledata.message=="success")
+                        {
+                            alert("Thành công");
+                        }
+                        else
+                        {
+                            alert("Không lấy được dữ liệu, vui lòng kiểm tra lại!");
+                            return false;
+                        }
+                    }
+                });
+                //ending of getJSON
+            }
+//ending of salecase
 
-
+//draw chart
+                             
             /*var datatest={    
                   "status":1,
                   "message":"success",
@@ -686,7 +713,7 @@ $("#btnconfirm").click(function()
                         ]
                  };*/
             //get sales data
-            var saledata={    
+            /*var saledata={    
                   "status":1,
                   "message":"success",
                   "data":[
@@ -772,13 +799,13 @@ $("#btnconfirm").click(function()
                             },
                             
                         ]
-                 };
+                 };*/
 
 
 
 
 //main code*********
-if(datatest.status==0)
+/*if(datatest.status==0)
 {
     alert("Lỗi hệ thống, xin vui lòng kiểm tra lại!");
     return false;
@@ -787,7 +814,7 @@ else
 {
     if(datatest.message=="success")//success
     {
-        /*var datapoint = [];
+        var datapoint = [];
         if($("#segmentationtypelist").val()==0)//Chain incomes
         {
             $("#barcharttable").show();
@@ -820,7 +847,7 @@ else
                 }       
             };
             
-        }*/
+        }
         if($("#segmentationtypelist").val()==1)//Store incomes
         {
             var flag1 = 0;
@@ -941,7 +968,7 @@ else
         if($("#segmentationtypelist").val()==3)
         {
             alert("Doanh số từng cửa hàng");
-        }
+        }*/
 
 
         //drawing chart
@@ -1007,7 +1034,7 @@ else
           },
         });
 
-chart.render();*/
+chart.render();
 
         if($("#segmentationtypelist").val()==2)//chain product sales
         {
@@ -1027,7 +1054,7 @@ chart.render();*/
         alert("Không có dữ liệu thống kê, xin vui lòng kiểm tra lại!");
         return false;
     }
-}
+}*/
 //main code ending
     
             }
