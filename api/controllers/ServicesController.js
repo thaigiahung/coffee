@@ -8,6 +8,8 @@
 function convertDate(date) {
     // var strDate = Date.parse(date);
     var dd = date.getDate();
+    if(dd < 10)
+        dd = "0" + dd;
     var mm = date.getMonth()+1;
     if(mm < 10)
         mm = "0" + mm;
@@ -30,9 +32,7 @@ function getDateRange(startDate, endDate) {
     var dateRange = new Array();
     var lowerBound = new Date(startDate);
     var upperBound = new Date(endDate);
-
-    console.log(lowerBound.getTime()+"lowerBound");
-    console.log(upperBound.getTime()+"upperBound");
+    // dateRange.push(lowerBound);
 
     if(upperBound > lowerBound) {
         var numberOfDayBetween = (upperBound - lowerBound) / 86400000;
@@ -80,6 +80,7 @@ module.exports = {
             result['message'] = 'start day must lower than end date';
             return res.json(result);
         }
+
 
         Product.find().exec(function(ProductError, products) {
             if(ProductError) {
@@ -163,6 +164,7 @@ module.exports = {
                                 });
                             }
                             else {
+                                result['data'] = cStores;
                                 result['status'] = 1;
                                 result['message'] = 'success';
                                 return res.json(result);
