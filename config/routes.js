@@ -94,6 +94,11 @@ module.exports.routes = {
     controller: 'RecipeController',
     action: 'viewRecipe'
   },
+
+  /*'get /segmentation': {
+    view: 'view_segmentation'
+  },*/
+  'GET /segmentation': 'BillController.viewSegmentation',
   '/bill/list/:store?': 'BillController.indexByStore',
   '/bill/get/:id?': 'BillItemController.indexBillItem',
 
@@ -125,4 +130,6 @@ module.exports.routes = {
   'GET /account/manage/view': 'UserController.viewManage',
   'POST /account': 'UserController.insert',
   'PUT /account/:id': 'UserController.update',
+  'GET /segmentation/revenue': 'Services.getRevenue',
+  'GET /segmentation/sales': 'Services.getSaleNumber',
 };

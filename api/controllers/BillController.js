@@ -66,5 +66,19 @@ module.exports = {
             }); 
         });
     },
+
+    viewSegmentation: function(req, res) {
+        if(!req.session.user) {
+            res.locals.layout = false; //Don't use layout
+            res.view('login');
+        }
+        else if(req.session.user.role != 1) {
+            res.locals.layout = false; //Don't use layout
+            res.view('permission-denied');
+        }
+        else {
+            return res.view('view_segmentation', {user: req.session.user});
+        }        
+    },
 };
 
