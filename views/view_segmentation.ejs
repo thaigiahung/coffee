@@ -361,6 +361,7 @@ function ChangeSegmentationType()
         $("#thsalestore").hide();
         for (var i = 1; i <=row; i++) 
         {
+            $("#saleproductlist"+i+"").val(0);
             $("#tdsalestore"+i+"").hide();
         };
     }
@@ -373,6 +374,8 @@ function ChangeSegmentationType()
         $("#thsalestore").show();
         for (var i = 1; i <=row; i++) 
         {
+            $("#saleproductlist"+i+"").val(0);
+            $("#salestorelist"+i+"").val(0);
             $("#tdsalestore"+i+"").show();
         };
     }
