@@ -12,11 +12,7 @@
             <form>
             	<div id="segmentationtypediv" class="form-group">
             		<select id="segmentationtypelist" class="form-control" onchange="ChangeSegmentationType();">
-            			<option value="0">Revenue of the whole chain</option>
-            			<option value="1">Revenue of specific stores</option>
-                        <option value="2">Product sales of the whole chain</option>
-                        <option value="3">Product sales of specific stores</option>
-
+            		
             		</select>
                     <label id="segmentationtypelabel" class="form-control-static"></label>
             	</div>
@@ -165,9 +161,25 @@
 <script type="text/javascript">	
 var row = 5;
 var dem=0;
+// var user = $.session.get('user');
 $( document ).ready(function()
 {
-    
+    var userrole = <%= user.role %>;
+    var userid=<%= user.id %>
+    console.log("user: "+ userid);
+    if(userrole==1)
+    {
+        $("#segmentationtypelist").append("<option value='0'>Revenue of the whole chain</option><option value='1'>Revenue of specific stores</option><option value='2'>Product sales of the whole chain</option><option value='3'>Product sales of specific stores</option>");
+    }
+    if(userrole==2||userrole==3)
+    {
+        $("#segmentationtypelist").append("<option value='1'>Revenue of specific stores</option><option value='3'>Product sales of specific stores</option>");
+        $("#storeincometable").show();
+        $("#storesaletable").hide();
+        $("#segmentationtable").hide();
+        $("#barcharttable").hide();
+    }
+
     for (var i = 2; i <= row; i++) 
     {
         $("#storelisttbody").append("<tr id='storelisttr"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control' onchange='ChangeStore("+i+");'><option value='0'>Store</option></select></div></td></tr>");
@@ -189,11 +201,26 @@ $( document ).ready(function()
                 {
                     if(result1.Store[i].id!=1)
                     {
-                        for (var l = 1; l <= row; l++) 
-                        {   
-                            $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                            $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                        };
+                        if(userrole==1)
+                        {
+                            for (var l = 1; l <= row; l++) 
+                            {   
+                                $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                            };
+                        }
+                        if(userrole==2||userrole==3)
+                        {
+                            if(result1.Store[i].manager==userid)
+                            {
+                                for (var l = 1; l <= row; l++) 
+                                {   
+                                    $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                    $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                };
+                            }
+                        }
+                        
                     }
                 };
             }

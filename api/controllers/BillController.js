@@ -72,7 +72,7 @@ module.exports = {
             res.locals.layout = false; //Don't use layout
             res.view('login');
         }
-        else if(req.session.user.role != 1) {
+        else if(req.session.user.role != 1 && req.session.user.role != 2 && req.session.user.role != 3) {
             res.locals.layout = false; //Don't use layout
             res.view('permission-denied');
         }
