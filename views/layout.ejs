@@ -68,7 +68,7 @@
             <!-- /.navbar-header -->
 
             <ul class="nav navbar-top-links navbar-right">
-                <li>Chào <%= user.name %></li>
+                <li>Hello <%= user.name %></li>
                 <li><a href="/logout">Thoát</a>
                         </li>
             </ul>
@@ -150,7 +150,7 @@
                                 <a href="/account/manage/view"><i class="fa fa-dashboard fa-fw"></i> Account</a>
                             </li>
                             <li>
-                                <a href="/segmentation"><i class="fa fa-dashboard fa-fw"></i> Thống kê</a>
+                                <a href="/segmentation"><i class="fa fa-dashboard fa-fw"></i> Segmentation</a>
                             </li>
                         <% } else if(user.role == 2) { %>
                             <li>
