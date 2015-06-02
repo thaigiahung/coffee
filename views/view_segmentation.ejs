@@ -162,11 +162,12 @@
 <script type="text/javascript">	
 var row = 5;
 var dem=0;
+var userrole = <%= user.role %>;
+var userid=<%= user.id %>
 // var user = $.session.get('user');
 $( document ).ready(function()
 {
-    var userrole = <%= user.role %>;
-    var userid=<%= user.id %>
+    
     console.log("user: "+ userid);
     if(userrole==1)
     {
@@ -175,7 +176,7 @@ $( document ).ready(function()
     if(userrole==2||userrole==3)
     {
         $("#segmentationtypelist").append("<option value='1'>Revenue of specific stores</option><option value='3'>Product sales of specific stores</option>");
-        $("#storeincometable").show();
+        $("#storeincometable").hide();
         $("#storesaletable").hide();
         $("#segmentationtable").hide();
         $("#barcharttable").hide();
@@ -210,12 +211,12 @@ $( document ).ready(function()
                                 $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
                             };
                         }
-                        if(userrole==2||userrole==3)
+                        if(userrole==2)
                         {
+                            $("#storeincometable").hide();
                             if(result1.Store[i].manager==userid)
                             {
                                 $("#storelist1").append("<option selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                                $("#storeincometable").hide();
                                 for(var l=1; l<=row; l++)
                                 {
                                      $("#salestorelist"+l+"").html("<option  selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
@@ -224,7 +225,20 @@ $( document ).ready(function()
                                 }
                             }
                         }
-                        
+                        if(userrole==3)
+                        {
+                            $("#storeincometable").hide();
+                            if(result1.Store[i].owner==userid)
+                            {
+                                $("#storelist1").append("<option selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                for(var l=1; l<=row; l++)
+                                {
+                                     $("#salestorelist"+l+"").html("<option  selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                     $("#salestorelist"+l+"").attr("disabled","disabled");
+                                     $("#tdsalestore"+l+"").hide();
+                                }
+                            }
+                        }
                     }
                 };
             }
@@ -353,10 +367,22 @@ function ChangeSegmentationType()
     }
     if($("#segmentationtypelist").val()==1)//store income
     {
-        $("#storeincometable").show();
-        $("#storesaletable").hide();
-        $("#segmentationtable").hide();
-        $("#barcharttable").hide();
+
+        if(userrole==2||userrole==3)
+        {
+            console.log("User role: " + userrole)
+            $("#storeincometable").hide();
+            $("#storesaletable").hide();
+            $("#segmentationtable").hide();
+            $("#barcharttable").hide();
+        }
+        if(userrole==1)
+        {
+            $("#storeincometable").show();
+            $("#storesaletable").hide();
+            $("#segmentationtable").hide();
+            $("#barcharttable").hide();
+        }
     }
     if($("#segmentationtypelist").val()==2)//chain product sales
     {

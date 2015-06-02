@@ -693,7 +693,7 @@ module.exports = {
 		}
 		else if(req.session.user.role == 3) 
 		{
-		    res.redirect('/segmentation/view');
+		    res.redirect('/segmentation');
 		}
 		else if(req.session.user.role == 1) 
 		{		    
