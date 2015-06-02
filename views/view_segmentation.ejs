@@ -102,7 +102,7 @@
                 <tr id="salestorelisttr1">
                     <td id="tdsalestore1">
                     <div id="salestorelistdiv1" class="form-group">
-                        <select id="salestorelist1" class="form-control" onchange="SaleChangeStore(1);">
+                        <select disabled id="salestorelist1" class="form-control" onchange="SaleChangeStore(1);">
                             <option value="0">Store</option>
                         </select>
                     </div>
@@ -184,7 +184,7 @@ $( document ).ready(function()
     for (var i = 2; i <= row; i++) 
     {
         $("#storelisttbody").append("<tr id='storelisttr"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control' onchange='ChangeStore("+i+");'><option value='0'>Store</option></select></div></td></tr>");
-        $("#salestorelisttbody").append("<tr id='salestorelisttr"+i+"'><td id='tdsalestore"+i+"'><div id='salestorelistdiv"+i+"' class='form-group'><select id='salestorelist"+i+"' class='form-control' onchange='SaleChangeStore("+i+");'><option value='0'>Store</option></select></div></td><td><div id='saleproductlistdiv"+i+"' class='form-group'><select id='saleproductlist"+i+"' class='form-control' onchange='SaleChangeProduct("+i+");'><option value='0'>Product</option></select></div></td></tr>");
+        $("#salestorelisttbody").append("<tr id='salestorelisttr"+i+"'><td id='tdsalestore"+i+"'><div id='salestorelistdiv"+i+"' class='form-group'><select disabled id='salestorelist"+i+"' class='form-control' onchange='SaleChangeStore("+i+");'><option value='0'>Store</option></select></div></td><td><div id='saleproductlistdiv"+i+"' class='form-group'><select id='saleproductlist"+i+"' class='form-control' onchange='SaleChangeProduct("+i+");'><option value='0'>Product</option></select></div></td></tr>");
     };
 
     $.post("services/model",{from:"store"},function(result1)
@@ -214,11 +214,15 @@ $( document ).ready(function()
                         {
                             if(result1.Store[i].manager==userid)
                             {
-                                for (var l = 1; l <= row; l++) 
-                                {   
-                                    $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                                    $("#salestorelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                                };
+                                $("#storelist1").append("<option selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                $("#storeincometable").hide();
+                                $("#thsalestore").hide();
+                                for(var l=1; l<=row; l++)
+                                {
+                                     $("#salestorelist"+l+"").html("<option  selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
+                                     //$("#salestorelist"+l+"").hide
+                                     $("#tdsalestore"+l+"").hide();
+                                }
                             }
                         }
                         
@@ -252,32 +256,7 @@ $.post("services/model",{from:"product"},function(result){
         }
     }
 });
-    /*$.post("services/model",{from:"product"},function(datatest)
-    {
-        if(datatest.status==0)
-        {
-            alert("Can not get data!");
-            return false;
-        }
-        else
-            {
-                if(datatest.message=="success")
-                {
-                    for (var i = 0; i < datatest.Product.length; i++) 
-                    {
-                        for (var l = 1; l <=row; l++) 
-                        {
-                            $("#productlist"+l+"").append("<option value='"+datatest.Product[i].id+"'>"+datatest.Product[i].name+"</option>");
-                        };
-                    };
-                }
-                else
-                {
-                    alert("Không có sản phẩm nào!");
-                    return false;
-                }
-            }
-        });*/
+    
 
 });
 
@@ -375,7 +354,7 @@ function ChangeSegmentationType()
     }
     if($("#segmentationtypelist").val()==1)//store income
     {
-        $("#storeincometable").show();
+        $("#storeincometable").hide();
         $("#storesaletable").hide();
         $("#segmentationtable").hide();
         $("#barcharttable").hide();
@@ -754,7 +733,7 @@ $("#btnconfirm").click(function()
                                  var flag3=0;
                                 for (var i = 1; i <= row; i++) 
                                 {
-                                    if($("#saleproductlist"+i+"").val()!=0||$("#salestorelist"+i+"").val()!=0)
+                                    if($("#saleproductlist"+i+"").val()!=0)
                                     {
                                         flag3=2;
                                     }
@@ -764,21 +743,17 @@ $("#btnconfirm").click(function()
                                     alert("You have not itput data yet!");
                                     return false;
                                 }
+                                var flag4=1;
                                 for (var i = 1; i <= row; i++) 
                                 {
-                                    if($("#saleproductlist"+i+"").val()!=0&&$("#salestorelist"+i+"").val()==0)
+                                    if($("#saleproductlist"+i+"").val()!=0)
                                     {
-                                        flag3=1;
-                                    }
-                                    if($("#saleproductlist"+i+"").val()==0&&$("#salestorelist"+i+"").val()!=0)
-                                    {
-                                        flag3=1;
+                                        flag4=0;
                                     }
                                 };
-                                if(flag3==1)
+                                if(flag4==1)
                                 {
                                     alert("Please check your input data!");
-                                    flag3=0;
                                     return false;
                                 }
                                 else
