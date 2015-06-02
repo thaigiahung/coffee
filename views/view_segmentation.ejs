@@ -102,7 +102,7 @@
                 <tr id="salestorelisttr1">
                     <td id="tdsalestore1">
                     <div id="salestorelistdiv1" class="form-group">
-                        <select disabled id="salestorelist1" class="form-control" onchange="SaleChangeStore(1);">
+                        <select id="salestorelist1" class="form-control" onchange="SaleChangeStore(1);">
                             <option value="0">Store</option>
                         </select>
                     </div>
@@ -184,9 +184,8 @@ $( document ).ready(function()
     for (var i = 2; i <= row; i++) 
     {
         $("#storelisttbody").append("<tr id='storelisttr"+i+"'><td><div id='storelistdiv"+i+"' class='form-group'><select id='storelist"+i+"' class='form-control' onchange='ChangeStore("+i+");'><option value='0'>Store</option></select></div></td></tr>");
-        $("#salestorelisttbody").append("<tr id='salestorelisttr"+i+"'><td id='tdsalestore"+i+"'><div id='salestorelistdiv"+i+"' class='form-group'><select disabled id='salestorelist"+i+"' class='form-control' onchange='SaleChangeStore("+i+");'><option value='0'>Store</option></select></div></td><td><div id='saleproductlistdiv"+i+"' class='form-group'><select id='saleproductlist"+i+"' class='form-control' onchange='SaleChangeProduct("+i+");'><option value='0'>Product</option></select></div></td></tr>");
+        $("#salestorelisttbody").append("<tr id='salestorelisttr"+i+"'><td id='tdsalestore"+i+"'><div id='salestorelistdiv"+i+"' class='form-group'><select  id='salestorelist"+i+"' class='form-control' onchange='SaleChangeStore("+i+");'><option value='0'>Store</option></select></div></td><td><div id='saleproductlistdiv"+i+"' class='form-group'><select id='saleproductlist"+i+"' class='form-control' onchange='SaleChangeProduct("+i+");'><option value='0'>Product</option></select></div></td></tr>");
     };
-
     $.post("services/model",{from:"store"},function(result1)
     {
         if(result1.status==0)
@@ -204,6 +203,7 @@ $( document ).ready(function()
                     {
                         if(userrole==1)
                         {
+                            $("#storeincometable").hide();
                             for (var l = 1; l <= row; l++) 
                             {   
                                 $("#storelist"+l+"").append("<option value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
@@ -216,11 +216,10 @@ $( document ).ready(function()
                             {
                                 $("#storelist1").append("<option selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
                                 $("#storeincometable").hide();
-                                $("#thsalestore").hide();
                                 for(var l=1; l<=row; l++)
                                 {
                                      $("#salestorelist"+l+"").html("<option  selected value='"+result1.Store[i].id+"'>"+result1.Store[i].name+"</option>");
-                                     //$("#salestorelist"+l+"").hide
+                                     $("#salestorelist"+l+"").attr("disabled","disabled");
                                      $("#tdsalestore"+l+"").hide();
                                 }
                             }
@@ -354,7 +353,7 @@ function ChangeSegmentationType()
     }
     if($("#segmentationtypelist").val()==1)//store income
     {
-        $("#storeincometable").hide();
+        $("#storeincometable").show();
         $("#storesaletable").hide();
         $("#segmentationtable").hide();
         $("#barcharttable").hide();
