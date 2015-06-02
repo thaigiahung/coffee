@@ -25,6 +25,7 @@ function update (object) {
   //After we update it, we just have a string
   //So, we must check if we have an object or a string
   $('#object-manager').val((object.manager.id != undefined) ? String(object.manager.id) : object.manager);
+  $('#object-owner').val((object.owner.id != undefined) ? String(object.owner.id) : object.owner);
 
   $('input:radio[name="object-status"]').filter('[value='+object.deleted+']').prop('checked', true);
   $('#div-status').show();
@@ -49,6 +50,7 @@ function drawObject(object, button) {
 
     //The response does not include category name => get text from the dropdown list where value = category id
     $("#object-manager [value='" + object.manager + "']").text(),
+    $("#object-owner [value='" + object.owner + "']").text(),
     
     (deleted == false) ? "Activated" : "Deleted"
   ];
@@ -106,6 +108,7 @@ function validate () {
   var address = $('#object-address').val();
   var phone = $('#object-phone').val();
   var manager = $('#object-manager').val();
+  var owner = $('#object-owner').val();
 
   if(address == "") //address is null
   {
@@ -131,6 +134,12 @@ function validate () {
     $('#message').show();
     return false;
   }
+  else if(owner == null) //manager is null
+  {
+    $('#message').text("Owner is required!");
+    $('#message').show();
+    return false;
+  }
   else if(name == "") //name is null
   {
     $('#message').text("Name is required!");
@@ -153,6 +162,7 @@ function save () {
       var address = $('#object-address').val();
       var phone = $('#object-phone').val();
       var manager = $('#object-manager').val();
+      var owner = $('#object-owner').val();
       var status = $('input[name=object-status]:checked').val();
       
       var obj = 
@@ -161,6 +171,7 @@ function save () {
                   "address": address,
                   "phone": phone,
                   "manager": manager,
+                  "owner": owner,
                   "deleted": status
                 };
       //If type == 0 -> action is update

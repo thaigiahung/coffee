@@ -10,6 +10,12 @@
     <%} else {%>
       <td><%= obj.manager.name %></td>
     <%} %>
+
+    <% if (obj.owner == undefined) {%>
+      <td></td>
+    <%} else {%>
+      <td><%= obj.owner.name %></td>
+    <%} %>
     
     <% if (obj.deleted == true) { %>
       <td>Deleted</td>

@@ -1,8 +1,8 @@
 $(document).ready(function() {
     $('#list-item').DataTable();
 
-    //Load Product Category
-    $.get( '/services/model?from=user&where={"deleted": false}', function( data ) {
+    //Load Manager
+    $.get( '/services/model?from=user&where={"role": 2, "deleted": false}', function( data ) {
       var users = data.User;
       $.each( users, function( key, value ) {
         //Key: is index
@@ -19,6 +19,14 @@ $(document).ready(function() {
           // }
         // console.log("value: "+value);
         $('#object-manager').append('<option value='+value.id+'>'+value.name+'</option>');
+      });
+    });
+
+    //Load Owner
+    $.get( '/services/model?from=user&where={"role": 3, "deleted": false}', function( data ) {
+      var users = data.User;
+      $.each( users, function( key, value ) {
+        $('#object-owner').append('<option value='+value.id+'>'+value.name+'</option>');
       });
     });
 });

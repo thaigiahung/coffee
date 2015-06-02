@@ -121,7 +121,7 @@ module.exports = {
 	},
 	
     viewManage: function(req, res) {
-        Store.find().populate('manager').exec(function (err, found) {
+        Store.find().populate('manager').populate('owner').exec(function (err, found) {
         	if(!req.session.user) {
         	    res.locals.layout = false; //Don't use layout
         	    res.view('login');
