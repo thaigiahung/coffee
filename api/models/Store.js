@@ -20,6 +20,8 @@ module.exports = {
 
         manager: { model: 'user', required: true },
 
+        owner: { model: 'user' },
+
         deleted: { type: 'boolean', defaultsTo: false },
 
         // Add a reference to User
