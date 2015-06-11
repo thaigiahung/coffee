@@ -57,7 +57,7 @@ module.exports = {
     },
 
     viewManage: function(req, res) {
-        User.find().populate('role').exec(function (err, found) {
+        User.find({ id: { '!': 1 }}).populate('role').exec(function (err, found) {
         	if(!req.session.user) {
         	    res.locals.layout = false; //Don't use layout
         	    res.view('login');
