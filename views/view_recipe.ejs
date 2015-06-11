@@ -424,6 +424,7 @@ $("#btnaddingredient").click(function()
 	if(row>20)
 	{
 		alert("Maximum is 20 rows!");
+		row=20;
 		return false;
 	}
 	else
@@ -506,6 +507,11 @@ $("#btnchange1").click(function()
                         		alert("Quantity at row "+i+" is not valid!");
                        	 		return false;
                     		}
+                    		if($("#ingredientamount"+i+"").val()>1000000)
+                    		{
+                    			alert("Quantity at row "+i+" is exceed the limit (must be below 1000000)!");
+                       	 		return false;
+                    		}
                     		else
                     		{
                     			unit.push($("#ingredientunit"+i+"").val());
@@ -563,6 +569,7 @@ $("#btnchange1").click(function()
 									  		{
 										    for (var i = 0; i < ingredient.length; i++) 
 											{
+												
 												if(unit[i]==2)
 												{
 													amount[i]=amount[i]/1000;
@@ -598,11 +605,16 @@ $("#btnchange1").click(function()
 												});
 												
 											};
-											window.location.reload();
+											ingredient = [];
+											setTimeout(function(){
+												window.location.reload();
+											},1000);
+											//window.location.reload();
+											
 											
   }, 1000);
 											
-										
+									
 ///////////////////////////////////////////////
 										}
 										
@@ -611,6 +623,7 @@ $("#btnchange1").click(function()
 									{
 										for (var i = 0; i < ingredient.length; i++) 
 										{
+										
 											if(unit[i]==2)
 												{
 													amount[i]=amount[i]/1000;
@@ -645,8 +658,14 @@ $("#btnchange1").click(function()
 														}
 													});
 										};
-										window.location.reload();
+										ingredient =[];
+										setTimeout(function(){
+												window.location.reload();
+											},1000);
+
+											
 									}
+									//window.location.reload();
 								}
 							});	
 				}
