@@ -412,7 +412,14 @@ function ChangeSegmentationType()
 
 $("#btnconfirm").click(function()
 {
-    smoothScrollTo("#scrollToHere");
+    $.get("/check/login").done(function(data){
+        if(data.status == 0)
+        {
+            window.location.reload();
+        }
+        else
+        {
+            smoothScrollTo("#scrollToHere");
     var flag = 0;
     var date1 = $("#datepicker1").val(),
         correctFormat1 = date1.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
@@ -994,5 +1001,8 @@ if($("#segmentationtypelist").val()==2)//Chain incomes
             alert("Please choose date range!");
             return false;
     }
+        }
+    });
+    
 });
 </script>

@@ -34,6 +34,16 @@ function update (object) {
   $('#form').modal();
 }
 
+//Check login
+function checkLogin () {
+  $.get("/check/login").done(function(data){
+    if(data.status == 0)
+    {
+      window.location = "/";
+    }
+  });
+}
+
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
 
@@ -63,44 +73,45 @@ function drawObject(object, button) {
 }
 
 function removeObject (object) {
-      var obj = {"deleted": true};
-      var data = {
-                    "from": model,
-                    "action": "update",
-                    "where": JSON.stringify({ "id": object.id}),
-                    "updatedata": JSON.stringify(obj)
-                };
+  var obj = {"deleted": true};
+  var data = {
+                "from": model,
+                "action": "update",
+                "where": JSON.stringify({ "id": object.id}),
+                "updatedata": JSON.stringify(obj)
+            };
 
-      $.post("/services/model", data)
-        .done(function(data) 
-        {
-          if(data.status == 1)
-          {
-            object = data.Store;
-            //Get datatable
-            var listItem = $('#list-item').DataTable();
-            object = object[0];
+  checkLogin();
+  $.post("/services/model", data)
+    .done(function(data) 
+    {
+      if(data.status == 1)
+      {
+        object = data.Store;
+        //Get datatable
+        var listItem = $('#list-item').DataTable();
+        object = object[0];
 
-            //Get selected row
-            var row = $("#btnUpdate"+object.id).closest('tr');
-            row = row[0];
-            //Get selected row id
-            // var rowId = table.row( row ).index();
-            listItem.row(row).remove();
+        //Get selected row
+        var row = $("#btnUpdate"+object.id).closest('tr');
+        row = row[0];
+        //Get selected row id
+        // var rowId = table.row( row ).index();
+        listItem.row(row).remove();
 
-            drawObject(object);
-            
-            $('#errorModelMessage').text(data.message);
-            $('#errorModelMessage').show();
-            $('#errorModal').modal('hide');
-          }
-        })
-        .fail(function(error)
-        {
-          $('#errorModelMessage').text("Cannot delete this product!");
-          $('#errorModelMessage').show();
-          $('#errorModal').modal('hide');
-        });
+        drawObject(object);
+        
+        $('#errorModelMessage').text(data.message);
+        $('#errorModelMessage').show();
+        $('#errorModal').modal('hide');
+      }
+    })
+    .fail(function(error)
+    {
+      $('#errorModelMessage').text("Cannot delete this product!");
+      $('#errorModelMessage').show();
+      $('#errorModal').modal('hide');
+    });
 }
 
 function validate () {
@@ -154,6 +165,7 @@ function validate () {
 }
 
 function save () {
+  checkLogin();
   var status = validate();
   if(status)
   {

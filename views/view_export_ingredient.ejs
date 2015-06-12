@@ -223,6 +223,7 @@ var y = 5;
             $("#notification").hide();
         }        
     });
+
     //All functions related to table one store
     function deleterow1(row)//delete one row in one store table
     {
@@ -542,7 +543,15 @@ var y = 5;
     $("#btnchange1").click(function()
     {
         $("#confirmform").modal('hide');
-        var flag = 0;
+        $.get("/check/login").done(function(data){
+        console.log(data);
+        if(data.status == 0)
+        {
+            window.location.reload();
+        }
+        else
+        {
+            var flag = 0;
         var data = [];
         var error= 0;
         var receiptid = $("#receipt").val();
@@ -564,12 +573,12 @@ var y = 5;
             alert("Date must follow the format dd/mm/yyyy!");
             return false;
         };
-        if($("#receipt").val()=="")
+        /*if($("#receipt").val()=="")
         {
             alert("Please input receipt id!");
             $("#receiptdiv").attr('class','form-group has-error');
             return false;
-        }
+        }*/
         
 
         for (var i = 1; i <=y; i++) 
@@ -825,7 +834,10 @@ var y = 5;
                         alert("Không thể lưu thông tin hóa đơn xuất kho!");
                         return false;
                     }
-                });*/  
+                });*/   
+        }
+      });
+       
             
     });
   $(function() {//datepicker code

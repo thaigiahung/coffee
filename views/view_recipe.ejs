@@ -459,7 +459,14 @@ $("#btnaddingredient").click(function()
 
 $("#btnchange1").click(function()
 {
-	var flags=0;
+	$.get("/check/login").done(function(data){
+	    if(data.status == 0)
+	    {
+	        window.location.reload();
+	    }
+	    else
+	    {
+	    	var flags=0;
 	var flag=0;
 	var ingredient = [];
 	var amount = [];
@@ -653,7 +660,10 @@ $("#btnchange1").click(function()
 			}
 		}
 	}
-})
+	    }
+	});
+	
+});
 
 //delete row
 function deleterow1(y)//delete one row in one store table

@@ -78,6 +78,24 @@ module.exports = {
         });
     },
 
+    checkLogin: function(req, res) {
+        var data = {};
+        if(!req.session.user) {
+            data = {
+                "status": 0,
+                "message": "Logged out"
+            }
+        }
+        else
+        {
+            data = {
+                "status": 1,
+                "message": "Logged in"
+            }
+        }
+        res.json(data);
+    },
+
     insert: function(req, res) 
     {
     	if(!req.session.user) 

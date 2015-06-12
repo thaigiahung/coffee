@@ -132,4 +132,5 @@ module.exports.routes = {
   'PUT /account/:id': 'UserController.update',
   'GET /segmentation/revenue': 'Services.getRevenue',
   'GET /segmentation/sales': 'Services.getSaleNumber',
+  'GET /check/login': 'UserController.checkLogin',
 };

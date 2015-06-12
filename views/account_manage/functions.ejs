@@ -69,44 +69,56 @@ function drawObject(object, button) {
 }
 
 function removeObject (object) {
-      var obj = {"deleted": true};
-      var data = {
-                    "from": model,
-                    "action": "update",
-                    "where": JSON.stringify({ "id": object.id}),
-                    "updatedata": JSON.stringify(obj)
-                };
+  var obj = {"deleted": true};
+  var data = {
+                "from": model,
+                "action": "update",
+                "where": JSON.stringify({ "id": object.id}),
+                "updatedata": JSON.stringify(obj)
+            };
 
-      $.post("/services/model", data)
-        .done(function(data) 
-        {
-          if(data.status == 1)
-          {
-            object = data.User;
-            //Get datatable
-            var listItem = $('#list-item').DataTable();
-            object = object[0];
+  checkLogin();
 
-            //Get selected row
-            var row = $("#btnUpdate"+object.id).closest('tr');
-            row = row[0];
-            //Get selected row id
-            // var rowId = table.row( row ).index();
-            listItem.row(row).remove();
+  $.post("/services/model", data)
+    .done(function(data) 
+    {
+      if(data.status == 1)
+      {
+        object = data.User;
+        //Get datatable
+        var listItem = $('#list-item').DataTable();
+        object = object[0];
 
-            drawObject(object);
-            
-            $('#errorModelMessage').text(data.message);
-            $('#errorModelMessage').show();
-            $('#errorModal').modal('hide');
-          }
-        })
-        .fail(function(error)
-        {
-          $('#errorModelMessage').text("Cannot delete this account!");
-          $('#errorModelMessage').show();
-          $('#errorModal').modal('hide');
-        });
+        //Get selected row
+        var row = $("#btnUpdate"+object.id).closest('tr');
+        row = row[0];
+        //Get selected row id
+        // var rowId = table.row( row ).index();
+        listItem.row(row).remove();
+
+        drawObject(object);
+        
+        $('#errorModelMessage').text(data.message);
+        $('#errorModelMessage').show();
+        $('#errorModal').modal('hide');
+      }
+    })
+    .fail(function(error)
+    {
+      $('#errorModelMessage').text("Cannot delete this account!");
+      $('#errorModelMessage').show();
+      $('#errorModal').modal('hide');
+    });
+}
+
+//Check login
+function checkLogin () {
+  $.get("/check/login").done(function(data){
+    if(data.status == 0)
+    {
+      window.location = "/";
+    }
+  });
 }
 
 function validate () {
@@ -166,6 +178,7 @@ function validate () {
 }
 
 function save () {
+  checkLogin();
   var status = validate();
   if(status)
   {
