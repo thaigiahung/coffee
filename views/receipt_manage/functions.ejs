@@ -166,6 +166,16 @@ function detail(id)
         });
 }
 
+//Check login
+function checkLogin () {
+  $.get("/check/login").done(function(data){
+    if(data.status == 0)
+    {
+      window.location = "/";
+    }
+  });
+}
+
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
 
@@ -192,6 +202,7 @@ function drawObject(object, button) {
 }
 
 function save () {
+  checkLogin();
   var status = validate();
   if(status)
   {

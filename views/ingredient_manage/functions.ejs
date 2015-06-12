@@ -35,6 +35,16 @@ function update (object) {
   $('#form').modal();
 }
 
+//Check login
+function checkLogin () {
+  $.get("/check/login").done(function(data){
+    if(data.status == 0)
+    {
+      window.location = "/";
+    }
+  });
+}
+
 function drawObject(object, button) {
   var listItem = $('#list-item').DataTable();
 
@@ -65,44 +75,67 @@ function drawObject(object, button) {
 }
 
 function removeObject (object) {
-      var obj = {"deleted": true};
-      var data = {
-                    "from": model,
-                    "action": "update",
-                    "where": JSON.stringify({ "id": object.id}),
-                    "updatedata": JSON.stringify(obj)
-                };
+  var obj = {"deleted": true};
+  var data = {
+                "from": model,
+                "action": "update",
+                "where": JSON.stringify({ "id": object.id}),
+                "updatedata": JSON.stringify(obj)
+            };
 
-      $.post("/services/model", data)
-        .done(function(data) 
-        {
-          if(data.status == 1)
+  checkLogin();
+
+  $.post("/services/model", data)
+    .done(function(data) 
+    {
+      if(data.status == 1)
+      {
+        var obj2 = {"deleted": true};
+        var data2 = {
+                      "from": "IngredientStore",
+                      "action": "update",
+                      "where": JSON.stringify({ "ingredient": object.id}),
+                      "updatedata": JSON.stringify(obj2)
+                  };
+
+        $.post("/services/model", data2)
+          .done(function(data2) 
           {
-            object = data.Ingredient;
-            //Get datatable
-            var listItem = $('#list-item').DataTable();
-            object = object[0];
+            if(data2.status == 1)
+            {
+              object = data.Ingredient;
+              //Get datatable
+              var listItem = $('#list-item').DataTable();
+              object = object[0];
 
-            //Get selected row
-            var row = $("#btnUpdate"+object.id).closest('tr');
-            row = row[0];
-            //Get selected row id
-            // var rowId = table.row( row ).index();
-            listItem.row(row).remove();
+              //Get selected row
+              var row = $("#btnUpdate"+object.id).closest('tr');
+              row = row[0];
+              //Get selected row id
+              // var rowId = table.row( row ).index();
+              listItem.row(row).remove();
 
-            drawObject(object);
-            
-            $('#errorModelMessage').text(data.message);
+              drawObject(object);
+              
+              $('#errorModelMessage').text(data.message);
+              $('#errorModelMessage').show();
+              $('#errorModal').modal('hide');
+            }
+          })
+          .fail(function(error)
+          {
+            $('#errorModelMessage').text("Cannot delete this ingredient!");
             $('#errorModelMessage').show();
             $('#errorModal').modal('hide');
-          }
-        })
-        .fail(function(error)
-        {
-          $('#errorModelMessage').text("Cannot delete this ingredient!");
-          $('#errorModelMessage').show();
-          $('#errorModal').modal('hide');
-        });
+          });
+      }
+    })
+    .fail(function(error)
+    {
+      $('#errorModelMessage').text("Cannot delete this ingredient!");
+      $('#errorModelMessage').show();
+      $('#errorModal').modal('hide');
+    });
 }
 
 function validate () {
@@ -160,6 +193,7 @@ function validate () {
 }
 
 function save () {
+  checkLogin();
   var status = validate();
   if(status)
   {
@@ -210,52 +244,56 @@ function save () {
         .done(function(data) 
         {
           if(data.status == 1)
-          {
-            //Auto add new ingredient to main store
-            obj = {
-                  "store": 1,
-                  "ingredient": data.Ingredient.id,
-                  "limit": 0,
-                  "instock": 0,
-                  "deleted": 0,
-                  "price": 0,
-                  "ingredient_store": data.Ingredient.id+"-1"
-              };
-            var query = {
-                          "from": "IngredientStore",
-                          "action": "create",
-                          "createdata": JSON.stringify(obj)
-                        };
-            $.post("/services/model", query)
-              .done(function(result) {});
-
+          {    
             //Auto add new ingredient to all store
-            $.post("/services/model",{ from: "store", where: JSON.stringify({ "deleted": 0})},function(result){
-                if(result.status == 1)
-                {
-                  var stores = result.Store;
-                  for(var i = 0; i < stores.length; i++)
-                  {
-                    obj = {
-                          "store": stores[i].id,
-                          "ingredient": data.Ingredient.id,
-                          "limit": 0,
-                          "instock": 0,
-                          "deleted": 0,
-                          "ingredient_store": data.Ingredient.id+"-"+stores[i].id
-                      };
-                    var query = {
-                                  "from": "IngredientStore",
-                                  "action": "create",
-                                  "createdata": JSON.stringify(obj)
-                                };
-                    $.post("/services/model", query)
-                      .done(function(result) {});
-                  }
-                }
-              });
+            if(type == 1) //Insert
+            {
+              //Auto add new ingredient to main store
+              obj = {
+                    "store": 1,
+                    "ingredient": data.Ingredient.id,
+                    "limit": 0,
+                    "instock": 0,
+                    "deleted": 0,
+                    "price": 0,
+                    "ingredient_store": data.Ingredient.id+"-1"
+                };
+              var query = {
+                            "from": "IngredientStore",
+                            "action": "create",
+                            "createdata": JSON.stringify(obj)
+                          };
+              $.post("/services/model", query)
+                .done(function(result) {});
 
+              $.post("/services/model",{ from: "store", where: JSON.stringify({ "deleted": 0})},function(result){
+                  if(result.status == 1)
+                  {
+                    var stores = result.Store;
+                    for(var i = 0; i < stores.length; i++)
+                    {
+                      obj = {
+                            "store": stores[i].id,
+                            "ingredient": data.Ingredient.id,
+                            "limit": 0,
+                            "instock": 0,
+                            "deleted": 0,
+                            "ingredient_store": data.Ingredient.id+"-"+stores[i].id
+                        };
+                      var query = {
+                                    "from": "IngredientStore",
+                                    "action": "create",
+                                    "createdata": JSON.stringify(obj)
+                                  };
+                      $.post("/services/model", query)
+                        .done(function(result) {});
+                    }
+                  }
+                });
+            }
+            
             object = data.Ingredient;
+
             //Get datatable
             var listItem = $('#list-item').DataTable();
 
@@ -264,6 +302,18 @@ function save () {
             {
               //Because we can update multiple rows => object will be an array not an object like insert
               object = object[0];
+
+              //Auto update status of IngredientStore
+              var obj2 = {"deleted": status};
+              var data2 = {
+                            "from": "IngredientStore",
+                            "action": "update",
+                            "where": JSON.stringify({ "ingredient": object.id}),
+                            "updatedata": JSON.stringify(obj2)
+                        };
+              console.log(data2);
+              console.log(data);
+              $.post("/services/model", data2).done(function(data2){});
 
               //Get selected row
               var row = $("#btnUpdate"+object.id).closest('tr');

@@ -57,7 +57,7 @@ module.exports = {
     },
 
     viewManage: function(req, res) {
-        User.find().populate('role').exec(function (err, found) {
+        User.find({ id: { '!': 1 }}).populate('role').exec(function (err, found) {
         	if(!req.session.user) {
         	    res.locals.layout = false; //Don't use layout
         	    res.view('login');
@@ -76,6 +76,24 @@ module.exports = {
         		});     
         	}             
         });
+    },
+
+    checkLogin: function(req, res) {
+        var data = {};
+        if(!req.session.user) {
+            data = {
+                "status": 0,
+                "message": "Logged out"
+            }
+        }
+        else
+        {
+            data = {
+                "status": 1,
+                "message": "Logged in"
+            }
+        }
+        res.json(data);
     },
 
     insert: function(req, res) 

@@ -167,7 +167,7 @@ var userid=<%= user.id %>
 // var user = $.session.get('user');
 $( document ).ready(function()
 {
-    
+    console.log("userrole: "+ userrole);
     console.log("user: "+ userid);
     if(userrole==1)
     {
@@ -413,7 +413,18 @@ function ChangeSegmentationType()
 
 $("#btnconfirm").click(function()
 {
+
+    $.get("/check/login").done(function(data){
+        if(data.status == 0)
+        {
+            window.location.reload();
+        }
+        else
+        {
+    var userid1=<%= user.id %>;
+    console.log("user: "+ userid1);
     smoothScrollTo("#scrollToHere");
+
     var flag = 0;
     var date1 = $("#datepicker1").val(),
         correctFormat1 = date1.replace(/(\d+)\/(\d+)\/(\d+)/, "$3/$2/$1"),
@@ -450,6 +461,13 @@ $("#btnconfirm").click(function()
             }
             else//success case
             {
+                if(datediff>731)//limit date range within 2 years
+                {
+                    $("#datepickerdiv1").attr('class','form-group has-error');
+                    $("#datepickerdiv2").attr('class','form-group has-error');
+                    alert("You can only view report within 2 years!");
+                    return false;
+                }
             //get income data by api***********************************
             if($("#segmentationtypelist").val()==0||$("#segmentationtypelist").val()==1)// income case
             {
@@ -995,5 +1013,8 @@ if($("#segmentationtypelist").val()==2)//Chain incomes
             alert("Please choose date range!");
             return false;
     }
+        }
+    });
+    
 });
 </script>
