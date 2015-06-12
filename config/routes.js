@@ -103,7 +103,7 @@ module.exports.routes = {
   '/bill/get/:id?': 'BillItemController.indexBillItem',
 
   '/services/model': 'ServicesController.getModel',
-
+  '/test': 'ServicesController.getModel',
   '/product/manage/view': 'ProductController.viewManage',
   '/product/view': 'ProductController.view',
 
