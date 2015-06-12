@@ -170,7 +170,7 @@
 var y = 5;
     $( document ).ready(function()
     {
-        var where = {"store": 1};   
+        var where = {"store": 1, "deleted": 0};   
         for (var y = 2; y <= 5; y++) 
         {
             $("#tbody1").append("<tr id='onestoretr"+y+"'><td><div id='ingredientlistdiv"+y+"' class='form-group'><select id='ingredientlist"+y+"' onchange='ChangeIngredient("+y+");' class='form-control'><option value='0'>Ingredient</option></select></div></td><td><label id='mainstorage"+y+"'></label></td><td><div id='mainstorageaddstockdiv"+y+"' class='form-group'><input type='text' id='mainstorageaddstock"+y+"' class='form-control' onkeyup='validate("+y+");' onpaste='validate("+y+");' oninput='validate("+y+");'></input><label id='mainstorageaddstocklbvalidate"+y+"' class='form-control-static'></label></div></td><td><label id='mainstorageunit"+y+"' class='form-control-static'></label></td><td><div id='mainstoragepricediv"+y+"' class='form-group'><input type='text' id='mainstorageprice"+y+"' class='form-control' onkeyup='validate1("+y+");' onpaste='validate1("+y+");' oninput='validate1("+y+");'></input><label id='mainstoragepricelbvalidate"+y+"' class='form-control-static'></label></div></td><td><img src='images/minus.png' height='20' width='20' id='"+y+"' onmouseover='' style='cursor:pointer;' onclick='deleterow1("+y+");'></td></tr>");
