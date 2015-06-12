@@ -457,7 +457,7 @@ var y = 5;
         $("#allstoreslist").val(store);
         ChangeStore();
 
-        var where = {"store": store};
+        var where = {"store": store, "deleted": 0};
         $.post("/services/model",{from:"IngredientStore", populate:["ingredient"], where:JSON.stringify(where)},function(result)
         {
             $("#tbody-notification").empty();
